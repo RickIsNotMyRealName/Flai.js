@@ -25,25 +25,25 @@ export default function NodePalette() {
       >
         {open ? (
           <svg
-            width="14"
-            height="14"
+            width="16"
+            height="16"
             viewBox="0 0 12 12"
             aria-hidden="true"
           >
             <line
-              x1="2"
-              y1="2"
-              x2="10"
-              y2="10"
+              x1="1"
+              y1="1"
+              x2="11"
+              y2="11"
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
             />
             <line
-              x1="10"
-              y1="2"
-              x2="2"
-              y2="10"
+              x1="11"
+              y1="1"
+              x2="1"
+              y2="11"
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
@@ -51,25 +51,25 @@ export default function NodePalette() {
           </svg>
         ) : (
           <svg
-            width="14"
-            height="14"
+            width="16"
+            height="16"
             viewBox="0 0 12 12"
             aria-hidden="true"
           >
-            <line
-              x1="6"
-              y1="1"
-              x2="6"
-              y2="11"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
             <line
               x1="1"
               y1="6"
               x2="11"
               y2="6"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <line
+              x1="6"
+              y1="1"
+              x2="6"
+              y2="11"
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
