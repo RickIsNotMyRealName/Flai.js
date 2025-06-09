@@ -23,7 +23,12 @@ export default function CustomNode({ data, selected }: NodeProps<RFNode>) {
 
   return (
     <div className="custom-node">
-      <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top} align="center">
+      <NodeToolbar
+        className="node-toolbar"
+        isVisible={selected}
+        position={Position.Bottom}
+        align="center"
+      >
         <button onClick={() => duplicateNode(nodeInst.uuid)} aria-label="Duplicate">⧉</button>
         <button onClick={() => removeNode(nodeInst.uuid)} aria-label="Delete">🗑️</button>
       </NodeToolbar>
