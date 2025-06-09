@@ -1,5 +1,6 @@
 // src/components/CustomNode.tsx
 import { Handle, Node, NodeProps, Position, NodeToolbar } from '@xyflow/react';
+import { useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { NodeInstance } from '../types';
 
@@ -12,7 +13,7 @@ export type RFNode = Node<CustomData>;
  *  - one row per input (handle left + label)
  *  - one row per output (label + handle right)
  */
-export default function CustomNode({ data, selected }: NodeProps<RFNode>) {
+export default function CustomNode({ data }: NodeProps<RFNode>) {
   const nodeInst = data.node;
   const nodeType = useWorkflowStore(
     (s) => s.nodeTypes.find((nt) => nt.id === nodeInst.nodeTypeId)!
@@ -20,17 +21,22 @@ export default function CustomNode({ data, selected }: NodeProps<RFNode>) {
   const openEditor = useWorkflowStore((s) => s.openEditor);
   const removeNode = useWorkflowStore((s) => s.removeNode);
   const duplicateNode = useWorkflowStore((s) => s.duplicateNode);
+  const [hovered, setHovered] = useState(false);
 
   return (
-    <div className="custom-node">
+    <div
+      className="custom-node"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <NodeToolbar
         className="node-toolbar"
-        isVisible={selected}
+        isVisible={hovered}
         position={Position.Bottom}
         align="center"
       >
         <button onClick={() => duplicateNode(nodeInst.uuid)} aria-label="Duplicate">⧉</button>
-        <button onClick={() => removeNode(nodeInst.uuid)} aria-label="Delete">🗑️</button>
+        <button onClick={() => removeNode(nodeInst.uuid)} aria-label="Delete">✖</button>
       </NodeToolbar>
       {/* Title row */}
       <div className="node-row title">
