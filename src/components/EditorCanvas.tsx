@@ -13,6 +13,7 @@ import { useCallback, useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useWorkflowStore } from '../store/workflowStore';
 import CustomNode from './CustomNode';
+import DeletableEdge from './DeletableEdge';
 import { validateConnection } from "../logic/pinValidation";
 import type {
   Node as RFNode,
@@ -22,6 +23,7 @@ import type {
 } from '@xyflow/react';
 
 const rfNodeTypes = { custom: CustomNode };
+const rfEdgeTypes = { deletable: DeletableEdge };
 
 /* -------------------------------------------------------------------------- */
 /*  OUTER: provides the context                                               */
@@ -46,7 +48,6 @@ function FlowInner() {
   const removeEdge = useWorkflowStore((s) => s.removeEdge);
   const moveNode = useWorkflowStore((s) => s.moveNode);
   const setSelected = useWorkflowStore((s) => s.setSelected);
-  const openContextMenu = useWorkflowStore((s) => s.openContextMenu);
 
   const nodeDefs = useWorkflowStore((s) => s.nodeTypes);
   const hierarchy = useWorkflowStore((s) => s.typeHierarchy);
@@ -70,6 +71,7 @@ function FlowInner() {
     setEdges(
       storeEdges.map((e) => ({
         id: e.id,
+        type: 'deletable',
         source: e.from.uuid,
         sourceHandle: e.from.pin,
         target: e.to.uuid,
@@ -153,6 +155,7 @@ function FlowInner() {
         nodes={nodes}
         edges={edges}
         nodeTypes={rfNodeTypes}
+        edgeTypes={rfEdgeTypes}
         onNodesChange={handleNodesChange}
         onEdgesChange={(changes) => {
           changes.forEach((c) => c.type === 'remove' && removeEdge(c.id as string));
@@ -161,24 +164,22 @@ function FlowInner() {
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
-        onSelectionChange={(sel) => setSelected(sel.nodes.map((n) => n.id))}
+        onSelectionChange={(sel) => {
+          setSelected(sel.nodes.map((n) => n.id));
+          setEdges((eds) =>
+            eds.map((e) => ({ ...e, selected: sel.edges.some((se) => se.id === e.id) }))
+          );
+        }}
         onNodeContextMenu={(e, node) => {
           e.preventDefault();
-          openContextMenu({
-            type: 'node',
-            id: node.id as string,
-            position: { x: e.clientX, y: e.clientY }
-          });
+          setSelected([node.id as string]);
         }}
         onEdgeContextMenu={(e, edge) => {
           e.preventDefault();
-          openContextMenu({
-            type: 'edge',
-            id: edge.id as string,
-            position: { x: e.clientX, y: e.clientY }
-          });
+          setEdges((eds) =>
+            eds.map((el) => ({ ...el, selected: el.id === edge.id }))
+          );
         }}
-        onPaneClick={() => openContextMenu(null)}
         fitView
       >
         <Background />

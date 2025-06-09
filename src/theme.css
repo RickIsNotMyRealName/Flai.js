@@ -215,3 +215,30 @@
   background: var(--accent);
   color: #fff;
 }
+
+/* Node action toolbar */
+.react-flow__node-toolbar button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  margin: 0 2px;
+  cursor: pointer;
+}
+
+/* Edge delete button */
+.edge-delete-btn {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

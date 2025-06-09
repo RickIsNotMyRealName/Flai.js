@@ -4,7 +4,6 @@ import NodePalette from './components/NodePalette';
 import EditorCanvas from './components/EditorCanvas';
 import PropertiesPanel from './components/PropertiesPanel';
 import ErrorToast from './components/ErrorToast';
-import ContextMenu from './components/ContextMenu';
 import clsx from 'clsx';
 
 export default function App() {
@@ -22,7 +21,6 @@ export default function App() {
     <div className={clsx('app', theme)}>
       <NodePalette />
       <EditorCanvas />
-      <ContextMenu />
       <PropertiesPanel />
       <ErrorToast />
     </div>
