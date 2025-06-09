@@ -1,10 +1,15 @@
 import { useMemo, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
+import { validateWorkflow } from '../logic/pinValidation';
 
 export default function NodePalette() {
   const nodeTypes = useWorkflowStore((s) => s.nodeTypes);
+  const addNode = useWorkflowStore((s) => s.addNode);
+  const nodes = useWorkflowStore((s) => s.nodes);
+  const edges = useWorkflowStore((s) => s.edges);
+  const hierarchy = useWorkflowStore((s) => s.typeHierarchy);
+  const setToast = useWorkflowStore((s) => s.setToast);
   const [query, setQuery] = useState('');
-  const [open, setOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
@@ -30,6 +35,25 @@ export default function NodePalette() {
             viewBox="0 0 12 12"
             aria-hidden="true"
           >
+            {nt.icon && <img src={nt.icon} alt="" />}
+            {nt.name}
+          </li>
+        ))}
+      </ul>
+      <button
+        className="validate-btn"
+        onClick={() => {
+          const err = validateWorkflow(nodes, edges, nodeTypes, hierarchy);
+          if (err) {
+            setToast(err, 'error');
+          } else {
+            setToast('Workflow valid', 'success');
+          }
+        }}
+      >
+        Validate
+      </button>
+    </aside>
             <line
               x1="1"
               y1="1"

@@ -1,8 +1,8 @@
 import { useWorkflowStore } from '../store/workflowStore';
 
 export default function ErrorToast() {
-  const msg = useWorkflowStore((s) => s.lastError);
-  if (!msg) return null;
+  const toast = useWorkflowStore((s) => s.toast);
+  if (!toast) return null;
 
   return (
     <div
@@ -11,7 +11,7 @@ export default function ErrorToast() {
         bottom: 20,
         left: '50%',
         transform: 'translateX(-50%)',
-        background: '#ff5555',
+        background: toast.type === 'success' ? '#55aa55' : '#ff5555',
         color: '#fff',
         padding: '8px 16px',
         borderRadius: 4,
@@ -19,7 +19,7 @@ export default function ErrorToast() {
         zIndex: 1000
       }}
     >
-      {msg}
+      {toast.message}
     </div>
   );
 }

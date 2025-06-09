@@ -66,6 +66,6 @@ App
 
 ### Notes for Contributors
 - Follow the design intent in `DesignDoc.md` when adding features or refactoring.
-- `npm run build` should succeed before committing changes (no tests yet).
+- Run `npm run verify` before committing changes to compile, type-check and run the tests.
 - The repo currently uses plain CSS; switch to CSS Modules or Tailwind only if consistent with the design doc.
 - If the project structure or workflow changes, **update this `AGENTS.md`** to keep it current.
