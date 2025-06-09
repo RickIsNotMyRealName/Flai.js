@@ -125,4 +125,19 @@ describe('validateWorkflow', () => {
       expect(result).toMatch(/Embeddings.*Web Search/);
     }
   });
+
+  it('allows required field with default to be omitted', () => {
+    const nodes: Record<string, NodeInstance> = {
+      start: makeNode('workflow.start', 'start'),
+      end: makeNode('workflow.end', 'end'),
+      chat: makeNode('openai.chatmodel', 'chat', { apiKey: 'k' }),
+      agent: makeNode('agent', 'agent')
+    };
+    const edges: EdgeInstance[] = [
+      { id: 'e1', from: { uuid: 'chat', pin: 'modelOut' }, to: { uuid: 'agent', pin: 'modelIn' } },
+      { id: 'e2', from: { uuid: 'start', pin: 'stateOut' }, to: { uuid: 'agent', pin: 'stateIn' } },
+      { id: 'e3', from: { uuid: 'agent', pin: 'stateOut' }, to: { uuid: 'end', pin: 'stateIn' } }
+    ];
+    expect(validateWorkflow(nodes, edges, nodeTypes, hierarchy)).toBeNull();
+  });
 });
