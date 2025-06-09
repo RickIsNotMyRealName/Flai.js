@@ -166,9 +166,6 @@ function FlowInner() {
         onDragOver={onDragOver}
         onSelectionChange={(sel) => {
           setSelected(sel.nodes.map((n) => n.id));
-          setEdges((eds) =>
-            eds.map((e) => ({ ...e, selected: sel.edges.some((se) => se.id === e.id) }))
-          );
         }}
         onNodeContextMenu={(e, node) => {
           e.preventDefault();
