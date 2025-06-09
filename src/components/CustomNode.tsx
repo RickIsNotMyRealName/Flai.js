@@ -1,6 +1,6 @@
 // src/components/CustomNode.tsx
 import { Handle, Node, NodeProps, Position, NodeToolbar } from '@xyflow/react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { NodeInstance } from '../types';
 
@@ -22,12 +22,31 @@ export default function CustomNode({ data }: NodeProps<RFNode>) {
   const removeNode = useWorkflowStore((s) => s.removeNode);
   const duplicateNode = useWorkflowStore((s) => s.duplicateNode);
   const [hovered, setHovered] = useState(false);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const show = () => {
+    if (hideTimer.current) {
+      clearTimeout(hideTimer.current);
+      hideTimer.current = null;
+    }
+    setHovered(true);
+  };
+
+  const hide = () => {
+    if (hideTimer.current) {
+      clearTimeout(hideTimer.current);
+    }
+    hideTimer.current = setTimeout(() => {
+      setHovered(false);
+      hideTimer.current = null;
+    }, 150);
+  };
 
   return (
     <div
       className="custom-node"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={show}
+      onMouseLeave={hide}
     >
       <NodeToolbar
         className="node-toolbar"
@@ -35,8 +54,8 @@ export default function CustomNode({ data }: NodeProps<RFNode>) {
         position={Position.Bottom}
         align="center"
         offset={4}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onMouseEnter={show}
+        onMouseLeave={hide}
       >
         <button onClick={() => duplicateNode(nodeInst.uuid)} aria-label="Duplicate">⧉</button>
         <button onClick={() => removeNode(nodeInst.uuid)} aria-label="Delete">✖</button>
