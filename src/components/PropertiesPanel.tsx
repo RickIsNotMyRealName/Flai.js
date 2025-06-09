@@ -4,28 +4,27 @@ import type { Field, NodeInstance } from '../types';
 import type { JSX } from 'react';
 
 export default function PropertiesPanel() {
-  const selected = useWorkflowStore((s) => s.selected);
-  const nodes    = useWorkflowStore((s) => s.nodes);
-  const types    = useWorkflowStore((s) => s.nodeTypes);
+  const editing = useWorkflowStore((s) => s.editing);
+  const nodes   = useWorkflowStore((s) => s.nodes);
+  const types   = useWorkflowStore((s) => s.nodeTypes);
 
-  const setSelected = useWorkflowStore((s) => s.setSelected);
+  const closeEditor = useWorkflowStore((s) => s.closeEditor);
 
-  const nodeId = selected[0];
-  if (!nodeId) return null;
+  if (!editing) return null;
 
-  const node     = nodes[nodeId];
+  const node     = nodes[editing];
   const nodeType = types.find((t) => t.id === node.nodeTypeId);
   if (!nodeType) return null;
 
   return (
     <>
-      <div className="modal-backdrop" onClick={() => setSelected([])} />
-      <div className="modal">
+      <div className="modal-backdrop" onClick={closeEditor} />
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h3>{nodeType.name}</h3>
         {nodeType.fields.map((f) => (
           <FieldInput key={f.id} field={f} node={node} />
         ))}
-        <button onClick={() => setSelected([])}>Close</button>
+        <button onClick={closeEditor}>Close</button>
       </div>
     </>
   );

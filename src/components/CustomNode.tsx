@@ -18,6 +18,9 @@ export default function CustomNode({ data }: NodeProps<RFNode>) {
   const nodeType = useWorkflowStore(
     (s) => s.nodeTypes.find((nt) => nt.id === nodeInst.nodeTypeId)!
   );
+  const selected = useWorkflowStore((s) => s.selected);
+  const openEditor = useWorkflowStore((s) => s.openEditor);
+  const isSelected = selected.includes(nodeInst.uuid);
 
   return (
     <div className="custom-node">
@@ -52,6 +55,12 @@ export default function CustomNode({ data }: NodeProps<RFNode>) {
           />
         </div>
       ))}
+
+      {isSelected && nodeType.fields.length > 0 && (
+        <button className="edit-btn" onClick={() => openEditor(nodeInst.uuid)}>
+          Edit
+        </button>
+      )}
     </div>
   );
 }
