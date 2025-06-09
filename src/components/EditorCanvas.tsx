@@ -46,6 +46,7 @@ function FlowInner() {
   const removeEdge = useWorkflowStore((s) => s.removeEdge);
   const moveNode = useWorkflowStore((s) => s.moveNode);
   const setSelected = useWorkflowStore((s) => s.setSelected);
+  const openContextMenu = useWorkflowStore((s) => s.openContextMenu);
 
   const nodeDefs = useWorkflowStore((s) => s.nodeTypes);
   const hierarchy = useWorkflowStore((s) => s.typeHierarchy);
@@ -161,6 +162,23 @@ function FlowInner() {
         onDrop={onDrop}
         onDragOver={onDragOver}
         onSelectionChange={(sel) => setSelected(sel.nodes.map((n) => n.id))}
+        onNodeContextMenu={(e, node) => {
+          e.preventDefault();
+          openContextMenu({
+            type: 'node',
+            id: node.id as string,
+            position: { x: e.clientX, y: e.clientY }
+          });
+        }}
+        onEdgeContextMenu={(e, edge) => {
+          e.preventDefault();
+          openContextMenu({
+            type: 'edge',
+            id: edge.id as string,
+            position: { x: e.clientX, y: e.clientY }
+          });
+        }}
+        onPaneClick={() => openContextMenu(null)}
         fitView
       >
         <Background />
