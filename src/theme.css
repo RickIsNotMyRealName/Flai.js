@@ -167,6 +167,27 @@
   z-index: 10;
   min-width: 240px;
 }
+.modal input[type="text"] {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 1rem;
+}
+.modal button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+.modal button.delete {
+  background: #d55;
+}
 
 /* Edit button row */
 .edit-row {

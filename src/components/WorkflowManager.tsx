@@ -13,6 +13,10 @@ export default function WorkflowManager() {
   const edges = useWorkflowStore((s) => s.edges);
   const setToast = useWorkflowStore((s) => s.setToast);
 
+  const [showSave, setShowSave] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [nameInput, setNameInput] = useState(current);
+
   useEffect(() => {
     refresh();
   }, [refresh]);
@@ -28,31 +32,76 @@ export default function WorkflowManager() {
   }, [nodes, edges, current, dirty, save, setToast]);
 
   const handleSaveAs = () => {
-    const name = prompt('Workflow name', current);
-    if (name) save(name);
+    setNameInput(current);
+    setShowSave(true);
   };
 
   const handleDelete = () => {
-    if (current && confirm(`Delete workflow "${current}"?`)) {
-      remove(current);
+    if (current) {
+      setShowDelete(true);
     }
   };
 
   return (
-    <div className="workflow-bar">
-      <select
-        value={current}
-        onChange={(e) => load(e.target.value)}
-      >
-        {names.map((n) => (
-          <option key={n} value={n}>
-            {n}
-          </option>
-        ))}
-      </select>
-      <button onClick={handleSaveAs}>Save As</button>
-      <button className="delete" onClick={handleDelete}>Delete</button>
-      {dirty && <span className="unsaved">*</span>}
-    </div>
+    <>
+      <div className="workflow-bar">
+        <select value={current} onChange={(e) => load(e.target.value)}>
+          {names.map((n) => (
+            <option key={n} value={n}>
+              {n}
+            </option>
+          ))}
+        </select>
+        <button onClick={handleSaveAs}>Save As</button>
+        <button className="delete" onClick={handleDelete}>Delete</button>
+        {dirty && <span className="unsaved">*</span>}
+      </div>
+
+      {showSave && (
+        <>
+          <div className="modal-backdrop" onClick={() => setShowSave(false)} />
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Name Workflow</h3>
+            <input
+              type="text"
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+            />
+            <div className="modal-buttons">
+              <button onClick={() => setShowSave(false)}>Cancel</button>
+              <button
+                onClick={() => {
+                  save(nameInput);
+                  setShowSave(false);
+                }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {showDelete && (
+        <>
+          <div className="modal-backdrop" onClick={() => setShowDelete(false)} />
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <p>Delete workflow "{current}"?</p>
+            <div className="modal-buttons">
+              <button onClick={() => setShowDelete(false)}>Cancel</button>
+              <button
+                className="delete"
+                onClick={() => {
+                  remove(current);
+                  setShowDelete(false);
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 }
