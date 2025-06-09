@@ -66,13 +66,14 @@ export function validateWorkflow(
     const toPin = toType.inputs.find((p) => p.id === edge.to.pin);
     if (!fromPin || !toPin) return 'Edge references unknown pin';
 
+    const remaining = edges.filter((e) => e.id !== edge.id);
     const err = validateConnection(
       fromNode,
       fromPin,
       toNode,
       toPin,
       hierarchy,
-      edges
+      remaining
     );
     if (err) return err;
   }
@@ -94,8 +95,14 @@ export function validateWorkflow(
       if ((pin as any).required && count === 0) {
         return `Required input ${pin.name} of ${def.name} is not connected`;
       }
-      if (cardinalityExceeded(pin, node, 'input', edges)) {
-        return `Input pin cardinality exceeded on ${def.name}.${pin.name}`;
+      const limit =
+        pin.cardinality === 'one'
+          ? 1
+          : pin.cardinality === 'many'
+          ? null
+          : pin.cardinality.exact;
+      if (limit !== null && count > limit) {
+        return `Input pin exceeds maximum connections on ${def.name}.${pin.name}`;
       }
     }
 
@@ -110,8 +117,14 @@ export function validateWorkflow(
       if ((pin as any).required && count === 0) {
         return `Required output ${pin.name} of ${def.name} is not connected`;
       }
-      if (cardinalityExceeded(pin, node, 'output', edges)) {
-        return `Output pin cardinality exceeded on ${def.name}.${pin.name}`;
+      const outLimit =
+        pin.cardinality === 'one'
+          ? 1
+          : pin.cardinality === 'many'
+          ? null
+          : pin.cardinality.exact;
+      if (outLimit !== null && count > outLimit) {
+        return `Output pin exceeds maximum connections on ${def.name}.${pin.name}`;
       }
     }
 
@@ -152,7 +165,7 @@ export function validateConnection(
   }
 
   if (cardinalityExceeded(toPin, toNode, 'input', edges)) {
-    return 'Target pin cardinality exceeded';
+    return 'Target pin already has maximum connections';
   }
 
   return null;
