@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
-import type { NodeType } from '../types';
 import { validateWorkflow } from '../logic/pinValidation';
-import { clsx } from 'clsx';
 
 export default function NodePalette() {
   const nodeTypes = useWorkflowStore((s) => s.nodeTypes);
