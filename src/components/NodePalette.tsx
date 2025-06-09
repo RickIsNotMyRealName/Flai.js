@@ -17,8 +17,13 @@ export default function NodePalette() {
 
   return (
     <div className="palette-wrapper">
-      <button className="palette-toggle" onClick={() => setOpen(!open)}>
-        {open ? '✕' : 'Nodes'}
+      <button
+        type="button"
+        className="palette-toggle"
+        aria-label={open ? 'Close node list' : 'Add node'}
+        onClick={() => setOpen(!open)}
+      >
+        {open ? '✕' : '➕'}
       </button>
       {open && (
         <aside className="palette palette-floating">
