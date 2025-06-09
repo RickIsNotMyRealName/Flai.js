@@ -1,6 +1,5 @@
 // src/components/CustomNode.tsx
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
-import { clsx } from 'clsx';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { NodeInstance } from '../types';
 
@@ -18,6 +17,7 @@ export default function CustomNode({ data }: NodeProps<RFNode>) {
   const nodeType = useWorkflowStore(
     (s) => s.nodeTypes.find((nt) => nt.id === nodeInst.nodeTypeId)!
   );
+  const openEditor = useWorkflowStore((s) => s.openEditor);
 
   return (
     <div className="custom-node">
@@ -52,6 +52,14 @@ export default function CustomNode({ data }: NodeProps<RFNode>) {
           />
         </div>
       ))}
+
+      {nodeType.fields.length > 0 && (
+        <div className="node-row edit-row">
+          <button className="edit-btn" onClick={() => openEditor(nodeInst.uuid)}>
+            Edit
+          </button>
+        </div>
+      )}
     </div>
   );
 }

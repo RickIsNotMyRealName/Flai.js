@@ -9,6 +9,7 @@ interface WorkflowState {
   nodes: Record<string, NodeInstance>;
   edges: EdgeInstance[];
   selected: string[];
+  editing: string | null;
   theme: 'light' | 'dark';
   undoStack: unknown[];
   redoStack: unknown[];
@@ -24,6 +25,11 @@ interface WorkflowState {
   addEdge: (edge: EdgeInstance) => void;
   removeEdge: (id: string) => void;
   setTheme: (t: 'light' | 'dark') => void;
+  setSelected: (ids: string[]) => void;
+  openEditor: (id: string) => void;
+  closeEditor: () => void;
+  updateNodeField: (uuid: string, fieldId: string, value: unknown) => void;
+  moveNode: (uuid: string, pos: { x: number; y: number }) => void;
 }
 
 export const useWorkflowStore = create<WorkflowState>()(
@@ -34,6 +40,7 @@ export const useWorkflowStore = create<WorkflowState>()(
     nodes: {},
     edges: [],
     selected: [],
+    editing: null,
     theme:
       (localStorage.getItem('theme') as 'light' | 'dark') ||
       (window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -88,6 +95,35 @@ export const useWorkflowStore = create<WorkflowState>()(
       set((s) => {
         s.theme = t;
         localStorage.setItem('theme', t);
+      }),
+
+    setSelected: (ids) =>
+      set((s) => {
+        s.selected = ids;
+      }),
+
+    openEditor: (id) =>
+      set((s) => {
+        s.editing = id;
+      }),
+
+    closeEditor: () =>
+      set((s) => {
+        s.editing = null;
+      }),
+
+    updateNodeField: (uuid, fieldId, value) =>
+      set((s) => {
+        if (s.nodes[uuid]) {
+          s.nodes[uuid].fields[fieldId] = value;
+        }
+      }),
+
+    moveNode: (uuid, pos) =>
+      set((s) => {
+        if (s.nodes[uuid]) {
+          s.nodes[uuid].position = pos;
+        }
       })
   }))
 );
