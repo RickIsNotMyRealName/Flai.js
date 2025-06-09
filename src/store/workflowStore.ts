@@ -18,8 +18,15 @@ interface WorkflowState {
   theme: 'light' | 'dark';
   undoStack: unknown[];
   redoStack: unknown[];
+  workflowName: string;
+  dirty: boolean;
+  savedWorkflows: string[];
   toast: { message: string; type: 'error' | 'success' } | null;
   setToast: (msg: string, type?: 'error' | 'success') => void;
+  refreshSavedWorkflows: () => void;
+  saveWorkflow: (name: string) => void;
+  loadWorkflow: (name: string) => void;
+  deleteWorkflow: (name: string) => void;
 
   loadDefinitions: (json: {
     types: Record<string, string | null>;
@@ -58,12 +65,73 @@ export const useWorkflowStore = create<WorkflowState>()(
         : 'light'),
     undoStack: [],
     redoStack: [],
+    workflowName: 'autosave',
+    dirty: false,
+    savedWorkflows: [],
 
     setToast: (msg, type = 'error') =>
       set((s) => {
         s.toast = { message: msg, type };
         /* auto-clear after 3 s */
         setTimeout(() => set((st) => void (st.toast = null)), 3000);
+      }),
+
+    refreshSavedWorkflows: () =>
+      set((s) => {
+        const list = localStorage.getItem('workflows');
+        s.savedWorkflows = list ? JSON.parse(list) : [];
+      }),
+
+    saveWorkflow: (name) =>
+      set((s) => {
+        localStorage.setItem(
+          `workflow.${name}`,
+          JSON.stringify({ nodes: s.nodes, edges: s.edges })
+        );
+        const list = localStorage.getItem('workflows');
+        const names = list ? JSON.parse(list) : [];
+        if (!names.includes(name)) {
+          names.push(name);
+          localStorage.setItem('workflows', JSON.stringify(names));
+        }
+        s.workflowName = name;
+        s.dirty = false;
+        s.savedWorkflows = names;
+      }),
+
+    loadWorkflow: (name) =>
+      set((s) => {
+        const data = localStorage.getItem(`workflow.${name}`);
+        if (!data) return;
+        try {
+          const parsed = JSON.parse(data) as {
+            nodes: Record<string, NodeInstance>;
+            edges: EdgeInstance[];
+          };
+          s.nodes = parsed.nodes;
+          s.edges = parsed.edges;
+          s.workflowName = name;
+          s.dirty = false;
+        } catch {
+          /* ignore parse errors */
+        }
+      }),
+
+    deleteWorkflow: (name) =>
+      set((s) => {
+        localStorage.removeItem(`workflow.${name}`);
+        const list = localStorage.getItem('workflows');
+        const names = list ? JSON.parse(list) : [];
+        const index = names.indexOf(name);
+        if (index !== -1) {
+          names.splice(index, 1);
+          localStorage.setItem('workflows', JSON.stringify(names));
+        }
+        if (s.workflowName === name) {
+          s.workflowName = 'autosave';
+          s.dirty = true;
+        }
+        s.savedWorkflows = names;
       }),
 
     loadDefinitions: (json) =>
@@ -81,6 +149,7 @@ export const useWorkflowStore = create<WorkflowState>()(
           position,
           fields: {}
         };
+        s.dirty = true;
       }),
 
     duplicateNode: (origId) =>
@@ -94,6 +163,7 @@ export const useWorkflowStore = create<WorkflowState>()(
           position: { x: orig.position.x + 20, y: orig.position.y + 20 },
           fields: { ...orig.fields }
         };
+        s.dirty = true;
       }),
 
     removeNode: (id) =>
@@ -102,16 +172,19 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.edges = s.edges.filter(
           (e) => e.from.uuid !== id && e.to.uuid !== id
         );
+        s.dirty = true;
       }),
 
     addEdge: (edge) =>
       set((s) => {
         s.edges.push(edge);
+        s.dirty = true;
       }),
 
     removeEdge: (id) =>
       set((s) => {
         s.edges = s.edges.filter((e) => e.id !== id);
+        s.dirty = true;
       }),
 
     openContextMenu: (menu) =>
@@ -144,6 +217,7 @@ export const useWorkflowStore = create<WorkflowState>()(
       set((s) => {
         if (s.nodes[uuid]) {
           s.nodes[uuid].fields[fieldId] = value;
+          s.dirty = true;
         }
       }),
 
@@ -151,6 +225,7 @@ export const useWorkflowStore = create<WorkflowState>()(
       set((s) => {
         if (s.nodes[uuid]) {
           s.nodes[uuid].position = pos;
+          s.dirty = true;
         }
       })
   }))
