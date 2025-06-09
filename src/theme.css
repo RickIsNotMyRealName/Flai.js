@@ -46,6 +46,9 @@
   justify-content: center;
   cursor: pointer;
 }
+.validate-toggle {
+  left: 60px;
+}
 .palette-floating {
   position: absolute;
   top: 62px;
@@ -179,17 +182,6 @@
   cursor: pointer;
 }
 
-.validate-btn {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  padding: 4px;
-  width: 100%;
-  margin-top: 0.5rem;
-  cursor: pointer;
-}
 
 /* Properties panel fields */
 .field-label {
