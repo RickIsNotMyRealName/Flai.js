@@ -4,6 +4,7 @@ import NodePalette from './components/NodePalette';
 import EditorCanvas from './components/EditorCanvas';
 import PropertiesPanel from './components/PropertiesPanel';
 import ErrorToast from './components/ErrorToast';
+import WorkflowManager from './components/WorkflowManager';
 import clsx from 'clsx';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
 
   return (
     <div className={clsx('app', theme)}>
+      <WorkflowManager />
       <NodePalette />
       <EditorCanvas />
       <PropertiesPanel />

@@ -294,3 +294,31 @@
   --xy-controls-button-color-hover: var(--accent);
   --xy-controls-button-border-color: var(--accent);
 }
+
+/* Workflow manager bar */
+.workflow-bar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 20;
+}
+.workflow-bar select {
+  padding: 2px 4px;
+  border: 1px solid #6663;
+  border-radius: 4px;
+}
+.workflow-bar button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+.unsaved {
+  color: var(--accent);
+  font-weight: bold;
+}
