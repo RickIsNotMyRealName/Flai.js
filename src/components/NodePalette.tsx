@@ -10,7 +10,7 @@ export default function NodePalette() {
   const nodes = useWorkflowStore((s) => s.nodes);
   const edges = useWorkflowStore((s) => s.edges);
   const hierarchy = useWorkflowStore((s) => s.typeHierarchy);
-  const setError = useWorkflowStore((s) => s.setError);
+  const setToast = useWorkflowStore((s) => s.setToast);
   const [query, setQuery] = useState('');
 
   const filtered = useMemo(() => {
@@ -47,7 +47,11 @@ export default function NodePalette() {
         className="validate-btn"
         onClick={() => {
           const err = validateWorkflow(nodes, edges, nodeTypes, hierarchy);
-          setError(err ?? 'Workflow valid');
+          if (err) {
+            setToast(err, 'error');
+          } else {
+            setToast('Workflow valid', 'success');
+          }
         }}
       >
         Validate

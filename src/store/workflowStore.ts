@@ -18,8 +18,8 @@ interface WorkflowState {
   theme: 'light' | 'dark';
   undoStack: unknown[];
   redoStack: unknown[];
-  lastError: string | null;
-  setError: (msg: string) => void;
+  toast: { message: string; type: 'error' | 'success' } | null;
+  setToast: (msg: string, type?: 'error' | 'success') => void;
 
   loadDefinitions: (json: {
     types: Record<string, string | null>;
@@ -43,7 +43,7 @@ interface WorkflowState {
 
 export const useWorkflowStore = create<WorkflowState>()(
   immer((set) => ({
-    lastError: null,
+    toast: null,
     nodeTypes: [],
     typeHierarchy: {},
     nodes: {},
@@ -59,11 +59,11 @@ export const useWorkflowStore = create<WorkflowState>()(
     undoStack: [],
     redoStack: [],
 
-    setError: (msg) =>
+    setToast: (msg, type = 'error') =>
       set((s) => {
-        s.lastError = msg;
+        s.toast = { message: msg, type };
         /* auto-clear after 3 s */
-        setTimeout(() => set((st) => void (st.lastError = null)), 3000);
+        setTimeout(() => set((st) => void (st.toast = null)), 3000);
       }),
 
     loadDefinitions: (json) =>

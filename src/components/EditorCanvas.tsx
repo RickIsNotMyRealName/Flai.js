@@ -51,7 +51,7 @@ function FlowInner() {
 
   const nodeDefs = useWorkflowStore((s) => s.nodeTypes);
   const hierarchy = useWorkflowStore((s) => s.typeHierarchy);
-  const setError = useWorkflowStore((s) => s.setError);
+  const setToast = useWorkflowStore((s) => s.setToast);
   /* -------- local RF state mirrors the store ----------------------------- */
   const [nodes, setNodes, onNodesChange] = useNodesState<RFNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<RFEdge>([]);
@@ -137,7 +137,7 @@ function FlowInner() {
       );
 
       if (err) {
-        setError(err);
+        setToast(err, 'error');
         return;
       }
 
@@ -147,7 +147,7 @@ function FlowInner() {
         to: { uuid: c.target, pin: c.targetHandle }
       });
     },
-    [addEdgeStore, storeNodes, nodeDefs, hierarchy, storeEdges, setError]
+    [addEdgeStore, storeNodes, nodeDefs, hierarchy, storeEdges, setToast]
   );
 
   /* ----------------------------------------------------------------------- */
