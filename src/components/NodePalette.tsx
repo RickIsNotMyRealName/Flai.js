@@ -72,6 +72,30 @@ export default function NodePalette() {
           </svg>
         )}
       </button>
+      <button
+        type="button"
+        className="palette-toggle validate-toggle"
+        aria-label="Validate workflow"
+        onClick={() => {
+          const err = validateWorkflow(nodes, edges, nodeTypes, hierarchy);
+          if (err) {
+            setToast(err, 'error');
+          } else {
+            setToast('Workflow valid', 'success');
+          }
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <polyline
+            points="3 9 7 13 13 5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
       {open && (
         <aside className="palette palette-floating">
           <input
@@ -93,19 +117,6 @@ export default function NodePalette() {
               </li>
             ))}
           </ul>
-          <button
-            className="validate-btn"
-            onClick={() => {
-              const err = validateWorkflow(nodes, edges, nodeTypes, hierarchy);
-              if (err) {
-                setToast(err, 'error');
-              } else {
-                setToast('Workflow valid', 'success');
-              }
-            }}
-          >
-            Validate
-          </button>
         </aside>
       )}
     </div>
