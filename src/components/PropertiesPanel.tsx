@@ -64,11 +64,14 @@ function FieldInput({ field, node }: { field: Field; node: NodeInstance }) {
       break;
     case 'bool':
       input = (
-        <input
-          type="checkbox"
-          checked={Boolean(value)}
-          onChange={(e) => onChange(e.target.checked)}
-        />
+        <span className="switch">
+          <input
+            type="checkbox"
+            checked={Boolean(value)}
+            onChange={(e) => onChange(e.target.checked)}
+          />
+          <span className="slider" />
+        </span>
       );
       break;
     case 'enum':
@@ -97,7 +100,7 @@ function FieldInput({ field, node }: { field: Field; node: NodeInstance }) {
   }
 
   return (
-    <label style={{ display: 'block', marginBottom: '0.5rem' }}>
+    <label className="field-label">
       {field.label}
       {input}
     </label>
