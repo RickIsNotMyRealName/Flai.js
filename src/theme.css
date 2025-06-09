@@ -346,3 +346,54 @@
   color: var(--accent);
   font-weight: bold;
 }
+
+/* Shell layout */
+.app-container {
+  display: flex;
+  height: 100vh;
+  color: var(--fg);
+  background: var(--bg);
+  font-family: system-ui, sans-serif;
+}
+.sidebar {
+  width: 180px;
+  border-right: 1px solid #6663;
+  padding: 0.5rem;
+}
+.sidebar button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--fg);
+  text-align: left;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.sidebar button.active {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 4px;
+}
+.main {
+  flex: 1;
+  padding: 0.5rem;
+}
+.editor-main {
+  display: flex;
+  height: 100%;
+  padding: 0;
+}
+.workflow-list ul {
+  list-style: none;
+  padding: 0;
+}
+.workflow-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.workflow-item .item-actions button {
+  margin-left: 4px;
+}
+
