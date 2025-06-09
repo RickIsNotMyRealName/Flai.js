@@ -92,7 +92,7 @@ export function validateWorkflow(
       if (typeof pin.cardinality === 'object' && count !== pin.cardinality.exact) {
         return `Input ${pin.name} of ${def.name} requires exactly ${pin.cardinality.exact} connections`;
       }
-      if ((pin as any).required && count === 0) {
+      if (pin.required && count === 0) {
         return `Required input ${pin.name} of ${def.name} is not connected`;
       }
       const limit =
@@ -114,7 +114,7 @@ export function validateWorkflow(
       if (typeof pin.cardinality === 'object' && count !== pin.cardinality.exact) {
         return `Output ${pin.name} of ${def.name} requires exactly ${pin.cardinality.exact} connections`;
       }
-      if ((pin as any).required && count === 0) {
+      if (pin.required && count === 0) {
         return `Required output ${pin.name} of ${def.name} is not connected`;
       }
       const outLimit =
@@ -130,7 +130,7 @@ export function validateWorkflow(
 
     for (const field of def.fields) {
       if (field.required) {
-        const val = node.fields[field.id];
+        const val = node.fields[field.id] ?? field.default;
         if (val === undefined || val === '') {
           return `Field ${field.label} of ${def.name} is required`;
         }
