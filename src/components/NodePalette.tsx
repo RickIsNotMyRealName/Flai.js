@@ -85,9 +85,9 @@ export default function NodePalette() {
           }
         }}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 12 12" aria-hidden="true">
           <polyline
-            points="3 9 7 13 13 5"
+            points="2 7 5 10 10 3"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
