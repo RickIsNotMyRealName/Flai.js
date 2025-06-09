@@ -40,7 +40,6 @@ export default function EditorCanvas() {
 /*  INNER: all React-Flow hooks live here                                     */
 /* -------------------------------------------------------------------------- */
 function FlowInner() {
-  console.log('FlowInner mount');
   /* -------- zustand store bindings --------------------------------------- */
   const storeNodes = useWorkflowStore((s) => s.nodes);
   const storeEdges = useWorkflowStore((s) => s.edges);
@@ -59,8 +58,6 @@ function FlowInner() {
   const syncingRef = useRef(false);
 
   useEffect(() => {
-    console.log('Sync nodes from store', Object.keys(storeNodes));
-    console.trace('setNodes from store');
     setNodes(
       Object.values(storeNodes).map((n) => ({
         id: n.uuid,
@@ -72,9 +69,7 @@ function FlowInner() {
   }, [storeNodes, setNodes]);
 
   useEffect(() => {
-    console.log('Sync edges from store', storeEdges);
     syncingRef.current = true;
-    console.trace('setEdges from store');
     setEdges(
       storeEdges.map((e) => ({
         id: e.id,
@@ -92,7 +87,6 @@ function FlowInner() {
 
   const handleNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      console.log('Nodes change', changes);
       changes.forEach((c) => {
         if (c.type === 'position' && c.position) {
           moveNode(c.id as string, c.position);
@@ -106,7 +100,6 @@ function FlowInner() {
   const onDrop = useCallback(
     (evt: React.DragEvent) => {
       evt.preventDefault();
-      console.log('onDrop', evt.clientX, evt.clientY);
       const typeId = evt.dataTransfer.getData('application/x-node-type');
       if (!typeId) return;
 
@@ -119,13 +112,11 @@ function FlowInner() {
   const onDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    console.log('onDragOver');
   }, []);
 
   /* -------- connect pins -------------------------------------------------- */
   const onConnect = useCallback(
     (c: Connection) => {
-      console.log('onConnect', c);
       if (!c.source || !c.target || !c.sourceHandle || !c.targetHandle) return;
       const fromNode = storeNodes[c.source];
       const toNode = storeNodes[c.target];
@@ -170,12 +161,9 @@ function FlowInner() {
         onNodesChange={handleNodesChange}
         onEdgesChange={(changes) => {
           if (syncingRef.current) {
-            console.log('Skip edgesChange due to syncingRef', changes);
             syncingRef.current = false;
             return;
           }
-          console.log('Edges change', changes);
-          console.trace('onEdgesChange triggered');
           changes.forEach((c) => c.type === 'remove' && removeEdge(c.id as string));
           onEdgesChange(changes);
         }}
@@ -183,19 +171,15 @@ function FlowInner() {
         onDrop={onDrop}
         onDragOver={onDragOver}
         onSelectionChange={(sel) => {
-          console.log('Selection change', sel);
           setSelected(sel.nodes.map((n) => n.id));
         }}
         onNodeContextMenu={(e, node) => {
           e.preventDefault();
-          console.log('Node context menu', node);
           setSelected([node.id as string]);
         }}
         onEdgeContextMenu={(e, edge) => {
           e.preventDefault();
-          console.log('Edge context menu', edge);
           syncingRef.current = true;
-          console.trace('setEdges from context menu');
           setEdges((eds) =>
             eds.map((el) => ({ ...el, selected: el.id === edge.id }))
           );
