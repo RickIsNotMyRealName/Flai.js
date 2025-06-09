@@ -53,7 +53,23 @@ export function validateWorkflow(
   let hasStart = false;
   let hasEnd = false;
 
+  const startIds = Object.values(nodes)
+    .filter((n) => n.nodeTypeId === 'workflow.start')
+    .map((n) => n.uuid);
+  const active = new Set<string>();
+  const queue = [...startIds];
+  while (queue.length) {
+    const id = queue.shift()!;
+    if (active.has(id)) continue;
+    active.add(id);
+    for (const e of edges) {
+      if (e.from.uuid === id && !active.has(e.to.uuid)) queue.push(e.to.uuid);
+      if (e.to.uuid === id && !active.has(e.from.uuid)) queue.push(e.from.uuid);
+    }
+  }
+
   for (const edge of edges) {
+    if (!active.has(edge.from.uuid) && !active.has(edge.to.uuid)) continue;
     const fromNode = nodes[edge.from.uuid];
     const toNode = nodes[edge.to.uuid];
     if (!fromNode || !toNode) return 'Edge references missing node';
@@ -79,6 +95,7 @@ export function validateWorkflow(
   }
 
   for (const node of Object.values(nodes)) {
+    if (!active.has(node.uuid)) continue;
     const def = typeMap[node.nodeTypeId];
     if (!def) return `Unknown node type ${node.nodeTypeId}`;
     if (node.nodeTypeId === 'workflow.start') hasStart = true;

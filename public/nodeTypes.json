@@ -4,7 +4,9 @@
     "OpenAIChatModel": "ChatModel",
     "Tool": null,
     "State": null,
-    "Text": null
+    "Text": null,
+    "Embeddings": null,
+    "OpenAIEmbeddings": "Embeddings"
   },
   "nodes": [
     {
@@ -60,6 +62,47 @@
           "type": "enum",
           "options": ["gpt-3.5-turbo", "gpt-4-turbo"],
           "default": "gpt-3.5-turbo"
+        }
+      ]
+    },
+    {
+      "id": "openai.embeddings",
+      "name": "OpenAI Embeddings",
+      "tags": ["openai", "embeddings"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "embedOut",
+          "name": "Embeddings",
+          "direction": "output",
+          "type": "OpenAIEmbeddings",
+          "cardinality": "many"
+        }
+      ],
+      "fields": [
+        {
+          "id": "apiKey",
+          "label": "API Key",
+          "type": "string",
+          "required": true
+        },
+        {
+          "id": "baseUrl",
+          "label": "Base URL",
+          "type": "string",
+          "required": true,
+          "default": "https://api.openai.com"
+        },
+        {
+          "id": "model",
+          "label": "Model",
+          "type": "enum",
+          "options": [
+            "text-embedding-3-small",
+            "text-embedding-3-large"
+          ],
+          "default": "text-embedding-3-small"
         }
       ]
     },
@@ -143,7 +186,24 @@
       "name": "Web Search",
       "tags": ["tool", "web", "search"],
       "layout": "singleRow",
-      "inputs": [],
+      "inputs": [
+        {
+          "id": "modelIn",
+          "name": "Chat Model",
+          "direction": "input",
+          "type": "ChatModel",
+          "cardinality": "one",
+          "required": true
+        },
+        {
+          "id": "embedIn",
+          "name": "Embeddings",
+          "direction": "input",
+          "type": "Embeddings",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
       "outputs": [
         {
           "id": "toolOut",
