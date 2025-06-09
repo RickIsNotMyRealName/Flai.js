@@ -342,6 +342,11 @@
 .workflow-bar button.delete {
   background: #d55;
 }
+.workflow-bar button.back {
+  background: none;
+  color: var(--fg);
+  border: 1px solid #6663;
+}
 .unsaved {
   color: var(--accent);
   font-weight: bold;

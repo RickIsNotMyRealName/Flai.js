@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 
-export default function WorkflowManager() {
-  const names = useWorkflowStore((s) => s.savedWorkflows);
-  const refresh = useWorkflowStore((s) => s.refreshSavedWorkflows);
+export default function WorkflowManager({ onBack }: { onBack: () => void }) {
   const save = useWorkflowStore((s) => s.saveWorkflow);
-  const load = useWorkflowStore((s) => s.loadWorkflow);
   const remove = useWorkflowStore((s) => s.deleteWorkflow);
   const current = useWorkflowStore((s) => s.workflowName);
   const dirty = useWorkflowStore((s) => s.dirty);
@@ -16,10 +13,6 @@ export default function WorkflowManager() {
   const [showSave, setShowSave] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [nameInput, setNameInput] = useState(current);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
 
   useEffect(() => {
     if (current && dirty) {
@@ -45,13 +38,7 @@ export default function WorkflowManager() {
   return (
     <>
       <div className="workflow-bar">
-        <select value={current} onChange={(e) => load(e.target.value)}>
-          {names.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </select>
+        <button className="back" onClick={onBack}>Back</button>
         <button onClick={handleSaveAs}>Save As</button>
         <button className="delete" onClick={handleDelete}>Delete</button>
         {dirty && <span className="unsaved">*</span>}

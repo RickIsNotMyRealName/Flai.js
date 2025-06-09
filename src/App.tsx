@@ -27,13 +27,15 @@ export default function App() {
 
   return (
     <div className={clsx('app-container', theme)}>
-      <Sidebar current={page} onNavigate={setPage} />
+      {page === 'workflows' && (
+        <Sidebar current={page} onNavigate={setPage} />
+      )}
       {page === 'workflows' ? (
         <main className="main">
           <WorkflowList onOpen={openWorkflow} />
         </main>
       ) : (
-        <EditorPage />
+        <EditorPage onBack={() => setPage('workflows')} />
       )}
       <ErrorToast />
     </div>
