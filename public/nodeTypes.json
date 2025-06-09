@@ -4,7 +4,10 @@
     "OpenAIChatModel": "ChatModel",
     "Tool": null,
     "State": null,
-    "Text": null
+    "Text": null,
+    "WebSearch": "Tool",
+    "Calculator": "Tool",
+    "MCP": "Tool"
   },
   "nodes": [
     {
@@ -149,7 +152,7 @@
           "id": "toolOut",
           "name": "Tool",
           "direction": "output",
-          "type": "Tool",
+          "type": "WebSearch",
           "cardinality": "many"
         }
       ],
@@ -166,7 +169,24 @@
           "id": "toolOut",
           "name": "Tool",
           "direction": "output",
-          "type": "Tool",
+          "type": "Calculator",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "tool.mcp",
+      "name": "MCP Tool",
+      "tags": ["tool", "mcp"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "toolOut",
+          "name": "Tool",
+          "direction": "output",
+          "type": "MCP",
           "cardinality": "many"
         }
       ],
