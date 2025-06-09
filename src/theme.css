@@ -126,11 +126,11 @@
   min-width: 240px;
 }
 
-/* Edit button overlay */
+/* Edit button row */
+.edit-row {
+  justify-content: flex-end;
+}
 .edit-btn {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
   background: var(--accent);
   color: #fff;
   border: none;
