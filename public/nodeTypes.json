@@ -1,0 +1,132 @@
+{
+  "types": {
+    "ChatModel": null,
+    "OpenAIChatModel": "ChatModel",
+    "Tool": null,
+    "State": null,
+    "Text": null
+  },
+  "nodes": [
+    {
+      "id": "openai.chatmodel",
+      "name": "OpenAI Chat Model",
+      "tags": ["llm", "openai", "chatmodel"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "modelOut",
+          "name": "Chat Model",
+          "direction": "output",
+          "type": "OpenAIChatModel",
+          "cardinality": "many"
+        }
+      ],
+      "fields": [
+        {
+          "id": "apiKey",
+          "label": "API Key",
+          "type": "string",
+          "required": true
+        },
+        {
+          "id": "baseUrl",
+          "label": "Base URL",
+          "type": "string",
+          "required": true,
+          "default": "https://api.openai.com"
+        }
+      ]
+    },
+    {
+      "id": "message.incoming",
+      "name": "Incoming Message",
+      "tags": ["message", "input", "state"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "stateOut",
+          "name": "State",
+          "direction": "output",
+          "type": "State",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "agent",
+      "name": "Agent",
+      "tags": ["agent"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "toolsIn",
+          "name": "Tools",
+          "direction": "input",
+          "type": "Tool",
+          "cardinality": "many"
+        },
+        {
+          "id": "modelIn",
+          "name": "Chat Model",
+          "direction": "input",
+          "type": "ChatModel",
+          "cardinality": "one"
+        },
+        {
+          "id": "stateIn",
+          "name": "State",
+          "direction": "input",
+          "type": "State",
+          "cardinality": "one"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "stateOut",
+          "name": "State",
+          "direction": "output",
+          "type": "State",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "tool.websearch",
+      "name": "Web Search",
+      "tags": ["tool", "web", "search"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "toolOut",
+          "name": "Tool",
+          "direction": "output",
+          "type": "Tool",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "tool.calculator",
+      "name": "Calculator",
+      "tags": ["tool", "math", "calculator"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "toolOut",
+          "name": "Tool",
+          "direction": "output",
+          "type": "Tool",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    }
+  ]
+}
