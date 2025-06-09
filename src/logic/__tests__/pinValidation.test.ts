@@ -101,4 +101,28 @@ describe('validateWorkflow', () => {
       expect(result).toMatch(/maximum connections/);
     }
   });
+
+  it("fails when a tool's required inputs are missing", () => {
+    const nodes: Record<string, NodeInstance> = {
+      start: makeNode('workflow.start', 'start'),
+      end: makeNode('workflow.end', 'end'),
+      chat: makeNode('openai.chatmodel', 'chat', { apiKey: 'k' }),
+      embed: makeNode('openai.embeddings', 'embed', { apiKey: 'k' }),
+      search: makeNode('tool.websearch', 'search'),
+      agent: makeNode('agent', 'agent')
+    };
+    const edges: EdgeInstance[] = [
+      { id: 'e1', from: { uuid: 'start', pin: 'stateOut' }, to: { uuid: 'agent', pin: 'stateIn' } },
+      { id: 'e2', from: { uuid: 'chat', pin: 'modelOut' }, to: { uuid: 'agent', pin: 'modelIn' } },
+      { id: 'e3', from: { uuid: 'chat', pin: 'modelOut' }, to: { uuid: 'search', pin: 'modelIn' } },
+      { id: 'e4', from: { uuid: 'search', pin: 'toolOut' }, to: { uuid: 'agent', pin: 'toolsIn' } },
+      { id: 'e5', from: { uuid: 'agent', pin: 'stateOut' }, to: { uuid: 'end', pin: 'stateIn' } }
+      // intentionally omit embedding connection to search.embedIn
+    ];
+    const result = validateWorkflow(nodes, edges, nodeTypes, hierarchy);
+    expect(typeof result).toBe('string');
+    if (typeof result === 'string') {
+      expect(result).toMatch(/Embeddings.*Web Search/);
+    }
+  });
 });
