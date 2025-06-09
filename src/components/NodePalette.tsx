@@ -4,12 +4,12 @@ import { validateWorkflow } from '../logic/pinValidation';
 
 export default function NodePalette() {
   const nodeTypes = useWorkflowStore((s) => s.nodeTypes);
-  const addNode = useWorkflowStore((s) => s.addNode);
   const nodes = useWorkflowStore((s) => s.nodes);
   const edges = useWorkflowStore((s) => s.edges);
   const hierarchy = useWorkflowStore((s) => s.typeHierarchy);
   const setToast = useWorkflowStore((s) => s.setToast);
   const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
@@ -29,31 +29,7 @@ export default function NodePalette() {
         onClick={() => setOpen(!open)}
       >
         {open ? (
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 12 12"
-            aria-hidden="true"
-          >
-            {nt.icon && <img src={nt.icon} alt="" />}
-            {nt.name}
-          </li>
-        ))}
-      </ul>
-      <button
-        className="validate-btn"
-        onClick={() => {
-          const err = validateWorkflow(nodes, edges, nodeTypes, hierarchy);
-          if (err) {
-            setToast(err, 'error');
-          } else {
-            setToast('Workflow valid', 'success');
-          }
-        }}
-      >
-        Validate
-      </button>
-    </aside>
+          <svg width="16" height="16" viewBox="0 0 12 12" aria-hidden="true">
             <line
               x1="1"
               y1="1"
@@ -74,12 +50,7 @@ export default function NodePalette() {
             />
           </svg>
         ) : (
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 12 12"
-            aria-hidden="true"
-          >
+          <svg width="16" height="16" viewBox="0 0 12 12" aria-hidden="true">
             <line
               x1="1"
               y1="6"
@@ -122,6 +93,19 @@ export default function NodePalette() {
               </li>
             ))}
           </ul>
+          <button
+            className="validate-btn"
+            onClick={() => {
+              const err = validateWorkflow(nodes, edges, nodeTypes, hierarchy);
+              if (err) {
+                setToast(err, 'error');
+              } else {
+                setToast('Workflow valid', 'success');
+              }
+            }}
+          >
+            Validate
+          </button>
         </aside>
       )}
     </div>
