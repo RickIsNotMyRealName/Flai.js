@@ -9,10 +9,11 @@ import {
   useReactFlow,
   Connection
 } from '@xyflow/react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useWorkflowStore } from '../store/workflowStore';
 import CustomNode from './CustomNode';
+import DeletableEdge from './DeletableEdge';
 import { validateConnection } from "../logic/pinValidation";
 import type {
   Node as RFNode,
@@ -22,6 +23,7 @@ import type {
 } from '@xyflow/react';
 
 const rfNodeTypes = { custom: CustomNode };
+const rfEdgeTypes = { deletable: DeletableEdge };
 
 /* -------------------------------------------------------------------------- */
 /*  OUTER: provides the context                                               */
@@ -53,6 +55,7 @@ function FlowInner() {
   /* -------- local RF state mirrors the store ----------------------------- */
   const [nodes, setNodes, onNodesChange] = useNodesState<RFNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<RFEdge>([]);
+  const syncingRef = useRef(false);
 
   useEffect(() => {
     setNodes(
@@ -66,9 +69,11 @@ function FlowInner() {
   }, [storeNodes, setNodes]);
 
   useEffect(() => {
+    syncingRef.current = true;
     setEdges(
       storeEdges.map((e) => ({
         id: e.id,
+        type: 'deletable',
         source: e.from.uuid,
         sourceHandle: e.from.pin,
         target: e.to.uuid,
@@ -152,15 +157,33 @@ function FlowInner() {
         nodes={nodes}
         edges={edges}
         nodeTypes={rfNodeTypes}
+        edgeTypes={rfEdgeTypes}
         onNodesChange={handleNodesChange}
         onEdgesChange={(changes) => {
+          if (syncingRef.current) {
+            syncingRef.current = false;
+            return;
+          }
           changes.forEach((c) => c.type === 'remove' && removeEdge(c.id as string));
           onEdgesChange(changes);
         }}
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
-        onSelectionChange={(sel) => setSelected(sel.nodes.map((n) => n.id))}
+        onSelectionChange={(sel) => {
+          setSelected(sel.nodes.map((n) => n.id));
+        }}
+        onNodeContextMenu={(e, node) => {
+          e.preventDefault();
+          setSelected([node.id as string]);
+        }}
+        onEdgeContextMenu={(e, edge) => {
+          e.preventDefault();
+          syncingRef.current = true;
+          setEdges((eds) =>
+            eds.map((el) => ({ ...el, selected: el.id === edge.id }))
+          );
+        }}
         fitView
       >
         <Background />

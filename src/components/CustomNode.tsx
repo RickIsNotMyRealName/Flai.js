@@ -1,5 +1,6 @@
 // src/components/CustomNode.tsx
-import { Handle, Node, NodeProps, Position } from '@xyflow/react';
+import { Handle, Node, NodeProps, Position, NodeToolbar } from '@xyflow/react';
+import { useState, useRef } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { NodeInstance } from '../types';
 
@@ -18,9 +19,47 @@ export default function CustomNode({ data }: NodeProps<RFNode>) {
     (s) => s.nodeTypes.find((nt) => nt.id === nodeInst.nodeTypeId)!
   );
   const openEditor = useWorkflowStore((s) => s.openEditor);
+  const removeNode = useWorkflowStore((s) => s.removeNode);
+  const duplicateNode = useWorkflowStore((s) => s.duplicateNode);
+  const [hovered, setHovered] = useState(false);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const show = () => {
+    if (hideTimer.current) {
+      clearTimeout(hideTimer.current);
+      hideTimer.current = null;
+    }
+    setHovered(true);
+  };
+
+  const hide = () => {
+    if (hideTimer.current) {
+      clearTimeout(hideTimer.current);
+    }
+    hideTimer.current = setTimeout(() => {
+      setHovered(false);
+      hideTimer.current = null;
+    }, 150);
+  };
 
   return (
-    <div className="custom-node">
+    <div
+      className="custom-node"
+      onMouseEnter={show}
+      onMouseLeave={hide}
+    >
+      <NodeToolbar
+        className="node-toolbar"
+        isVisible={hovered}
+        position={Position.Bottom}
+        align="center"
+        offset={4}
+        onMouseEnter={show}
+        onMouseLeave={hide}
+      >
+        <button onClick={() => duplicateNode(nodeInst.uuid)} aria-label="Duplicate">⧉</button>
+        <button onClick={() => removeNode(nodeInst.uuid)} aria-label="Delete">✖</button>
+      </NodeToolbar>
       {/* Title row */}
       <div className="node-row title">
         {nodeType.icon && <img src={nodeType.icon} alt="" className="icon" />}

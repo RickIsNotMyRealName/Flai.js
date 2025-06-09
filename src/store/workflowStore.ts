@@ -10,6 +10,11 @@ interface WorkflowState {
   edges: EdgeInstance[];
   selected: string[];
   editing: string | null;
+  contextMenu: {
+    type: 'node' | 'edge';
+    id: string;
+    position: { x: number; y: number };
+  } | null;
   theme: 'light' | 'dark';
   undoStack: unknown[];
   redoStack: unknown[];
@@ -21,9 +26,13 @@ interface WorkflowState {
     nodes: NodeType[];
   }) => void;
   addNode: (typeId: string, position: { x: number; y: number }) => void;
+  duplicateNode: (uuid: string) => void;
   removeNode: (uuid: string) => void;
   addEdge: (edge: EdgeInstance) => void;
   removeEdge: (id: string) => void;
+  openContextMenu: (
+    menu: { type: 'node' | 'edge'; id: string; position: { x: number; y: number } } | null
+  ) => void;
   setTheme: (t: 'light' | 'dark') => void;
   setSelected: (ids: string[]) => void;
   openEditor: (id: string) => void;
@@ -41,6 +50,7 @@ export const useWorkflowStore = create<WorkflowState>()(
     edges: [],
     selected: [],
     editing: null,
+    contextMenu: null,
     theme:
       (localStorage.getItem('theme') as 'light' | 'dark') ||
       (window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -73,6 +83,19 @@ export const useWorkflowStore = create<WorkflowState>()(
         };
       }),
 
+    duplicateNode: (origId) =>
+      set((s) => {
+        const orig = s.nodes[origId];
+        if (!orig) return;
+        const id = uuid();
+        s.nodes[id] = {
+          uuid: id,
+          nodeTypeId: orig.nodeTypeId,
+          position: { x: orig.position.x + 20, y: orig.position.y + 20 },
+          fields: { ...orig.fields }
+        };
+      }),
+
     removeNode: (id) =>
       set((s) => {
         delete s.nodes[id];
@@ -89,6 +112,11 @@ export const useWorkflowStore = create<WorkflowState>()(
     removeEdge: (id) =>
       set((s) => {
         s.edges = s.edges.filter((e) => e.id !== id);
+      }),
+
+    openContextMenu: (menu) =>
+      set((s) => {
+        s.contextMenu = menu;
       }),
 
     setTheme: (t) =>
