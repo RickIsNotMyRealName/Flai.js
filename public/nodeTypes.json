@@ -75,7 +75,8 @@
           "name": "State",
           "direction": "output",
           "type": "State",
-          "cardinality": "many"
+          "cardinality": "one",
+          "required": true
         }
       ],
       "fields": []
@@ -91,7 +92,8 @@
           "name": "State",
           "direction": "input",
           "type": "State",
-          "cardinality": "one"
+          "cardinality": "one",
+          "required": true
         }
       ],
       "outputs": [],
