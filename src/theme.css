@@ -242,3 +242,12 @@
   justify-content: center;
   cursor: pointer;
 }
+
+/* React Flow canvas controls */
+.react-flow {
+  --xy-controls-button-background-color: var(--accent);
+  --xy-controls-button-background-color-hover: var(--accent);
+  --xy-controls-button-color: #fff;
+  --xy-controls-button-color-hover: #fff;
+  --xy-controls-button-border-color: var(--accent);
+}
