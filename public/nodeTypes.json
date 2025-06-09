@@ -64,9 +64,9 @@
       ]
     },
     {
-      "id": "message.incoming",
-      "name": "Incoming Message",
-      "tags": ["message", "input", "state"],
+      "id": "workflow.start",
+      "name": "Start",
+      "tags": ["workflow", "start", "state"],
       "layout": "singleRow",
       "inputs": [],
       "outputs": [
@@ -75,9 +75,28 @@
           "name": "State",
           "direction": "output",
           "type": "State",
-          "cardinality": "many"
+          "cardinality": "many",
+          "required": true
         }
       ],
+      "fields": []
+    },
+    {
+      "id": "workflow.end",
+      "name": "End",
+      "tags": ["workflow", "end", "state"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "stateIn",
+          "name": "State",
+          "direction": "input",
+          "type": "State",
+          "cardinality": "many",
+          "required": true
+        }
+      ],
+      "outputs": [],
       "fields": []
     },
     {
