@@ -9,7 +9,7 @@ import {
   useReactFlow,
   Connection
 } from '@xyflow/react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useWorkflowStore } from '../store/workflowStore';
 import CustomNode from './CustomNode';
@@ -55,6 +55,7 @@ function FlowInner() {
   /* -------- local RF state mirrors the store ----------------------------- */
   const [nodes, setNodes, onNodesChange] = useNodesState<RFNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<RFEdge>([]);
+  const syncingRef = useRef(false);
 
   useEffect(() => {
     setNodes(
@@ -68,6 +69,7 @@ function FlowInner() {
   }, [storeNodes, setNodes]);
 
   useEffect(() => {
+    syncingRef.current = true;
     setEdges(
       storeEdges.map((e) => ({
         id: e.id,
@@ -158,6 +160,10 @@ function FlowInner() {
         edgeTypes={rfEdgeTypes}
         onNodesChange={handleNodesChange}
         onEdgesChange={(changes) => {
+          if (syncingRef.current) {
+            syncingRef.current = false;
+            return;
+          }
           changes.forEach((c) => c.type === 'remove' && removeEdge(c.id as string));
           onEdgesChange(changes);
         }}
@@ -173,6 +179,7 @@ function FlowInner() {
         }}
         onEdgeContextMenu={(e, edge) => {
           e.preventDefault();
+          syncingRef.current = true;
           setEdges((eds) =>
             eds.map((el) => ({ ...el, selected: el.id === edge.id }))
           );
