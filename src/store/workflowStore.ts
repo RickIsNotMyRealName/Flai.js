@@ -68,6 +68,7 @@ export const useWorkflowStore = create<WorkflowState>()(
 
     loadDefinitions: (json) =>
       set((s) => {
+        console.log('loadDefinitions', json);
         s.nodeTypes = json.nodes;
         s.typeHierarchy = json.types;
       }),
