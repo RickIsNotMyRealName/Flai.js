@@ -13,6 +13,7 @@ import { useCallback, useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useWorkflowStore } from '../store/workflowStore';
 import CustomNode from './CustomNode';
+import { validateConnection } from "../logic/pinValidation";
 import type {
   Node as RFNode,
   Edge as RFEdge,
@@ -20,7 +21,7 @@ import type {
   NodeChange
 } from '@xyflow/react';
 
-const nodeTypes = { custom: CustomNode };
+const rfNodeTypes = { custom: CustomNode };
 
 /* -------------------------------------------------------------------------- */
 /*  OUTER: provides the context                                               */
@@ -44,6 +45,9 @@ function FlowInner() {
   const addEdgeStore = useWorkflowStore((s) => s.addEdge);
   const removeEdge = useWorkflowStore((s) => s.removeEdge);
 
+  const nodeDefs = useWorkflowStore((s) => s.nodeTypes);
+  const hierarchy = useWorkflowStore((s) => s.typeHierarchy);
+  const setError = useWorkflowStore((s) => s.setError);
   /* -------- local RF state mirrors the store ----------------------------- */
   const [nodes, setNodes, onNodesChange] = useNodesState<RFNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<RFEdge>([]);
@@ -93,13 +97,38 @@ function FlowInner() {
 
   /* -------- connect pins -------------------------------------------------- */
   const onConnect = useCallback(
-    (c: Connection) =>
+    (c: Connection) => {
+      if (!c.source || !c.target || !c.sourceHandle || !c.targetHandle) return;
+      const fromNode = storeNodes[c.source];
+      const toNode = storeNodes[c.target];
+      if (!fromNode || !toNode) return;
+
+      const fromType = nodeDefs.find((nt) => nt.id === fromNode.nodeTypeId)!;
+      const toType = nodeDefs.find((nt) => nt.id === toNode.nodeTypeId)!;
+      const fromPin = fromType.outputs.find((p) => p.id === c.sourceHandle)!;
+      const toPin = toType.inputs.find((p) => p.id === c.targetHandle)!;
+
+      const err = validateConnection(
+        fromNode,
+        fromPin,
+        toNode,
+        toPin,
+        hierarchy,
+        storeEdges
+      );
+
+      if (err) {
+        setError(err);
+        return;
+      }
+
       addEdgeStore({
         id: uuid(),
-        from: { uuid: c.source!, pin: c.sourceHandle! },
-        to: { uuid: c.target!, pin: c.targetHandle! }
-      }),
-    [addEdgeStore]
+        from: { uuid: c.source, pin: c.sourceHandle },
+        to: { uuid: c.target, pin: c.targetHandle }
+      });
+    },
+    [addEdgeStore, storeNodes, nodeDefs, hierarchy, storeEdges, setError]
   );
 
   /* ----------------------------------------------------------------------- */
@@ -108,7 +137,7 @@ function FlowInner() {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        nodeTypes={nodeTypes}
+        nodeTypes={rfNodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={(changes) => {
           changes.forEach((c) => c.type === 'remove' && removeEdge(c.id as string));
