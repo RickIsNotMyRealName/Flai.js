@@ -103,3 +103,24 @@
   margin-right: 12px;
   text-align: right;
 }
+
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #0006;
+  z-index: 5;
+}
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--accent);
+  padding: 1rem;
+  border-radius: 6px;
+  z-index: 10;
+  min-width: 240px;
+}

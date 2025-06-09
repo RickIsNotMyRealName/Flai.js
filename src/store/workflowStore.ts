@@ -24,6 +24,9 @@ interface WorkflowState {
   addEdge: (edge: EdgeInstance) => void;
   removeEdge: (id: string) => void;
   setTheme: (t: 'light' | 'dark') => void;
+  setSelected: (ids: string[]) => void;
+  updateNodeField: (uuid: string, fieldId: string, value: unknown) => void;
+  moveNode: (uuid: string, pos: { x: number; y: number }) => void;
 }
 
 export const useWorkflowStore = create<WorkflowState>()(
@@ -88,6 +91,25 @@ export const useWorkflowStore = create<WorkflowState>()(
       set((s) => {
         s.theme = t;
         localStorage.setItem('theme', t);
+      }),
+
+    setSelected: (ids) =>
+      set((s) => {
+        s.selected = ids;
+      }),
+
+    updateNodeField: (uuid, fieldId, value) =>
+      set((s) => {
+        if (s.nodes[uuid]) {
+          s.nodes[uuid].fields[fieldId] = value;
+        }
+      }),
+
+    moveNode: (uuid, pos) =>
+      set((s) => {
+        if (s.nodes[uuid]) {
+          s.nodes[uuid].position = pos;
+        }
       })
   }))
 );

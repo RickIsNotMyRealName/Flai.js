@@ -44,6 +44,8 @@ function FlowInner() {
   const addNode = useWorkflowStore((s) => s.addNode);
   const addEdgeStore = useWorkflowStore((s) => s.addEdge);
   const removeEdge = useWorkflowStore((s) => s.removeEdge);
+  const moveNode = useWorkflowStore((s) => s.moveNode);
+  const setSelected = useWorkflowStore((s) => s.setSelected);
 
   const nodeDefs = useWorkflowStore((s) => s.nodeTypes);
   const hierarchy = useWorkflowStore((s) => s.typeHierarchy);
@@ -77,6 +79,18 @@ function FlowInner() {
 
   /* -------- drag-and-drop ------------------------------------------------- */
   const { screenToFlowPosition } = useReactFlow<RFNode, RFEdge>();
+
+  const handleNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      changes.forEach((c) => {
+        if (c.type === 'position' && c.position) {
+          moveNode(c.id as string, c.position);
+        }
+      });
+      onNodesChange(changes);
+    },
+    [onNodesChange, moveNode]
+  );
 
   const onDrop = useCallback(
     (evt: React.DragEvent) => {
@@ -138,7 +152,7 @@ function FlowInner() {
         nodes={nodes}
         edges={edges}
         nodeTypes={rfNodeTypes}
-        onNodesChange={onNodesChange}
+        onNodesChange={handleNodesChange}
         onEdgesChange={(changes) => {
           changes.forEach((c) => c.type === 'remove' && removeEdge(c.id as string));
           onEdgesChange(changes);
@@ -146,6 +160,7 @@ function FlowInner() {
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        onSelectionChange={(sel) => setSelected(sel.nodes.map((n) => n.id))}
         fitView
       >
         <Background />

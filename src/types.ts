@@ -12,7 +12,7 @@ export interface Field {
   id: string;
   name: string;
   label: string;
-  type: 'string' | 'number' | 'boolean' | 'enum';
+  type: 'string' | 'integer' | 'float' | 'bool' | 'enum';
   required?: boolean;
   options?: string[];        // for enum
   default?: unknown;
