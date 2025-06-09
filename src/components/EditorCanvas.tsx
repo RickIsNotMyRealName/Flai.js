@@ -58,6 +58,7 @@ function FlowInner() {
   const syncingRef = useRef(false);
 
   useEffect(() => {
+    console.log('Sync nodes from store', Object.keys(storeNodes));
     setNodes(
       Object.values(storeNodes).map((n) => ({
         id: n.uuid,
@@ -69,6 +70,7 @@ function FlowInner() {
   }, [storeNodes, setNodes]);
 
   useEffect(() => {
+    console.log('Sync edges from store', storeEdges);
     syncingRef.current = true;
     setEdges(
       storeEdges.map((e) => ({
@@ -87,6 +89,7 @@ function FlowInner() {
 
   const handleNodesChange = useCallback(
     (changes: NodeChange[]) => {
+      console.log('Nodes change', changes);
       changes.forEach((c) => {
         if (c.type === 'position' && c.position) {
           moveNode(c.id as string, c.position);
@@ -161,9 +164,11 @@ function FlowInner() {
         onNodesChange={handleNodesChange}
         onEdgesChange={(changes) => {
           if (syncingRef.current) {
+            console.log('Skip edgesChange due to syncingRef', changes);
             syncingRef.current = false;
             return;
           }
+          console.log('Edges change', changes);
           changes.forEach((c) => c.type === 'remove' && removeEdge(c.id as string));
           onEdgesChange(changes);
         }}
@@ -171,14 +176,17 @@ function FlowInner() {
         onDrop={onDrop}
         onDragOver={onDragOver}
         onSelectionChange={(sel) => {
+          console.log('Selection change', sel);
           setSelected(sel.nodes.map((n) => n.id));
         }}
         onNodeContextMenu={(e, node) => {
           e.preventDefault();
+          console.log('Node context menu', node);
           setSelected([node.id as string]);
         }}
         onEdgeContextMenu={(e, edge) => {
           e.preventDefault();
+          console.log('Edge context menu', edge);
           syncingRef.current = true;
           setEdges((eds) =>
             eds.map((el) => ({ ...el, selected: el.id === edge.id }))

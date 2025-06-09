@@ -74,6 +74,7 @@ export const useWorkflowStore = create<WorkflowState>()(
 
     addNode: (typeId, position) =>
       set((s) => {
+        console.log('addNode', typeId, position);
         const id = uuid();
         s.nodes[id] = {
           uuid: id,
@@ -85,6 +86,7 @@ export const useWorkflowStore = create<WorkflowState>()(
 
     duplicateNode: (origId) =>
       set((s) => {
+        console.log('duplicateNode', origId);
         const orig = s.nodes[origId];
         if (!orig) return;
         const id = uuid();
@@ -98,6 +100,7 @@ export const useWorkflowStore = create<WorkflowState>()(
 
     removeNode: (id) =>
       set((s) => {
+        console.log('removeNode', id);
         delete s.nodes[id];
         s.edges = s.edges.filter(
           (e) => e.from.uuid !== id && e.to.uuid !== id
@@ -106,16 +109,19 @@ export const useWorkflowStore = create<WorkflowState>()(
 
     addEdge: (edge) =>
       set((s) => {
+        console.log('addEdge', edge);
         s.edges.push(edge);
       }),
 
     removeEdge: (id) =>
       set((s) => {
+        console.log('removeEdge', id);
         s.edges = s.edges.filter((e) => e.id !== id);
       }),
 
     openContextMenu: (menu) =>
       set((s) => {
+        console.log('openContextMenu', menu);
         s.contextMenu = menu;
       }),
 
