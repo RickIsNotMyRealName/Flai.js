@@ -17,19 +17,11 @@ export default function NodePalette() {
 
   return (
     <div className="palette-wrapper">
-      {!open && (
-        <button className="palette-toggle" onClick={() => setOpen(true)}>
-          Nodes
-        </button>
-      )}
+      <button className="palette-toggle" onClick={() => setOpen(!open)}>
+        {open ? '✕' : 'Nodes'}
+      </button>
       {open && (
         <aside className="palette palette-floating">
-          <button
-            className="palette-close"
-            onClick={() => setOpen(false)}
-          >
-            ✕
-          </button>
           <input
             placeholder="Search..."
             value={query}
