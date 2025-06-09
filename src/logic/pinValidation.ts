@@ -50,6 +50,9 @@ export function validateWorkflow(
     typeMap[nt.id] = nt;
   });
 
+  let hasStart = false;
+  let hasEnd = false;
+
   for (const edge of edges) {
     const fromNode = nodes[edge.from.uuid];
     const toNode = nodes[edge.to.uuid];
@@ -77,6 +80,8 @@ export function validateWorkflow(
   for (const node of Object.values(nodes)) {
     const def = typeMap[node.nodeTypeId];
     if (!def) return `Unknown node type ${node.nodeTypeId}`;
+    if (node.nodeTypeId === 'workflow.start') hasStart = true;
+    if (node.nodeTypeId === 'workflow.end') hasEnd = true;
 
     for (const pin of def.inputs) {
       const count = countConnections(node, pin.id, 'input', edges);
@@ -119,6 +124,9 @@ export function validateWorkflow(
       }
     }
   }
+
+  if (!hasStart) return 'Workflow missing start node';
+  if (!hasEnd) return 'Workflow missing end node';
 
   return null;
 }
