@@ -34,6 +34,9 @@ export default function CustomNode({ data }: NodeProps<RFNode>) {
         isVisible={hovered}
         position={Position.Bottom}
         align="center"
+        offset={4}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
         <button onClick={() => duplicateNode(nodeInst.uuid)} aria-label="Duplicate">⧉</button>
         <button onClick={() => removeNode(nodeInst.uuid)} aria-label="Delete">✖</button>
