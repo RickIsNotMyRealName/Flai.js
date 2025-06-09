@@ -6,7 +6,7 @@
     "State": null,
     "Text": null,
     "Embeddings": null,
-    "OpenAIEmbeddings": "Embeddings"
+    "OpenAIEmbeddings": "Embeddings",
     "WebSearch": "Tool",
     "Calculator": "Tool",
     "MCP": "Tool"
