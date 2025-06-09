@@ -7,6 +7,9 @@
     "Text": null,
     "Embeddings": null,
     "OpenAIEmbeddings": "Embeddings"
+    "WebSearch": "Tool",
+    "Calculator": "Tool",
+    "MCP": "Tool"
   },
   "nodes": [
     {
@@ -209,7 +212,7 @@
           "id": "toolOut",
           "name": "Tool",
           "direction": "output",
-          "type": "Tool",
+          "type": "WebSearch",
           "cardinality": "many"
         }
       ],
@@ -226,7 +229,24 @@
           "id": "toolOut",
           "name": "Tool",
           "direction": "output",
-          "type": "Tool",
+          "type": "Calculator",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "tool.mcp",
+      "name": "MCP Tool",
+      "tags": ["tool", "mcp"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "toolOut",
+          "name": "Tool",
+          "direction": "output",
+          "type": "MCP",
           "cardinality": "many"
         }
       ],
