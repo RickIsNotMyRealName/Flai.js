@@ -26,6 +26,45 @@
   padding: 0.5rem;
   overflow: auto;
 }
+.palette-wrapper {
+  position: relative;
+  width: 0;
+}
+.palette-toggle {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 15;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.palette-floating {
+  position: absolute;
+  top: 62px;
+  left: 20px;
+  z-index: 10;
+  background: var(--bg);
+  border: 1px solid #6663;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  max-height: calc(80vh - 46px);
+  width: 240px;
+  padding: 0.5rem;
+  border-radius: 10px;
+}
+.palette-floating input {
+  margin-bottom: 0.5rem;
+  padding: 2px 4px;
+  border: 1px solid #6663;
+  border-radius: 8px;
+}
 .canvas { flex: 1; }
 .props {
   width: 260px;
