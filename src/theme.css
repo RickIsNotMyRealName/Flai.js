@@ -38,7 +38,7 @@
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 2px 6px;
   cursor: pointer;
 }
@@ -53,13 +53,13 @@
   max-height: calc(80vh - 46px);
   width: 240px;
   padding: 0.5rem;
-  border-radius: 6px;
+  border-radius: 10px;
 }
 .palette-floating input {
   margin-bottom: 0.5rem;
   padding: 2px 4px;
   border: 1px solid #6663;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 .canvas { flex: 1; }
 .props {
