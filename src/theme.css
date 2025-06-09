@@ -318,6 +318,9 @@
   padding: 2px 6px;
   cursor: pointer;
 }
+.workflow-bar button.delete {
+  background: #d55;
+}
 .unsaved {
   color: var(--accent);
   font-weight: bold;

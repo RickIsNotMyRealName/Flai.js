@@ -6,6 +6,7 @@ export default function WorkflowManager() {
   const refresh = useWorkflowStore((s) => s.refreshSavedWorkflows);
   const save = useWorkflowStore((s) => s.saveWorkflow);
   const load = useWorkflowStore((s) => s.loadWorkflow);
+  const remove = useWorkflowStore((s) => s.deleteWorkflow);
   const current = useWorkflowStore((s) => s.workflowName);
   const dirty = useWorkflowStore((s) => s.dirty);
   const nodes = useWorkflowStore((s) => s.nodes);
@@ -31,6 +32,12 @@ export default function WorkflowManager() {
     if (name) save(name);
   };
 
+  const handleDelete = () => {
+    if (current && confirm(`Delete workflow "${current}"?`)) {
+      remove(current);
+    }
+  };
+
   return (
     <div className="workflow-bar">
       <select
@@ -44,6 +51,7 @@ export default function WorkflowManager() {
         ))}
       </select>
       <button onClick={handleSaveAs}>Save As</button>
+      <button className="delete" onClick={handleDelete}>Delete</button>
       {dirty && <span className="unsaved">*</span>}
     </div>
   );

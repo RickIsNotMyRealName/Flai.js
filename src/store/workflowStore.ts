@@ -26,6 +26,7 @@ interface WorkflowState {
   refreshSavedWorkflows: () => void;
   saveWorkflow: (name: string) => void;
   loadWorkflow: (name: string) => void;
+  deleteWorkflow: (name: string) => void;
 
   loadDefinitions: (json: {
     types: Record<string, string | null>;
@@ -114,6 +115,23 @@ export const useWorkflowStore = create<WorkflowState>()(
         } catch {
           /* ignore parse errors */
         }
+      }),
+
+    deleteWorkflow: (name) =>
+      set((s) => {
+        localStorage.removeItem(`workflow.${name}`);
+        const list = localStorage.getItem('workflows');
+        const names = list ? JSON.parse(list) : [];
+        const index = names.indexOf(name);
+        if (index !== -1) {
+          names.splice(index, 1);
+          localStorage.setItem('workflows', JSON.stringify(names));
+        }
+        if (s.workflowName === name) {
+          s.workflowName = 'autosave';
+          s.dirty = true;
+        }
+        s.savedWorkflows = names;
       }),
 
     loadDefinitions: (json) =>
