@@ -6,6 +6,7 @@ export interface Pin {
   direction: 'input' | 'output';
   type: string;              // for hierarchy: "Text", "Number", etc.
   cardinality: PinCardinality;
+  required?: boolean;
 }
 
 export interface Field {

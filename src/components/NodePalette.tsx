@@ -1,11 +1,16 @@
 import { useMemo, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { NodeType } from '../types';
+import { validateWorkflow } from '../logic/pinValidation';
 import { clsx } from 'clsx';
 
 export default function NodePalette() {
   const nodeTypes = useWorkflowStore((s) => s.nodeTypes);
   const addNode = useWorkflowStore((s) => s.addNode);
+  const nodes = useWorkflowStore((s) => s.nodes);
+  const edges = useWorkflowStore((s) => s.edges);
+  const hierarchy = useWorkflowStore((s) => s.typeHierarchy);
+  const setError = useWorkflowStore((s) => s.setError);
   const [query, setQuery] = useState('');
 
   const filtered = useMemo(() => {
@@ -38,6 +43,15 @@ export default function NodePalette() {
           </li>
         ))}
       </ul>
+      <button
+        className="validate-btn"
+        onClick={() => {
+          const err = validateWorkflow(nodes, edges, nodeTypes, hierarchy);
+          setError(err ?? 'Workflow valid');
+        }}
+      >
+        Validate
+      </button>
     </aside>
   );
 }
