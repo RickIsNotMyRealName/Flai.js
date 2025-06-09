@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint \"src/**/*.{ts,tsx,js}\" --max-warnings 0"
+    "lint": "eslint \"src/**/*.{ts,tsx,js}\" --max-warnings 0",
+    "test": "vitest run"
   },
   "dependencies": {
     "@xyflow/react": "^12.6.4",
@@ -20,6 +21,7 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@types/node": "^20.11.17",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.6",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
@@ -27,6 +29,7 @@
     "@vitejs/plugin-react": "^4.5.1",
     "eslint": "^9.28.0",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^1.5.0"
   }
 }
