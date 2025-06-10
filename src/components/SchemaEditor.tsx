@@ -162,6 +162,18 @@ export default function SchemaEditor({ value, onChange }: Props) {
                 placeholder={`Field ${i + 1}`}
                 onChange={e => updateField(i, 'name', e.target.value)}
               />
+              <select
+                className="field-type"
+                value={f.type}
+                onChange={e => updateField(i, 'type', e.target.value)}
+              >
+                <option value="string">string</option>
+                <option value="number">number</option>
+                <option value="object">object</option>
+                <option value="array">array</option>
+                <option value="boolean">boolean</option>
+                <option value="null">null</option>
+              </select>
               <button
                 type="button"
                 className="delete-btn"
@@ -233,17 +245,6 @@ export default function SchemaEditor({ value, onChange }: Props) {
                   </button>
                 </div>
                 {enumErrors[i] && <div className="enum-error">{enumErrors[i]}</div>}
-              </label>
-              <label className="field-label">
-                Type
-                <select value={f.type} onChange={e => updateField(i, 'type', e.target.value)}>
-                  <option value="string">string</option>
-                  <option value="number">number</option>
-                  <option value="object">object</option>
-                  <option value="array">array</option>
-                  <option value="boolean">boolean</option>
-                  <option value="null">null</option>
-                </select>
               </label>
             </div>
           </details>

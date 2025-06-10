@@ -604,15 +604,33 @@
 }
 .field-summary .field-name {
   font-weight: bold;
-  flex: 1;
+  flex: 0 0 auto;
+  width: 8ch;
   border: none;
   background: transparent;
   color: var(--fg);
   font-size: 1rem;
   padding: 2px;
+  transition: width 0.2s ease;
+}
+.field-summary .field-name:hover {
+  outline: 1px solid var(--accent);
 }
 .field-summary .field-name:focus {
   outline: 1px solid var(--accent);
+  width: 100%;
+  flex: 1;
+}
+
+.field-summary .field-type {
+  margin-left: 4px;
+  padding: 2px 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 0.9rem;
+  width: auto;
 }
 .field-body {
   display: flex;
@@ -658,6 +676,7 @@
   padding: 2px 6px;
   font-size: 0.9rem;
   gap: 6px;
+  line-height: 1;
 }
 .enum-tag button {
   background: none;
@@ -677,6 +696,7 @@
 }
 .enum-item input {
   flex: 1;
+  height: 24px;
 }
 .add-btn {
   background: var(--accent);
@@ -688,7 +708,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: center;
   cursor: pointer;
   line-height: 0;
 }
