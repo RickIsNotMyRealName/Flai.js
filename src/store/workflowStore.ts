@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { v4 as uuid } from 'uuid';
-import type { NodeInstance, NodeType, EdgeInstance } from '../types';
+import type { NodeInstance, NodeType, EdgeInstance, ToolMeta, ToolData } from '../types';
 
 interface WorkflowState {
   nodeTypes: NodeType[];
@@ -21,6 +21,7 @@ interface WorkflowState {
   workflowName: string;
   dirty: boolean;
   savedWorkflows: string[];
+  toolMeta: ToolMeta | null;
   toast: { message: string; type: 'error' | 'success' } | null;
   setToast: (msg: string, type?: 'error' | 'success') => void;
   refreshSavedWorkflows: () => void;
@@ -28,9 +29,11 @@ interface WorkflowState {
   loadWorkflow: (name: string) => void;
   saveTool: (name: string) => void;
   loadTool: (name: string) => void;
+  setToolMeta: (meta: ToolMeta) => void;
   deleteWorkflow: (name: string) => void;
   duplicateWorkflow: (name: string) => void;
   renameWorkflow: (oldName: string, newName: string) => void;
+  renameTool: (oldName: string, newName: string) => void;
   createWorkflow: () => string;
 
   loadDefinitions: (json: {
@@ -73,6 +76,7 @@ export const useWorkflowStore = create<WorkflowState>()(
     workflowName: 'autosave',
     dirty: false,
     savedWorkflows: [],
+    toolMeta: null,
 
     setToast: (msg, type = 'error') =>
       set((s) => {
@@ -124,10 +128,9 @@ export const useWorkflowStore = create<WorkflowState>()(
 
     saveTool: (name) =>
       set((s) => {
-        localStorage.setItem(
-          `tool.${name}`,
-          JSON.stringify({ nodes: s.nodes, edges: s.edges })
-        );
+        const meta = s.toolMeta || { name, description: '', schema: '' };
+        const payload: ToolData = { meta, nodes: s.nodes, edges: s.edges };
+        localStorage.setItem(`tool.${name}`, JSON.stringify(payload));
         const list = localStorage.getItem('tools');
         const names = list ? JSON.parse(list) : [];
         if (!names.includes(name)) {
@@ -143,17 +146,21 @@ export const useWorkflowStore = create<WorkflowState>()(
         const data = localStorage.getItem(`tool.${name}`);
         if (!data) return;
         try {
-          const parsed = JSON.parse(data) as {
-            nodes: Record<string, NodeInstance>;
-            edges: EdgeInstance[];
-          };
+          const parsed = JSON.parse(data) as ToolData;
           s.nodes = parsed.nodes;
           s.edges = parsed.edges;
+          s.toolMeta = parsed.meta || { name, description: '', schema: '' };
           s.workflowName = `tool:${name}`;
           s.dirty = false;
         } catch {
           /* ignore parse errors */
         }
+      }),
+
+    setToolMeta: (meta) =>
+      set((s) => {
+        s.toolMeta = meta;
+        s.dirty = true;
       }),
 
     deleteWorkflow: (name) =>
@@ -204,6 +211,21 @@ export const useWorkflowStore = create<WorkflowState>()(
         localStorage.setItem('workflows', JSON.stringify(names));
         if (s.workflowName === oldName) s.workflowName = newName;
         s.savedWorkflows = names;
+      }),
+
+    renameTool: (oldName, newName) =>
+      set((s) => {
+        const data = localStorage.getItem(`tool.${oldName}`);
+        if (!data) return;
+        localStorage.setItem(`tool.${newName}`, data);
+        localStorage.removeItem(`tool.${oldName}`);
+        const list = localStorage.getItem('tools');
+        let names = list ? JSON.parse(list) : [];
+        const idx = names.indexOf(oldName);
+        if (idx !== -1) names.splice(idx, 1);
+        if (!names.includes(newName)) names.push(newName);
+        localStorage.setItem('tools', JSON.stringify(names));
+        if (s.workflowName === `tool:${oldName}`) s.workflowName = `tool:${newName}`;
       }),
 
     createWorkflow: () => {

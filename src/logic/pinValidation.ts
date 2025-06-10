@@ -43,7 +43,8 @@ export function validateWorkflow(
   nodes: Record<string, NodeInstance>,
   edges: EdgeInstance[],
   nodeTypes: NodeType[],
-  hierarchy: Record<string, string | null>
+  hierarchy: Record<string, string | null>,
+  mode: 'agent' | 'tool' = 'agent'
 ): string | null {
   const typeMap: Record<string, NodeType> = {};
   nodeTypes.forEach((nt) => {
@@ -53,8 +54,11 @@ export function validateWorkflow(
   let hasStart = false;
   let hasEnd = false;
 
+  const startType = mode === 'tool' ? 'tool.start' : 'workflow.start';
+  const endType = mode === 'tool' ? 'tool.end' : 'workflow.end';
+
   const startIds = Object.values(nodes)
-    .filter((n) => n.nodeTypeId === 'workflow.start')
+    .filter((n) => n.nodeTypeId === startType)
     .map((n) => n.uuid);
   const active = new Set<string>();
   const queue = [...startIds];
@@ -98,8 +102,8 @@ export function validateWorkflow(
     if (!active.has(node.uuid)) continue;
     const def = typeMap[node.nodeTypeId];
     if (!def) return `Unknown node type ${node.nodeTypeId}`;
-    if (node.nodeTypeId === 'workflow.start') hasStart = true;
-    if (node.nodeTypeId === 'workflow.end') hasEnd = true;
+    if (node.nodeTypeId === startType) hasStart = true;
+    if (node.nodeTypeId === endType) hasEnd = true;
 
     for (const pin of def.inputs) {
       const count = countConnections(node, pin.id, 'input', edges);
@@ -155,8 +159,14 @@ export function validateWorkflow(
     }
   }
 
-  if (!hasStart) return 'Workflow missing start node';
-  if (!hasEnd) return 'Workflow missing end node';
+  if (!hasStart)
+    return mode === 'tool'
+      ? 'Tool missing Tool Start node'
+      : 'Workflow missing start node';
+  if (!hasEnd)
+    return mode === 'tool'
+      ? 'Tool missing Tool End node'
+      : 'Workflow missing end node';
 
   return null;
 }

@@ -140,4 +140,17 @@ describe('validateWorkflow', () => {
     ];
     expect(validateWorkflow(nodes, edges, nodeTypes, hierarchy)).toBeNull();
   });
+
+  it('validates tool workflows with start and end', () => {
+    const nodes: Record<string, NodeInstance> = {
+      start: makeNode('tool.start', 'start'),
+      end: makeNode('tool.end', 'end')
+    };
+    const edges: EdgeInstance[] = [
+      { id: 'e1', from: { uuid: 'start', pin: 'stateOut' }, to: { uuid: 'end', pin: 'stateIn' } }
+    ];
+    expect(
+      validateWorkflow(nodes, edges, nodeTypes, hierarchy, 'tool')
+    ).toBeNull();
+  });
 });

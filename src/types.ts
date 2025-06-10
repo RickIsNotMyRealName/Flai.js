@@ -28,6 +28,7 @@ export interface NodeType {
   inputs: Pin[];
   outputs: Pin[];
   fields: Field[];
+  editors?: ('tool' | 'agent')[];
 }
 
 export interface NodeInstance {
@@ -41,4 +42,16 @@ export interface EdgeInstance {
   id: string;
   from: { uuid: string; pin: string };
   to: { uuid: string; pin: string };
+}
+
+export interface ToolMeta {
+  name: string;
+  description: string;
+  schema: string;
+}
+
+export interface ToolData {
+  meta: ToolMeta;
+  nodes: Record<string, NodeInstance>;
+  edges: EdgeInstance[];
 }

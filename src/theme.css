@@ -449,6 +449,12 @@
   vertical-align: middle;
   margin-left: 0.25rem;
 }
+.editor-header .settings-btn {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
 .editor-header .editor-title {
   margin: 0;
   display: flex;

@@ -2,7 +2,10 @@ import { useMemo, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import { validateWorkflow } from '../logic/pinValidation';
 
-export default function NodePalette() {
+interface Props {
+  editor: 'agent' | 'tool';
+}
+export default function NodePalette({ editor }: Props) {
   const nodeTypes = useWorkflowStore((s) => s.nodeTypes);
   const nodes = useWorkflowStore((s) => s.nodes);
   const edges = useWorkflowStore((s) => s.edges);
@@ -15,10 +18,11 @@ export default function NodePalette() {
     const q = query.toLowerCase();
     return nodeTypes.filter(
       (nt) =>
-        nt.name.toLowerCase().includes(q) ||
-        nt.tags.some((t) => t.toLowerCase().includes(q))
+        (!nt.editors || nt.editors.includes(editor)) &&
+        (nt.name.toLowerCase().includes(q) ||
+          nt.tags.some((t) => t.toLowerCase().includes(q)))
     );
-  }, [nodeTypes, query]);
+  }, [nodeTypes, query, editor]);
 
   return (
     <div className="palette-wrapper">
@@ -77,7 +81,13 @@ export default function NodePalette() {
         className="palette-toggle validate-toggle"
         aria-label="Validate workflow"
         onClick={() => {
-          const err = validateWorkflow(nodes, edges, nodeTypes, hierarchy);
+          const err = validateWorkflow(
+            nodes,
+            edges,
+            nodeTypes,
+            hierarchy,
+            editor === 'tool' ? 'tool' : 'agent'
+          );
           if (err) {
             setToast(err, 'error');
           } else {

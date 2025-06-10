@@ -112,8 +112,9 @@
     },
     {
       "id": "workflow.start",
-      "name": "Start",
+      "name": "Start Agent",
       "tags": ["workflow", "start", "state"],
+      "editors": ["agent"],
       "layout": "singleRow",
       "inputs": [],
       "outputs": [
@@ -130,8 +131,9 @@
     },
     {
       "id": "workflow.end",
-      "name": "End",
+      "name": "End Agent",
       "tags": ["workflow", "end", "state"],
+      "editors": ["agent"],
       "layout": "singleRow",
       "inputs": [
         {
@@ -150,19 +152,26 @@
       "id": "tool.start",
       "name": "Tool Start",
       "tags": ["tool", "start"],
+      "editors": ["tool"],
       "layout": "singleRow",
       "inputs": [],
-      "outputs": [],
-      "fields": [
-        { "id": "name", "label": "Name", "type": "string" },
-        { "id": "description", "label": "Description", "type": "string" },
-        { "id": "schema", "label": "JSON Schema", "type": "string" }
-      ]
+      "outputs": [
+        {
+          "id": "stateOut",
+          "name": "State",
+          "direction": "output",
+          "type": "State",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "fields": []
     },
     {
       "id": "tool.end",
       "name": "Tool End",
       "tags": ["tool", "end"],
+      "editors": ["tool"],
       "layout": "singleRow",
       "inputs": [
         {
@@ -181,6 +190,7 @@
       "id": "agent",
       "name": "Agent",
       "tags": ["agent"],
+      "editors": ["agent", "tool"],
       "layout": "singleRow",
       "inputs": [
         {
@@ -279,49 +289,6 @@
           "name": "Tool",
           "direction": "output",
           "type": "MCP",
-          "cardinality": "many"
-        }
-      ],
-      "fields": []
-    },
-    {
-      "id": "tool.in",
-      "name": "Tool Input",
-      "tags": ["tool", "json", "input"],
-      "layout": "singleRow",
-      "inputs": [],
-      "outputs": [
-        {
-          "id": "jsonOut",
-          "name": "JSON",
-          "direction": "output",
-          "type": "Json",
-          "cardinality": "many"
-        }
-      ],
-      "fields": []
-    },
-    {
-      "id": "tool.out",
-      "name": "Tool Output",
-      "tags": ["tool", "json", "output"],
-      "layout": "singleRow",
-      "inputs": [
-        {
-          "id": "jsonIn",
-          "name": "JSON",
-          "direction": "input",
-          "type": "Json",
-          "cardinality": "one",
-          "required": true
-        }
-      ],
-      "outputs": [
-        {
-          "id": "toolOut",
-          "name": "Tool",
-          "direction": "output",
-          "type": "Tool",
           "cardinality": "many"
         }
       ],
