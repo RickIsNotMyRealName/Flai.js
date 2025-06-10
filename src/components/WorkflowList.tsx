@@ -16,12 +16,17 @@ export default function WorkflowList({
 
   const [renaming, setRenaming] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
+  const [query, setQuery] = useState('');
 
   useEffect(() => { refresh(); }, [refresh]);
 
+  const filtered = names.filter(n =>
+    n.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
     <div className="workflow-list">
-      <div className="list-header">
+      <div className="list-header page-header">
         <h2>Workflows</h2>
         <button
           className="create-btn"
@@ -50,8 +55,14 @@ export default function WorkflowList({
           </svg>
         </button>
       </div>
+      <input
+        className="workflow-search"
+        placeholder="Search workflows"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+      />
       <ul>
-        {names.map((name) => (
+        {filtered.map((name) => (
           <li
             key={name}
             className="workflow-item"

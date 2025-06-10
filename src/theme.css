@@ -372,6 +372,8 @@
   font-weight: bold;
   text-align: center;
   margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #6663;
 }
 .sidebar button {
   width: 100%;
@@ -405,11 +407,21 @@
   list-style: none;
   padding: 0;
 }
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #6663;
+}
 .list-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #6663;
 }
 .create-btn {
   background: var(--accent);
@@ -420,6 +432,14 @@
   height: 36px;
   font-size: 1.3rem;
   cursor: pointer;
+}
+.workflow-search {
+  margin-bottom: 0.75rem;
+  padding: 2px 4px;
+  border: 1px solid #6663;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 .workflow-item {
   display: flex;
