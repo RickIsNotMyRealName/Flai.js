@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 
-export default function WorkflowManager({ onBack }: { onBack: () => void }) {
+export default function WorkflowManager() {
   const save = useWorkflowStore((s) => s.saveWorkflow);
   const current = useWorkflowStore((s) => s.workflowName);
   const dirty = useWorkflowStore((s) => s.dirty);
@@ -21,12 +21,5 @@ export default function WorkflowManager({ onBack }: { onBack: () => void }) {
 
   /* Save actions are handled automatically via auto-save */
 
-  return (
-    <>
-      <div className="workflow-bar">
-        <button className="back" onClick={onBack}>Back</button>
-        {dirty && <span className="unsaved">*</span>}
-      </div>
-    </>
-  );
+  return null;
 }
