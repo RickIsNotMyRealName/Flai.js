@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { validateWorkflow } from '../pinValidation';
+import { parseSchema, buildSchema } from '../schemaUtils';
 import type { NodeInstance, EdgeInstance, NodeType } from '../../types';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -45,5 +46,23 @@ describe('object field handling', () => {
     const str = JSON.stringify(node);
     const parsed = JSON.parse(str) as NodeInstance;
     expect(parsed.fields).toEqual(node.fields);
+  });
+
+  it('parses and builds simple schemas', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        foo: { type: 'string' },
+        bar: { type: 'number' },
+      },
+      required: ['bar'],
+    };
+    const entries = parseSchema(schema);
+    expect(entries).toEqual([
+      { name: 'foo', type: 'string', required: false },
+      { name: 'bar', type: 'number', required: true },
+    ]);
+    const rebuilt = buildSchema(entries);
+    expect(rebuilt).toEqual(schema);
   });
 });

@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { Field, NodeInstance } from '../types';
 import type { JSX } from 'react';
+import {
+  SchemaEntry,
+  parseSchema,
+  buildSchema,
+} from '../logic/schemaUtils';
 
 export default function PropertiesPanel() {
   const editing = useWorkflowStore((s) => s.editing);
@@ -104,10 +109,7 @@ function FieldInput({ field, node }: { field: Field; node: NodeInstance }) {
       break;
     case 'object':
       input = (
-        <textarea
-          value={text}
-          onChange={(e) => onTextChange(e.target.value)}
-        />
+        <SchemaEditor initial={value} onChange={onChange} />
       );
       break;
     default:
@@ -128,3 +130,69 @@ function FieldInput({ field, node }: { field: Field; node: NodeInstance }) {
     </label>
   );
 }
+
+
+
+function SchemaEditor({
+  initial,
+  onChange,
+}: {
+  initial: any;
+  onChange: (v: any) => void;
+}) {
+  const [entries, setEntries] = useState<SchemaEntry[]>(() => parseSchema(initial));
+
+  useEffect(() => {
+    onChange(buildSchema(entries));
+  }, [entries]);
+
+  const update = (i: number, entry: SchemaEntry) => {
+    const copy = entries.slice();
+    copy[i] = entry;
+    setEntries(copy);
+  };
+
+  const remove = (i: number) => {
+    const copy = entries.slice();
+    copy.splice(i, 1);
+    setEntries(copy);
+  };
+
+  const add = () => {
+    setEntries([...entries, { name: '', type: 'string', required: false }]);
+  };
+
+  return (
+    <div className="schema-editor">
+      {entries.map((e, i) => (
+        <div key={i} className="schema-row">
+          <input
+            placeholder="name"
+            value={e.name}
+            onChange={(ev) => update(i, { ...e, name: ev.target.value })}
+          />
+          <select
+            value={e.type}
+            onChange={(ev) => update(i, { ...e, type: ev.target.value })}
+          >
+            <option value="string">string</option>
+            <option value="integer">integer</option>
+            <option value="number">number</option>
+            <option value="boolean">boolean</option>
+          </select>
+          <label className="req">
+            <input
+              type="checkbox"
+              checked={e.required}
+              onChange={(ev) => update(i, { ...e, required: ev.target.checked })}
+            />
+            required
+          </label>
+          <button onClick={() => remove(i)}>✕</button>
+        </div>
+      ))}
+      <button onClick={add}>Add Field</button>
+    </div>
+  );
+}
+
