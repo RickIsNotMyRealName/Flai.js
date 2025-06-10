@@ -604,13 +604,14 @@
 }
 .field-summary .field-name {
   font-weight: bold;
-  flex: none;
+  flex: none; margin-right: auto;
   width: 4ch !important;
-  border: none;
-  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
   color: var(--fg);
   font-size: 1rem;
-  padding: 2px;
+  padding: 2px 4px;
   transition: width 0.15s ease;
 }
 .field-summary .field-name:hover {
@@ -622,7 +623,8 @@
 }
 
 .field-summary .field-type {
-  margin-left: 4px;
+  margin-left: auto;
+  margin-right: 4px;
   padding: 1px 3px;
   border: 1px solid var(--accent);
   border-radius: 4px;
@@ -630,6 +632,9 @@
   color: var(--fg);
   font-size: 0.8rem;
   width: auto;
+}
+.field-summary .delete-btn {
+  margin-left: 0;
 }
 .field-body {
   display: flex;
