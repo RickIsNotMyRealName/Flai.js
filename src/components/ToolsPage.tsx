@@ -2,12 +2,6 @@ import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import type { NodeInstance, EdgeInstance } from '../types';
 
-interface ToolMeta {
-  name: string;
-  description: string;
-  schema: string;
-}
-
 interface ToolData {
   nodes: Record<string, NodeInstance>;
   edges: EdgeInstance[];
@@ -20,7 +14,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
   const [editing, setEditing] = useState<string | null>(null);
   const [metaName, setMetaName] = useState('');
   const [metaDesc, setMetaDesc] = useState('');
-  const [metaSchema, setMetaSchema] = useState('');
+  const [metaSchema, setMetaSchema] = useState('{}');
   const [data, setData] = useState<ToolData | null>(null);
 
   const refresh = () => {
@@ -69,7 +63,12 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
 
     setMetaName((start.fields as any).name || name);
     setMetaDesc((start.fields as any).description || '');
-    setMetaSchema((start.fields as any).schema || '');
+    const schemaVal = (start.fields as any).schema;
+    setMetaSchema(
+      schemaVal && typeof schemaVal === 'object'
+        ? JSON.stringify(schemaVal, null, 2)
+        : '{}'
+    );
     setEditing(name);
     setData(parsed);
   };
@@ -89,7 +88,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
       uuid: startId,
       nodeTypeId: 'tool.start',
       position: { x: 0, y: 0 },
-      fields: { name: '', description: '', schema: '' },
+      fields: { name: '', description: '', schema: {} },
     };
     const end: NodeInstance = {
       uuid: endId,
@@ -113,11 +112,18 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
     const list = localStorage.getItem('tools');
     const names: string[] = list ? JSON.parse(list) : [];
 
-    const start = Object.values(data.nodes).find(n => n.nodeTypeId === 'tool.start');
+    const start = Object.values(data.nodes).find(
+      (n) => n.nodeTypeId === 'tool.start'
+    );
     if (start) {
       (start.fields as any).name = metaName;
       (start.fields as any).description = metaDesc;
-      (start.fields as any).schema = metaSchema;
+      try {
+        (start.fields as any).schema = JSON.parse(metaSchema);
+      } catch {
+        alert('Invalid JSON schema');
+        return;
+      }
     }
 
     let target = editing;
@@ -209,7 +215,10 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
             </label>
             <label className="field-label">
               JSON Schema
-              <input type="text" value={metaSchema} onChange={e => setMetaSchema(e.target.value)} />
+              <textarea
+                value={metaSchema}
+                onChange={e => setMetaSchema(e.target.value)}
+              />
             </label>
             <div className="modal-buttons">
               <button onClick={() => setEditing(null)}>Cancel</button>

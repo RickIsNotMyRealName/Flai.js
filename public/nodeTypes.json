@@ -156,7 +156,7 @@
       "fields": [
         { "id": "name", "label": "Name", "type": "string" },
         { "id": "description", "label": "Description", "type": "string" },
-        { "id": "schema", "label": "JSON Schema", "type": "string" }
+        { "id": "schema", "label": "JSON Schema", "type": "object" }
       ]
     },
     {
