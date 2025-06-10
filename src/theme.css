@@ -598,28 +598,27 @@
 }
 .field-summary {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 4px;
   cursor: pointer;
 }
 .field-summary .field-name {
   font-weight: bold;
-  flex: 0 0 auto;
-  width: 5ch;
+  flex: none;
+  width: 4ch;
   border: none;
   background: transparent;
   color: var(--fg);
   font-size: 1rem;
   padding: 2px;
-  transition: width 0.2s ease;
+  transition: width 0.15s ease;
 }
 .field-summary .field-name:hover {
   outline: 1px solid var(--accent);
 }
 .field-summary .field-name:focus {
   outline: 1px solid var(--accent);
-  width: 100%;
-  flex: 1;
+  width: 12ch;
 }
 
 .field-summary .field-type {
