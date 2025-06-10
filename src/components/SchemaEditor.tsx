@@ -9,18 +9,18 @@ interface FieldDef {
   name: string;
   type: string;
   description: string;
-  enumText: string;
 }
 
 const defaultField = (): FieldDef => ({
   name: '',
   type: 'string',
-  description: '',
-  enumText: ''
+  description: ''
 });
 
 export default function SchemaEditor({ value, onChange }: Props) {
   const [fields, setFields] = useState<FieldDef[]>([]);
+  const [adding, setAdding] = useState(false);
+  const [newField, setNewField] = useState<FieldDef>(defaultField());
 
   // parse incoming value
   useEffect(() => {
@@ -29,8 +29,7 @@ export default function SchemaEditor({ value, onChange }: Props) {
       const arr: FieldDef[] = Object.entries(obj).map(([key, def]: any) => ({
         name: key,
         type: def.type || 'string',
-        description: def.description || '',
-        enumText: Array.isArray(def.enum) ? def.enum.join(', ') : ''
+        description: def.description || ''
       }));
       if (arr.length === 0) arr.push(defaultField());
       setFields(arr);
@@ -45,9 +44,6 @@ export default function SchemaEditor({ value, onChange }: Props) {
       if (!f.name) return;
       const prop: any = { type: f.type };
       if (f.description) prop.description = f.description;
-      if (f.enumText.trim()) {
-        prop.enum = f.enumText.split(',').map(s => s.trim()).filter(Boolean);
-      }
       obj[f.name] = prop;
     });
     return JSON.stringify(obj, null, 2);
@@ -69,7 +65,10 @@ export default function SchemaEditor({ value, onChange }: Props) {
     });
   };
 
-  const addField = () => updateFields(prev => [...prev, defaultField()]);
+  const addField = () => {
+    setNewField(defaultField());
+    setAdding(true);
+  };
 
   const removeField = (idx: number) => updateFields(prev => prev.filter((_, i) => i !== idx));
 
@@ -85,18 +84,15 @@ export default function SchemaEditor({ value, onChange }: Props) {
           <select value={f.type} onChange={e => updateField(i, 'type', e.target.value)}>
             <option value="string">string</option>
             <option value="number">number</option>
-            <option value="integer">integer</option>
+            <option value="object">object</option>
+            <option value="array">array</option>
             <option value="boolean">boolean</option>
+            <option value="null">null</option>
           </select>
           <input
             placeholder="Description"
             value={f.description}
             onChange={e => updateField(i, 'description', e.target.value)}
-          />
-          <input
-            placeholder="Enum values"
-            value={f.enumText}
-            onChange={e => updateField(i, 'enumText', e.target.value)}
           />
           <button type="button" className="delete-btn" onClick={() => removeField(i)}>
             🗑️
@@ -104,6 +100,58 @@ export default function SchemaEditor({ value, onChange }: Props) {
         </div>
       ))}
       <button type="button" onClick={addField}>Add Field</button>
+      {adding && (
+        <>
+          <div className="modal-backdrop" onClick={() => setAdding(false)} />
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>Add Field</h3>
+            <label className="field-label">
+              Name
+              <input
+                type="text"
+                value={newField.name}
+                onChange={e => setNewField({ ...newField, name: e.target.value })}
+              />
+            </label>
+            <label className="field-label">
+              Description
+              <input
+                type="text"
+                value={newField.description}
+                onChange={e =>
+                  setNewField({ ...newField, description: e.target.value })
+                }
+              />
+            </label>
+            <label className="field-label">
+              Type
+              <select
+                value={newField.type}
+                onChange={e => setNewField({ ...newField, type: e.target.value })}
+              >
+                <option value="string">string</option>
+                <option value="number">number</option>
+                <option value="object">object</option>
+                <option value="array">array</option>
+                <option value="boolean">boolean</option>
+                <option value="null">null</option>
+              </select>
+            </label>
+            <div className="modal-buttons">
+              <button onClick={() => setAdding(false)}>Cancel</button>
+              <button
+                onClick={() => {
+                  if (!newField.name) return;
+                  updateFields(prev => [...prev, newField]);
+                  setAdding(false);
+                }}
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
