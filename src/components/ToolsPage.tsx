@@ -1,17 +1,7 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
-import type { NodeInstance, EdgeInstance } from '../types';
+import type { NodeInstance, EdgeInstance, ToolData, ToolMeta } from '../types';
 
-interface ToolMeta {
-  name: string;
-  description: string;
-  schema: string;
-}
-
-interface ToolData {
-  nodes: Record<string, NodeInstance>;
-  edges: EdgeInstance[];
-}
 
 export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }) {
   const [tools, setTools] = useState<string[]>([]);
@@ -37,12 +27,12 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
     let parsed: ToolData;
     if (raw) {
       try {
-        parsed = JSON.parse(raw);
+        parsed = JSON.parse(raw) as ToolData;
       } catch {
-        parsed = { nodes: {}, edges: [] };
+        parsed = { meta: { name, description: '', schema: '' }, nodes: {}, edges: [] };
       }
     } else {
-      parsed = { nodes: {}, edges: [] };
+      parsed = { meta: { name, description: '', schema: '' }, nodes: {}, edges: [] };
     }
 
     let start = Object.values(parsed.nodes).find((n) => n.nodeTypeId === 'tool.start');
@@ -67,9 +57,9 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
       };
     }
 
-    setMetaName((start.fields as any).name || name);
-    setMetaDesc((start.fields as any).description || '');
-    setMetaSchema((start.fields as any).schema || '');
+    setMetaName(parsed.meta?.name || name);
+    setMetaDesc(parsed.meta?.description || '');
+    setMetaSchema(parsed.meta?.schema || '');
     setEditing(name);
     setData(parsed);
   };
@@ -89,7 +79,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
       uuid: startId,
       nodeTypeId: 'tool.start',
       position: { x: 0, y: 0 },
-      fields: { name: '', description: '', schema: '' },
+      fields: {},
     };
     const end: NodeInstance = {
       uuid: endId,
@@ -98,6 +88,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
       fields: {},
     };
     const newData: ToolData = {
+      meta: { name: '', description: '', schema: '' },
       nodes: { [startId]: start, [endId]: end },
       edges: [],
     };
@@ -113,12 +104,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
     const list = localStorage.getItem('tools');
     const names: string[] = list ? JSON.parse(list) : [];
 
-    const start = Object.values(data.nodes).find(n => n.nodeTypeId === 'tool.start');
-    if (start) {
-      (start.fields as any).name = metaName;
-      (start.fields as any).description = metaDesc;
-      (start.fields as any).schema = metaSchema;
-    }
+    data.meta = { name: metaName, description: metaDesc, schema: metaSchema };
 
     let target = editing;
     if (metaName && metaName !== editing) {

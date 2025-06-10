@@ -152,12 +152,17 @@
       "tags": ["tool", "start"],
       "layout": "singleRow",
       "inputs": [],
-      "outputs": [],
-      "fields": [
-        { "id": "name", "label": "Name", "type": "string" },
-        { "id": "description", "label": "Description", "type": "string" },
-        { "id": "schema", "label": "JSON Schema", "type": "string" }
-      ]
+      "outputs": [
+        {
+          "id": "stateOut",
+          "name": "State",
+          "direction": "output",
+          "type": "State",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "fields": []
     },
     {
       "id": "tool.end",

@@ -42,3 +42,15 @@ export interface EdgeInstance {
   from: { uuid: string; pin: string };
   to: { uuid: string; pin: string };
 }
+
+export interface ToolMeta {
+  name: string;
+  description: string;
+  schema: string;
+}
+
+export interface ToolData {
+  meta: ToolMeta;
+  nodes: Record<string, NodeInstance>;
+  edges: EdgeInstance[];
+}
