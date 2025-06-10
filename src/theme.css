@@ -439,10 +439,15 @@
 .editor-header .back-btn {
   position: absolute;
   left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .editor-header .name-edit-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  margin-left: 0.25rem;
 }
 .editor-header .editor-title {
   margin: 0;
