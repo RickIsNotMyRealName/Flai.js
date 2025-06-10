@@ -167,6 +167,12 @@
   z-index: 10;
   min-width: 240px;
 }
+.modal-large {
+  width: 90vw;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
 .modal input[type="text"] {
   width: 100%;
   margin-top: 0.5rem;
@@ -209,11 +215,25 @@
   display: block;
   margin-bottom: 0.5rem;
 }
-.field-label > input,
 .field-label > select {
   display: block;
   margin-top: 0.25rem;
   width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+}
+.field-label > input {
+  display: block;
+  margin-top: 0.25rem;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
 }
 .field-label > .switch {
   display: block;
@@ -587,9 +607,21 @@
   gap: 4px;
   margin-top: 4px;
 }
-.field-body input,
 .field-body select {
   width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+}
+.field-body input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
 }
 .delete-btn {
   background: none;

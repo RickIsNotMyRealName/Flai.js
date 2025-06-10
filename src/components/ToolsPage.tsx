@@ -184,7 +184,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
       {editing && (
         <>
           <div className="modal-backdrop" onClick={() => setEditing(null)} />
-          <div className="modal" onClick={e => e.stopPropagation()}>
+          <div className="modal modal-large" onClick={e => e.stopPropagation()}>
             <h3>Edit Tool</h3>
             <label className="field-label">
               Name

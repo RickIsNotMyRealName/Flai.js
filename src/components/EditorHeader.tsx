@@ -123,7 +123,7 @@ export default function EditorHeader({ onBack }: { onBack: () => void }) {
       {cfgOpen && (
         <>
           <div className="modal-backdrop" onClick={() => setCfgOpen(false)} />
-          <div className="modal" onClick={e => e.stopPropagation()}>
+          <div className="modal modal-large" onClick={e => e.stopPropagation()}>
             <h3>Tool Settings</h3>
             <label className="field-label">
               Name
