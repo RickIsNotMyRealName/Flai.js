@@ -45,11 +45,26 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
       parsed = { nodes: {}, edges: [] };
     }
 
-    let start = Object.values(parsed.nodes).find(n => n.nodeTypeId === 'tool.start');
+    let start = Object.values(parsed.nodes).find((n) => n.nodeTypeId === 'tool.start');
     if (!start) {
       const id = uuid();
-      start = { uuid: id, nodeTypeId: 'tool.start', position: { x: 0, y: 0 }, fields: {} };
+      start = {
+        uuid: id,
+        nodeTypeId: 'tool.start',
+        position: { x: 0, y: 0 },
+        fields: {},
+      };
       parsed.nodes[id] = start;
+    }
+
+    if (!Object.values(parsed.nodes).some((n) => n.nodeTypeId === 'tool.end')) {
+      const id = uuid();
+      parsed.nodes[id] = {
+        uuid: id,
+        nodeTypeId: 'tool.end',
+        position: { x: 200, y: 0 },
+        fields: {},
+      };
     }
 
     setMetaName((start.fields as any).name || name);
@@ -68,14 +83,24 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
       name = `${base} ${++idx}`;
     }
 
-    const id = uuid();
+    const startId = uuid();
+    const endId = uuid();
     const start: NodeInstance = {
-      uuid: id,
+      uuid: startId,
       nodeTypeId: 'tool.start',
       position: { x: 0, y: 0 },
-      fields: { name: '', description: '', schema: '' }
+      fields: { name: '', description: '', schema: '' },
     };
-    const newData: ToolData = { nodes: { [id]: start }, edges: [] };
+    const end: NodeInstance = {
+      uuid: endId,
+      nodeTypeId: 'tool.end',
+      position: { x: 200, y: 0 },
+      fields: {},
+    };
+    const newData: ToolData = {
+      nodes: { [startId]: start, [endId]: end },
+      edges: [],
+    };
     localStorage.setItem(`tool.${name}`, JSON.stringify(newData));
     list.push(name);
     localStorage.setItem('tools', JSON.stringify(list));

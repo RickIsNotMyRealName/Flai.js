@@ -159,6 +159,24 @@
       ]
     },
     {
+      "id": "tool.end",
+      "name": "Tool End",
+      "tags": ["tool", "end"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "stateIn",
+          "name": "State",
+          "direction": "input",
+          "type": "State",
+          "cardinality": "many",
+          "required": true
+        }
+      ],
+      "outputs": [],
+      "fields": []
+    },
+    {
       "id": "agent",
       "name": "Agent",
       "tags": ["agent"],
