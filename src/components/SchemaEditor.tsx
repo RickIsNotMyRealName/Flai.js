@@ -155,7 +155,13 @@ export default function SchemaEditor({ value, onChange }: Props) {
           <li className="schema-field" key={i}>
             <details>
             <summary className="field-summary">
-              <span>{f.name || `Field ${i + 1}`}</span>
+              <input
+                className="field-name"
+                type="text"
+                value={f.name}
+                placeholder={`Field ${i + 1}`}
+                onChange={e => updateField(i, 'name', e.target.value)}
+              />
               <button
                 type="button"
                 className="delete-btn"
@@ -185,14 +191,6 @@ export default function SchemaEditor({ value, onChange }: Props) {
               </button>
             </summary>
             <div className="field-body">
-              <label className="field-label">
-                Name
-                <input
-                  type="text"
-                  value={f.name}
-                  onChange={e => updateField(i, 'name', e.target.value)}
-                />
-              </label>
               <label className="field-label">
                 Description
                 <input
