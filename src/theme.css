@@ -605,7 +605,7 @@
 .field-summary .field-name {
   font-weight: bold;
   flex: none;
-  width: 4ch;
+  width: 4ch !important;
   border: none;
   background: transparent;
   color: var(--fg);
@@ -618,7 +618,7 @@
 }
 .field-summary .field-name:focus {
   outline: 1px solid var(--accent);
-  width: 12ch;
+  width: 12ch !important;
 }
 
 .field-summary .field-type {
