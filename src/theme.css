@@ -364,6 +364,8 @@
   width: 180px;
   border-right: 1px solid #6663;
   padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
 }
 .sidebar button {
   width: 100%;
@@ -396,7 +398,26 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 4px 6px;
   margin-bottom: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.workflow-item:hover {
+  background: #6662;
+}
+.workflow-name {
+  flex: 1;
+}
+.workflow-item button {
+  background: none;
+  border: none;
+  color: var(--fg);
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.workflow-item button.delete {
+  color: #d55;
 }
 .workflow-item .item-actions button {
   margin-left: 4px;
