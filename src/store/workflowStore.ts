@@ -172,23 +172,19 @@ export const useWorkflowStore = create<WorkflowState>()(
 
     createWorkflow: () => {
       const list = localStorage.getItem('workflows');
-      const names = list ? JSON.parse(list) : [] as string[];
+      const names = list ? JSON.parse(list) : ([] as string[]);
       let idx = 1;
-      let base = 'Untitled';
+      const base = 'Untitled';
       let name = `${base} ${idx}`;
       while (names.includes(name)) {
         name = `${base} ${++idx}`;
       }
-      const empty = JSON.stringify({ nodes: {}, edges: [] });
-      localStorage.setItem(`workflow.${name}`, empty);
-      names.push(name);
-      localStorage.setItem('workflows', JSON.stringify(names));
       set((s) => {
         s.nodes = {};
         s.edges = [];
         s.workflowName = name;
+        /* mark as clean so autosave doesn't immediately persist */
         s.dirty = false;
-        s.savedWorkflows = names;
       });
       return name;
     },

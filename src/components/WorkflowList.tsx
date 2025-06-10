@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 
-export default function WorkflowList({ onOpen }: { onOpen: (name: string) => void }) {
+export default function WorkflowList({
+  onOpen,
+  onCreate,
+}: {
+  onOpen: (name: string) => void;
+  onCreate: () => void;
+}) {
   const names = useWorkflowStore(s => s.savedWorkflows);
   const refresh = useWorkflowStore(s => s.refreshSavedWorkflows);
   const del = useWorkflowStore(s => s.deleteWorkflow);
   const dup = useWorkflowStore(s => s.duplicateWorkflow);
   const rename = useWorkflowStore(s => s.renameWorkflow);
-  const create = useWorkflowStore(s => s.createWorkflow);
 
   const [renaming, setRenaming] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
@@ -21,7 +26,7 @@ export default function WorkflowList({ onOpen }: { onOpen: (name: string) => voi
         <button
           className="create-btn"
           title="New Workflow"
-          onClick={() => onOpen(create())}
+          onClick={onCreate}
         >
           ➕
         </button>

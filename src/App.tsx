@@ -12,6 +12,7 @@ export default function App() {
   const theme = useWorkflowStore((s) => s.theme);
   const loadDefs = useWorkflowStore((s) => s.loadDefinitions);
   const loadWorkflow = useWorkflowStore((s) => s.loadWorkflow);
+  const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
 
   const [page, setPage] = useState<'workflows' | 'editor' | 'settings' | 'tools'>(
     'workflows'
@@ -29,6 +30,11 @@ export default function App() {
     setPage('editor');
   };
 
+  const createAndOpen = () => {
+    createWorkflow();
+    setPage('editor');
+  };
+
   return (
     <div className={clsx('app-container', theme)}>
       {page !== 'editor' && (
@@ -40,7 +46,7 @@ export default function App() {
 
       {page === 'workflows' && (
         <main className="main">
-          <WorkflowList onOpen={openWorkflow} />
+          <WorkflowList onOpen={openWorkflow} onCreate={createAndOpen} />
         </main>
       )}
 
