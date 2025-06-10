@@ -5,6 +5,7 @@
     "Tool": null,
     "State": null,
     "Text": null,
+    "Json": null,
     "Embeddings": null,
     "OpenAIEmbeddings": "Embeddings",
     "WebSearch": "Tool",
@@ -247,6 +248,49 @@
           "name": "Tool",
           "direction": "output",
           "type": "MCP",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "tool.in",
+      "name": "Tool Input",
+      "tags": ["tool", "json", "input"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "jsonOut",
+          "name": "JSON",
+          "direction": "output",
+          "type": "Json",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "tool.out",
+      "name": "Tool Output",
+      "tags": ["tool", "json", "output"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "jsonIn",
+          "name": "JSON",
+          "direction": "input",
+          "type": "Json",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "id": "toolOut",
+          "name": "Tool",
+          "direction": "output",
+          "type": "Tool",
           "cardinality": "many"
         }
       ],
