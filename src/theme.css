@@ -405,23 +405,25 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 .create-btn {
   background: var(--accent);
   color: #fff;
   border: none;
   border-radius: 4px;
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.3rem;
   cursor: pointer;
 }
 .workflow-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 6px;
-  margin-bottom: 4px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  font-size: 1.1rem;
   border-radius: 4px;
   cursor: pointer;
   background: #6661;
@@ -437,12 +439,13 @@
   border: none;
   color: var(--fg);
   cursor: pointer;
-  padding: 2px;
+  padding: 4px;
+  font-size: 1.1rem;
 }
 .workflow-item button.delete {
   color: #d55;
 }
 .workflow-item .item-actions button {
-  margin-left: 4px;
+  margin-left: 8px;
 }
 
