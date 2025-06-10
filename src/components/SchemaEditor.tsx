@@ -162,6 +162,13 @@ export default function SchemaEditor({ value, onChange }: Props) {
                 placeholder={`Field ${i + 1}`}
                 onChange={e => updateField(i, 'name', e.target.value)}
               />
+              <input
+                className="field-desc"
+                type="text"
+                value={f.description}
+                placeholder="Description"
+                onChange={e => updateField(i, 'description', e.target.value)}
+              />
               <select
                 className="field-type"
                 value={f.type}
@@ -203,14 +210,6 @@ export default function SchemaEditor({ value, onChange }: Props) {
               </button>
             </summary>
             <div className="field-body">
-              <label className="field-label">
-                Description
-                <input
-                  type="text"
-                  value={f.description}
-                  onChange={e => updateField(i, 'description', e.target.value)}
-                />
-              </label>
               <label className="field-label">
                 Enum Values
                 <div className="enum-tags">

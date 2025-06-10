@@ -604,8 +604,9 @@
 }
 .field-summary .field-name {
   font-weight: bold;
-  flex: none; margin-right: auto;
-  width: 4ch !important;
+  flex: none;
+  margin-right: 4px;
+  width: 12ch !important;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
@@ -619,7 +620,27 @@
 }
 .field-summary .field-name:focus {
   outline: 1px solid var(--accent);
-  width: 12ch !important;
+  width: 20ch !important;
+}
+
+.field-summary .field-desc {
+  flex: none;
+  margin-right: auto;
+  width: 20ch !important;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 1rem;
+  padding: 2px 4px;
+  transition: width 0.15s ease;
+}
+.field-summary .field-desc:hover {
+  outline: 1px solid var(--accent);
+}
+.field-summary .field-desc:focus {
+  outline: 1px solid var(--accent);
+  width: 32ch !important;
 }
 
 .field-summary .field-type {
