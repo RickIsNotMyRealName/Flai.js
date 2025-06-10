@@ -455,10 +455,14 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 6px;
+  height: 36px;
+  padding: 0 8px;
   border: 1px solid #6663;
   border-radius: 8px;
-  background: var(--bg);
+  background: #f7f7f7;
+}
+.dark .search-wrap {
+  background: #303134;
 }
 .search-wrap svg {
   flex: none;
@@ -470,6 +474,10 @@
   padding: 0;
   background: none;
   outline: none;
+  color: var(--fg);
+}
+.workflow-search::placeholder {
+  color: #888;
 }
 .workflow-item {
   display: flex;

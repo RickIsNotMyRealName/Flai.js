@@ -52,7 +52,7 @@ export default function WorkflowList({
           </svg>
           <input
             className="workflow-search"
-            placeholder="Search workflows"
+            placeholder="Search..."
             value={query}
             onChange={e => setQuery(e.target.value)}
           />
