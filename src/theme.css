@@ -421,6 +421,10 @@
   padding-bottom: 0.25rem;
   border-bottom: 1px solid #6663;
 }
+.editor-header {
+  position: relative;
+  justify-content: center;
+}
 .editor-header button {
   background: none;
   color: var(--fg);
@@ -432,9 +436,16 @@
   align-items: center;
   justify-content: center;
 }
+.editor-header .back-btn {
+  position: absolute;
+  left: 1rem;
+}
+.editor-header .name-edit-btn {
+  display: inline-flex;
+  align-items: center;
+}
 .editor-header .editor-title {
   margin: 0;
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
