@@ -61,12 +61,8 @@ const parseEnum = (type: string, val: string): any => {
 
 export default function SchemaEditor({ value, onChange }: Props) {
   const [fields, setFields] = useState<FieldDef[]>([]);
-  const [adding, setAdding] = useState(false);
-  const [newField, setNewField] = useState<FieldDef>(defaultField());
   const [enumInputs, setEnumInputs] = useState<Record<number, string>>({});
   const [enumErrors, setEnumErrors] = useState<Record<number, string>>({});
-  const [newEnumInput, setNewEnumInput] = useState('');
-  const [newEnumError, setNewEnumError] = useState('');
 
   // parse incoming value
   useEffect(() => {
@@ -147,8 +143,7 @@ export default function SchemaEditor({ value, onChange }: Props) {
   };
 
   const addField = () => {
-    setNewField(defaultField());
-    setAdding(true);
+    updateFields(prev => [...prev, defaultField()]);
   };
 
   const removeField = (idx: number) => updateFields(prev => prev.filter((_, i) => i !== idx));
@@ -258,115 +253,6 @@ export default function SchemaEditor({ value, onChange }: Props) {
         ))}
       </ul>
       <button type="button" onClick={addField}>Add Field</button>
-      {adding && (
-        <>
-          <div className="modal-backdrop" onClick={() => setAdding(false)} />
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <h3>Add Field</h3>
-            <label className="field-label">
-              Name
-              <input
-                type="text"
-                value={newField.name}
-                onChange={e => setNewField({ ...newField, name: e.target.value })}
-              />
-            </label>
-            <label className="field-label">
-              Description
-              <input
-                type="text"
-                value={newField.description}
-                onChange={e =>
-                  setNewField({ ...newField, description: e.target.value })
-                }
-              />
-            </label>
-            <label className="field-label">
-              Enum Values
-              <div className="enum-tags">
-                {newField.enums.map((val, j) => (
-                  <span className="enum-tag" key={j}>
-                    {val}
-                    <button
-                      type="button"
-                      className="delete-btn"
-                      onClick={() =>
-                        setNewField({
-                          ...newField,
-                          enums: newField.enums.filter((_, i) => i !== j)
-                        })
-                      }
-                      aria-label="Delete enum"
-                    >
-                      <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
-                        <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                        <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                      </svg>
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <div className="enum-item">
-                <input
-                  type="text"
-                  value={newEnumInput}
-                  onChange={e => setNewEnumInput(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="add-btn"
-                  onClick={() => {
-                    if (!newEnumInput.trim()) return;
-                    if (!isValidEnum(newField.type, newEnumInput)) {
-                      setNewEnumError('Invalid value');
-                      return;
-                    }
-                    setNewField({
-                      ...newField,
-                      enums: [...newField.enums, newEnumInput.trim()]
-                    });
-                    setNewEnumInput('');
-                    setNewEnumError('');
-                  }}
-                  aria-label="Add enum"
-                >
-                  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                    <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    <line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </button>
-              </div>
-              {newEnumError && <div className="enum-error">{newEnumError}</div>}
-            </label>
-            <label className="field-label">
-              Type
-              <select
-                value={newField.type}
-                onChange={e => setNewField({ ...newField, type: e.target.value })}
-              >
-                <option value="string">string</option>
-                <option value="number">number</option>
-                <option value="object">object</option>
-                <option value="array">array</option>
-                <option value="boolean">boolean</option>
-                <option value="null">null</option>
-              </select>
-            </label>
-            <div className="modal-buttons">
-              <button onClick={() => setAdding(false)}>Cancel</button>
-              <button
-                onClick={() => {
-                  if (!newField.name) return;
-                  updateFields(prev => [...prev, newField]);
-                  setAdding(false);
-                }}
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 }

@@ -588,12 +588,13 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 .schema-field details {
   border: 1px solid var(--accent);
   border-radius: 4px;
   padding: 4px;
+  background: #6661;
 }
 .field-summary {
   display: flex;
@@ -644,7 +645,7 @@
   border-radius: 12px;
   padding: 2px 6px;
   font-size: 0.9rem;
-  gap: 2px;
+  gap: 6px;
 }
 .enum-tag button {
   background: none;
@@ -673,6 +674,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
   cursor: pointer;
 }
 .enum-error {
