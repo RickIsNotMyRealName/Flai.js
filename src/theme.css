@@ -436,7 +436,12 @@
   border: none;
   color: var(--fg);
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .workflow-item button.delete {
   color: #d55;
