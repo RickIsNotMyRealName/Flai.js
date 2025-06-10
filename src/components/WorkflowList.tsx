@@ -28,7 +28,7 @@ export default function WorkflowList({
           title="New Workflow"
           onClick={onCreate}
         >
-          ➕
+          ⊕
         </button>
       </div>
       <ul>

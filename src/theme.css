@@ -383,6 +383,10 @@
   cursor: pointer;
   font-size: 1.1rem;
 }
+.sidebar button:hover {
+  background: #6662;
+  border-radius: 4px;
+}
 .sidebar button.active {
   background: var(--accent);
   color: #fff;
