@@ -28,6 +28,14 @@ export default function WorkflowList({
     <div className="workflow-list">
       <div className="list-header page-header">
         <h2>Workflows</h2>
+      </div>
+      <div className="workflow-controls">
+        <input
+          className="workflow-search"
+          placeholder="Search workflows"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
         <button
           className="create-btn"
           title="New Workflow"
@@ -55,12 +63,6 @@ export default function WorkflowList({
           </svg>
         </button>
       </div>
-      <input
-        className="workflow-search"
-        placeholder="Search workflows"
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-      />
       <ul>
         {filtered.map((name) => (
           <li

@@ -433,13 +433,17 @@
   font-size: 1.3rem;
   cursor: pointer;
 }
-.workflow-search {
+.workflow-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 0.75rem;
+}
+.workflow-search {
+  flex: 1;
   padding: 2px 4px;
   border: 1px solid #6663;
   border-radius: 8px;
-  width: 100%;
-  box-sizing: border-box;
 }
 .workflow-item {
   display: flex;
