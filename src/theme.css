@@ -372,6 +372,8 @@
   font-weight: bold;
   text-align: center;
   margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #6663;
 }
 .sidebar button {
   width: 100%;
@@ -405,21 +407,75 @@
   list-style: none;
   padding: 0;
 }
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #6663;
+}
 .list-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #6663;
 }
 .create-btn {
   background: var(--accent);
   color: #fff;
   border: none;
   border-radius: 4px;
-  width: 36px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   height: 36px;
+  padding: 0 10px;
   font-size: 1.3rem;
   cursor: pointer;
+}
+.create-btn svg {
+  flex: none;
+}
+.workflow-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+}
+.create-label {
+  font-size: 0.9rem;
+}
+.search-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #6663;
+  border-radius: 8px;
+  background: #f7f7f7;
+}
+.dark .search-wrap {
+  background: #303134;
+}
+.search-wrap svg {
+  flex: none;
+  color: #666;
+}
+.workflow-search {
+  flex: 1;
+  border: none;
+  padding: 0;
+  background: none;
+  outline: none;
+  color: var(--fg);
+}
+.workflow-search::placeholder {
+  color: #888;
 }
 .workflow-item {
   display: flex;
