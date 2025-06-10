@@ -112,7 +112,7 @@
     },
     {
       "id": "workflow.start",
-      "name": "Start",
+      "name": "Start Agent",
       "tags": ["workflow", "start", "state"],
       "editors": ["agent"],
       "layout": "singleRow",
@@ -131,7 +131,7 @@
     },
     {
       "id": "workflow.end",
-      "name": "End",
+      "name": "End Agent",
       "tags": ["workflow", "end", "state"],
       "editors": ["agent"],
       "layout": "singleRow",
@@ -190,7 +190,7 @@
       "id": "agent",
       "name": "Agent",
       "tags": ["agent"],
-      "editors": ["agent"],
+      "editors": ["agent", "tool"],
       "layout": "singleRow",
       "inputs": [
         {
