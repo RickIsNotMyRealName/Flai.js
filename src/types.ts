@@ -28,6 +28,7 @@ export interface NodeType {
   inputs: Pin[];
   outputs: Pin[];
   fields: Field[];
+  editors?: ('tool' | 'agent')[];
 }
 
 export interface NodeInstance {
