@@ -148,7 +148,12 @@ export function validateWorkflow(
     for (const field of def.fields) {
       if (field.required) {
         const val = node.fields[field.id] ?? field.default;
-        if (val === undefined || val === '') {
+        if (
+          val === undefined ||
+          val === '' ||
+          (field.type === 'object' &&
+            (typeof val !== 'object' || val === null || Object.keys(val).length === 0))
+        ) {
           return `Field ${field.label} of ${def.name} is required`;
         }
       }

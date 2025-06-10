@@ -32,12 +32,26 @@ export default function PropertiesPanel() {
 
 function FieldInput({ field, node }: { field: Field; node: NodeInstance }) {
   const update = useWorkflowStore((s) => s.updateNodeField);
-  const initial = node.fields[field.id] ?? field.default ?? '';
+  const initial = node.fields[field.id] ?? field.default ?? (field.type === 'object' ? {} : '');
   const [value, setValue] = useState<any>(initial);
+  const [text, setText] = useState(
+    field.type === 'object' ? JSON.stringify(initial, null, 2) : ''
+  );
 
   const onChange = (val: unknown) => {
     setValue(val);
     update(node.uuid, field.id, val);
+  };
+
+  const onTextChange = (str: string) => {
+    setText(str);
+    try {
+      const parsed = JSON.parse(str);
+      setValue(parsed);
+      update(node.uuid, field.id, parsed);
+    } catch {
+      /* keep old value until JSON is valid */
+    }
   };
 
   let input: JSX.Element;
@@ -86,6 +100,14 @@ function FieldInput({ field, node }: { field: Field; node: NodeInstance }) {
             </option>
           ))}
         </select>
+      );
+      break;
+    case 'object':
+      input = (
+        <textarea
+          value={text}
+          onChange={(e) => onTextChange(e.target.value)}
+        />
       );
       break;
     default:
