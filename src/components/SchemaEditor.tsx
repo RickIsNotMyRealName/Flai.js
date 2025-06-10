@@ -155,6 +155,9 @@ export default function SchemaEditor({ value, onChange }: Props) {
           <li className="schema-field" key={i}>
             <details>
             <summary className="field-summary">
+              <svg className="toggle-icon" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                <polyline points="4,2 8,6 4,10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
               <input
                 className="field-name"
                 type="text"

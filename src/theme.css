@@ -596,17 +596,30 @@
   padding: 4px;
   background: #6661;
 }
+.schema-field summary {
+  list-style: none;
+}
+.schema-field summary::-webkit-details-marker {
+  display: none;
+}
 .field-summary {
   display: flex;
   align-items: center;
   gap: 4px;
   cursor: pointer;
 }
+.field-summary .toggle-icon {
+  transition: transform 0.2s;
+  flex: none;
+}
+details[open] .field-summary .toggle-icon {
+  transform: rotate(90deg);
+}
 .field-summary .field-name {
   font-weight: bold;
-  flex: none;
+  flex: 0 0 8ch;
   margin-right: 4px;
-  width: 12ch !important;
+  width: 8ch;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
@@ -618,15 +631,15 @@
 .field-summary .field-name:hover {
   outline: 1px solid var(--accent);
 }
-.field-summary .field-name:focus {
+.field-summary:focus-within .field-name {
   outline: 1px solid var(--accent);
-  width: 20ch !important;
+  width: 14ch;
 }
 
 .field-summary .field-desc {
-  flex: none;
+  flex: 1 1 auto;
   margin-right: auto;
-  width: 20ch !important;
+  min-width: 16ch;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
@@ -638,9 +651,8 @@
 .field-summary .field-desc:hover {
   outline: 1px solid var(--accent);
 }
-.field-summary .field-desc:focus {
+.field-summary:focus-within .field-desc {
   outline: 1px solid var(--accent);
-  width: 32ch !important;
 }
 
 .field-summary .field-type {
