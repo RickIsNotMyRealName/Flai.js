@@ -556,3 +556,25 @@
   margin-left: 8px;
 }
 
+/* Schema Editor */
+.schema-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.schema-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.schema-field input,
+.schema-field select {
+  flex: 1;
+}
+.schema-field .delete-btn {
+  background: none;
+  border: none;
+  color: #d55;
+  cursor: pointer;
+}
+

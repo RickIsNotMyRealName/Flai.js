@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
+import SchemaEditor from './SchemaEditor';
 
 export default function EditorHeader({ onBack }: { onBack: () => void }) {
   const name = useWorkflowStore(s => s.workflowName);
@@ -134,7 +135,7 @@ export default function EditorHeader({ onBack }: { onBack: () => void }) {
             </label>
             <label className="field-label">
               JSON Schema
-              <input type="text" value={cfgSchema} onChange={e => setCfgSchema(e.target.value)} />
+              <SchemaEditor value={cfgSchema} onChange={setCfgSchema} />
             </label>
             <div className="modal-buttons">
               <button onClick={() => setCfgOpen(false)}>Cancel</button>

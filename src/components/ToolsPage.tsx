@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import SchemaEditor from './SchemaEditor';
 import { v4 as uuid } from 'uuid';
 import type { NodeInstance, EdgeInstance, ToolData, ToolMeta } from '../types';
 
@@ -195,7 +196,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
             </label>
             <label className="field-label">
               JSON Schema
-              <input type="text" value={metaSchema} onChange={e => setMetaSchema(e.target.value)} />
+              <SchemaEditor value={metaSchema} onChange={setMetaSchema} />
             </label>
             <div className="modal-buttons">
               <button onClick={() => setEditing(null)}>Cancel</button>
