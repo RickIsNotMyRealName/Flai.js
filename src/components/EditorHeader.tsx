@@ -24,12 +24,44 @@ export default function EditorHeader({ onBack }: { onBack: () => void }) {
   return (
     <>
       <div className="page-header editor-header">
-        <button className="back" onClick={onBack}>Back</button>
-        <h2>
+        <button className="back-btn" onClick={onBack} aria-label="Back">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <polyline
+              points="15 18 9 12 15 6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        <h2 className="editor-title">
           {name}
           {dirty && <span className="unsaved">*</span>}
+          <button
+            className="name-edit-btn"
+            title="Rename"
+            onClick={startEdit}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 20h9"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <path
+                d="M16.5 3.5l4 4L7 21H3v-4L16.5 3.5z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
         </h2>
-        <button className="edit" onClick={startEdit}>Edit</button>
       </div>
       {editing && (
         <>
