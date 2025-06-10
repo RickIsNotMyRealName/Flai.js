@@ -1,8 +1,10 @@
 import clsx from 'clsx';
 
 export default function Sidebar({ current, onNavigate }: {
-  current: 'workflows' | 'settings' | 'tools';
-  onNavigate: (page: 'workflows' | 'settings' | 'tools') => void;
+  current: 'workflows' | 'settings' | 'tools' | 'assistants' | 'chat';
+  onNavigate: (
+    page: 'workflows' | 'settings' | 'tools' | 'assistants' | 'chat'
+  ) => void;
 }) {
   return (
     <nav className="sidebar">
@@ -11,7 +13,19 @@ export default function Sidebar({ current, onNavigate }: {
         className={clsx({ active: current === 'workflows' })}
         onClick={() => onNavigate('workflows')}
       >
-        Workflows
+        Agents
+      </button>
+      <button
+        className={clsx({ active: current === 'assistants' })}
+        onClick={() => onNavigate('assistants')}
+      >
+        Assistants
+      </button>
+      <button
+        className={clsx({ active: current === 'chat' })}
+        onClick={() => onNavigate('chat')}
+      >
+        Chat
       </button>
       <button
         className={clsx({ active: current === 'tools' })}
