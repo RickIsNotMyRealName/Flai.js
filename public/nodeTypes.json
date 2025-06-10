@@ -146,6 +146,19 @@
       "fields": []
     },
     {
+      "id": "tool.start",
+      "name": "Tool Start",
+      "tags": ["tool", "start"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [],
+      "fields": [
+        { "id": "name", "label": "Name", "type": "string" },
+        { "id": "description", "label": "Description", "type": "string" },
+        { "id": "schema", "label": "JSON Schema", "type": "string" }
+      ]
+    },
+    {
       "id": "agent",
       "name": "Agent",
       "tags": ["agent"],

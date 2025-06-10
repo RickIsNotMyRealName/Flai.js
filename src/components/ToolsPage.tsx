@@ -13,7 +13,7 @@ interface ToolData {
   edges: EdgeInstance[];
 }
 
-export default function ToolsPage() {
+export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }) {
   const [tools, setTools] = useState<string[]>([]);
   const [query, setQuery] = useState('');
 
@@ -153,7 +153,11 @@ export default function ToolsPage() {
       </div>
       <ul>
         {filtered.map(name => (
-          <li key={name} className="workflow-item">
+          <li
+            key={name}
+            className="workflow-item"
+            onClick={() => onOpen(name)}
+          >
             <span className="workflow-name">{name}</span>
             <div className="item-actions" onClick={e => e.stopPropagation()}>
               <button title="Edit" onClick={() => openEdit(name)}>✏️</button>
