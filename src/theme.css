@@ -168,9 +168,9 @@
   min-width: 240px;
 }
 .modal-large {
-  width: 90vw;
-  max-width: 800px;
-  max-height: 90vh;
+  width: 95vw;
+  max-width: 1000px;
+  max-height: 95vh;
   overflow-y: auto;
 }
 .modal input[type="text"] {
@@ -628,5 +628,20 @@
   border: none;
   color: #d55;
   cursor: pointer;
+}
+
+/* Enum editing */
+.enum-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.enum-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.enum-item input {
+  flex: 1;
 }
 

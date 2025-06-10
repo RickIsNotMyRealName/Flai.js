@@ -9,20 +9,22 @@ interface FieldDef {
   name: string;
   type: string;
   description: string;
-  enumVals: string;
+  enums: string[];
 }
 
 const defaultField = (): FieldDef => ({
   name: '',
   type: 'string',
   description: '',
-  enumVals: ''
+  enums: []
 });
 
 export default function SchemaEditor({ value, onChange }: Props) {
   const [fields, setFields] = useState<FieldDef[]>([]);
   const [adding, setAdding] = useState(false);
   const [newField, setNewField] = useState<FieldDef>(defaultField());
+  const [enumInputs, setEnumInputs] = useState<Record<number, string>>({});
+  const [newEnumInput, setNewEnumInput] = useState('');
 
   // parse incoming value
   useEffect(() => {
@@ -32,7 +34,9 @@ export default function SchemaEditor({ value, onChange }: Props) {
         name: key,
         type: def.type || 'string',
         description: def.description || '',
-        enumVals: Array.isArray(def.enum) ? def.enum.join(', ') : ''
+        enums: Array.isArray(def.enum)
+          ? def.enum.map((v: any) => String(v))
+          : []
       }));
       if (arr.length === 0) arr.push(defaultField());
       setFields(arr);
@@ -47,10 +51,8 @@ export default function SchemaEditor({ value, onChange }: Props) {
       if (!f.name) return;
       const prop: any = { type: f.type };
       if (f.description) prop.description = f.description;
-      if (f.enumVals) {
-        const vals = f.enumVals.split(',').map(v => v.trim()).filter(Boolean);
-        if (vals.length) prop.enum = vals;
-      }
+      const vals = f.enums.map(v => v.trim()).filter(Boolean);
+      if (vals.length) prop.enum = vals;
       obj[f.name] = prop;
     });
     return JSON.stringify(obj, null, 2);
@@ -68,6 +70,37 @@ export default function SchemaEditor({ value, onChange }: Props) {
     updateFields(prev => {
       const next = prev.slice();
       next[idx] = { ...next[idx], [key]: val };
+      return next;
+    });
+  };
+
+  const updateEnum = (fieldIdx: number, enumIdx: number, val: string) => {
+    updateFields(prev => {
+      const next = prev.slice();
+      const enums = next[fieldIdx].enums.slice();
+      enums[enumIdx] = val;
+      next[fieldIdx] = { ...next[fieldIdx], enums };
+      return next;
+    });
+  };
+
+  const addEnum = (fieldIdx: number) => {
+    const val = (enumInputs[fieldIdx] || '').trim();
+    if (!val) return;
+    updateFields(prev => {
+      const next = prev.slice();
+      const enums = next[fieldIdx].enums.concat(val);
+      next[fieldIdx] = { ...next[fieldIdx], enums };
+      return next;
+    });
+    setEnumInputs(inputs => ({ ...inputs, [fieldIdx]: '' }));
+  };
+
+  const removeEnum = (fieldIdx: number, enumIdx: number) => {
+    updateFields(prev => {
+      const next = prev.slice();
+      const enums = next[fieldIdx].enums.filter((_, i) => i !== enumIdx);
+      next[fieldIdx] = { ...next[fieldIdx], enums };
       return next;
     });
   };
@@ -133,12 +166,37 @@ export default function SchemaEditor({ value, onChange }: Props) {
                 />
               </label>
               <label className="field-label">
-                Enum (comma separated)
-                <input
-                  type="text"
-                  value={f.enumVals}
-                  onChange={e => updateField(i, 'enumVals', e.target.value)}
-                />
+                Enum Values
+                <div className="enum-list">
+                  {f.enums.map((val, j) => (
+                    <div className="enum-item" key={j}>
+                      <input
+                        type="text"
+                        value={val}
+                        onChange={e => updateEnum(i, j, e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="delete-btn"
+                        onClick={() => removeEnum(i, j)}
+                        aria-label="Delete enum"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                          <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                          <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                  <div className="enum-item">
+                    <input
+                      type="text"
+                      value={enumInputs[i] || ''}
+                      onChange={e => setEnumInputs(inp => ({ ...inp, [i]: e.target.value }))}
+                    />
+                    <button type="button" onClick={() => addEnum(i)}>Add</button>
+                  </div>
+                </div>
               </label>
               <label className="field-label">
                 Type
@@ -181,14 +239,61 @@ export default function SchemaEditor({ value, onChange }: Props) {
               />
             </label>
             <label className="field-label">
-              Enum (comma separated)
-              <input
-                type="text"
-                value={newField.enumVals}
-                onChange={e =>
-                  setNewField({ ...newField, enumVals: e.target.value })
-                }
-              />
+              Enum Values
+              <div className="enum-list">
+                {newField.enums.map((val, j) => (
+                  <div className="enum-item" key={j}>
+                    <input
+                      type="text"
+                      value={val}
+                      onChange={e =>
+                        setNewField({
+                          ...newField,
+                          enums: newField.enums.map((v, k) =>
+                            k === j ? e.target.value : v
+                          )
+                        })
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="delete-btn"
+                      onClick={() =>
+                        setNewField({
+                          ...newField,
+                          enums: newField.enums.filter((_, i) => i !== j)
+                        })
+                      }
+                      aria-label="Delete enum"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                        <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+                <div className="enum-item">
+                  <input
+                    type="text"
+                    value={newEnumInput}
+                    onChange={e => setNewEnumInput(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!newEnumInput.trim()) return;
+                      setNewField({
+                        ...newField,
+                        enums: [...newField.enums, newEnumInput.trim()]
+                      });
+                      setNewEnumInput('');
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
             </label>
             <label className="field-label">
               Type
