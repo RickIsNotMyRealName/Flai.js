@@ -6,12 +6,14 @@ import EditorHeader from './EditorHeader';
 
 export default function EditorPage({ onBack }: { onBack: () => void }) {
   return (
-    <div className="main editor-main">
+    <main className="main editor-page">
       <EditorHeader onBack={onBack} />
-      <WorkflowManager />
-      <NodePalette />
-      <EditorCanvas />
-      <PropertiesPanel />
-    </div>
+      <div className="editor-main">
+        <WorkflowManager />
+        <NodePalette />
+        <EditorCanvas />
+        <PropertiesPanel />
+      </div>
+    </main>
   );
 }
