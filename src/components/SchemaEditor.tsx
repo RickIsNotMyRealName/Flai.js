@@ -9,12 +9,14 @@ interface FieldDef {
   name: string;
   type: string;
   description: string;
+  enumVals: string;
 }
 
 const defaultField = (): FieldDef => ({
   name: '',
   type: 'string',
-  description: ''
+  description: '',
+  enumVals: ''
 });
 
 export default function SchemaEditor({ value, onChange }: Props) {
@@ -29,7 +31,8 @@ export default function SchemaEditor({ value, onChange }: Props) {
       const arr: FieldDef[] = Object.entries(obj).map(([key, def]: any) => ({
         name: key,
         type: def.type || 'string',
-        description: def.description || ''
+        description: def.description || '',
+        enumVals: Array.isArray(def.enum) ? def.enum.join(', ') : ''
       }));
       if (arr.length === 0) arr.push(defaultField());
       setFields(arr);
@@ -44,6 +47,10 @@ export default function SchemaEditor({ value, onChange }: Props) {
       if (!f.name) return;
       const prop: any = { type: f.type };
       if (f.description) prop.description = f.description;
+      if (f.enumVals) {
+        const vals = f.enumVals.split(',').map(v => v.trim()).filter(Boolean);
+        if (vals.length) prop.enum = vals;
+      }
       obj[f.name] = prop;
     });
     return JSON.stringify(obj, null, 2);
@@ -94,6 +101,11 @@ export default function SchemaEditor({ value, onChange }: Props) {
             value={f.description}
             onChange={e => updateField(i, 'description', e.target.value)}
           />
+          <input
+            placeholder="Enum (comma separated)"
+            value={f.enumVals}
+            onChange={e => updateField(i, 'enumVals', e.target.value)}
+          />
           <button type="button" className="delete-btn" onClick={() => removeField(i)}>
             🗑️
           </button>
@@ -120,6 +132,16 @@ export default function SchemaEditor({ value, onChange }: Props) {
                 value={newField.description}
                 onChange={e =>
                   setNewField({ ...newField, description: e.target.value })
+                }
+              />
+            </label>
+            <label className="field-label">
+              Enum (comma separated)
+              <input
+                type="text"
+                value={newField.enumVals}
+                onChange={e =>
+                  setNewField({ ...newField, enumVals: e.target.value })
                 }
               />
             </label>
