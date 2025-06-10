@@ -76,3 +76,4 @@ App
 - Run `npm run verify` before committing changes to compile, type-check and run the tests.
 - The repo currently uses plain CSS; switch to CSS Modules or Tailwind only if consistent with the design doc.
 - If the project structure or workflow changes, **update this `AGENTS.md`** to keep it current.
+- When submitting a PR with significant changes, add, modify or remove sections of this file so it accurately reflects the new state of the project.
