@@ -7,6 +7,7 @@ export default function WorkflowList({ onOpen }: { onOpen: (name: string) => voi
   const del = useWorkflowStore(s => s.deleteWorkflow);
   const dup = useWorkflowStore(s => s.duplicateWorkflow);
   const rename = useWorkflowStore(s => s.renameWorkflow);
+  const create = useWorkflowStore(s => s.createWorkflow);
 
   const [renaming, setRenaming] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
@@ -15,7 +16,16 @@ export default function WorkflowList({ onOpen }: { onOpen: (name: string) => voi
 
   return (
     <div className="workflow-list">
-      <h2>Workflows</h2>
+      <div className="list-header">
+        <h2>Workflows</h2>
+        <button
+          className="create-btn"
+          title="New Workflow"
+          onClick={() => onOpen(create())}
+        >
+          ➕
+        </button>
+      </div>
       <ul>
         {names.map((name) => (
           <li

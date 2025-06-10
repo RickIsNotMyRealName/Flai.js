@@ -4,6 +4,8 @@ import ErrorToast from './components/ErrorToast';
 import Sidebar from './components/Sidebar';
 import WorkflowList from './components/WorkflowList';
 import EditorPage from './components/EditorPage';
+import SettingsPage from './components/SettingsPage';
+import ToolsPage from './components/ToolsPage';
 import clsx from 'clsx';
 
 export default function App() {
@@ -11,7 +13,9 @@ export default function App() {
   const loadDefs = useWorkflowStore((s) => s.loadDefinitions);
   const loadWorkflow = useWorkflowStore((s) => s.loadWorkflow);
 
-  const [page, setPage] = useState<'workflows' | 'editor'>('workflows');
+  const [page, setPage] = useState<'workflows' | 'editor' | 'settings' | 'tools'>(
+    'workflows'
+  );
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}nodeTypes.json`)
@@ -27,16 +31,26 @@ export default function App() {
 
   return (
     <div className={clsx('app-container', theme)}>
-      {page === 'workflows' && (
-        <Sidebar current={page} onNavigate={setPage} />
+      {page !== 'editor' && (
+        <Sidebar
+          current={page as 'workflows' | 'settings' | 'tools'}
+          onNavigate={setPage}
+        />
       )}
-      {page === 'workflows' ? (
+
+      {page === 'workflows' && (
         <main className="main">
           <WorkflowList onOpen={openWorkflow} />
         </main>
-      ) : (
+      )}
+
+      {page === 'settings' && <SettingsPage />}
+      {page === 'tools' && <ToolsPage />}
+
+      {page === 'editor' && (
         <EditorPage onBack={() => setPage('workflows')} />
       )}
+
       <ErrorToast />
     </div>
   );

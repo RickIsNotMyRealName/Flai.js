@@ -29,6 +29,7 @@ interface WorkflowState {
   deleteWorkflow: (name: string) => void;
   duplicateWorkflow: (name: string) => void;
   renameWorkflow: (oldName: string, newName: string) => void;
+  createWorkflow: () => string;
 
   loadDefinitions: (json: {
     types: Record<string, string | null>;
@@ -168,6 +169,29 @@ export const useWorkflowStore = create<WorkflowState>()(
         if (s.workflowName === oldName) s.workflowName = newName;
         s.savedWorkflows = names;
       }),
+
+    createWorkflow: () => {
+      const list = localStorage.getItem('workflows');
+      const names = list ? JSON.parse(list) : [] as string[];
+      let idx = 1;
+      let base = 'Untitled';
+      let name = `${base} ${idx}`;
+      while (names.includes(name)) {
+        name = `${base} ${++idx}`;
+      }
+      const empty = JSON.stringify({ nodes: {}, edges: [] });
+      localStorage.setItem(`workflow.${name}`, empty);
+      names.push(name);
+      localStorage.setItem('workflows', JSON.stringify(names));
+      set((s) => {
+        s.nodes = {};
+        s.edges = [];
+        s.workflowName = name;
+        s.dirty = false;
+        s.savedWorkflows = names;
+      });
+      return name;
+    },
 
     loadDefinitions: (json) =>
       set((s) => {
