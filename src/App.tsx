@@ -6,6 +6,8 @@ import WorkflowList from './components/WorkflowList';
 import EditorPage from './components/EditorPage';
 import SettingsPage from './components/SettingsPage';
 import ToolsPage from './components/ToolsPage';
+import AssistantsPage from './components/AssistantsPage';
+import ChatPage from './components/ChatPage';
 import clsx from 'clsx';
 
 export default function App() {
@@ -14,9 +16,9 @@ export default function App() {
   const loadWorkflow = useWorkflowStore((s) => s.loadWorkflow);
   const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
 
-  const [page, setPage] = useState<'workflows' | 'editor' | 'settings' | 'tools'>(
-    'workflows'
-  );
+  const [page, setPage] = useState<
+    'workflows' | 'editor' | 'settings' | 'tools' | 'assistants' | 'chat'
+  >('workflows');
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}nodeTypes.json`)
@@ -39,7 +41,12 @@ export default function App() {
     <div className={clsx('app-container', theme)}>
       {page !== 'editor' && (
         <Sidebar
-          current={page as 'workflows' | 'settings' | 'tools'}
+          current={page as
+            | 'workflows'
+            | 'settings'
+            | 'tools'
+            | 'assistants'
+            | 'chat'}
           onNavigate={setPage}
         />
       )}
@@ -49,6 +56,9 @@ export default function App() {
           <WorkflowList onOpen={openWorkflow} onCreate={createAndOpen} />
         </main>
       )}
+
+      {page === 'assistants' && <AssistantsPage />}
+      {page === 'chat' && <ChatPage />}
 
       {page === 'settings' && <SettingsPage />}
       {page === 'tools' && <ToolsPage />}
