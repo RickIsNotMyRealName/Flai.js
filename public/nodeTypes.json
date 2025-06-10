@@ -5,6 +5,7 @@
     "Tool": null,
     "State": null,
     "Text": null,
+    "Json": null,
     "Embeddings": null,
     "OpenAIEmbeddings": "Embeddings",
     "WebSearch": "Tool",
@@ -146,6 +147,37 @@
       "fields": []
     },
     {
+      "id": "tool.start",
+      "name": "Tool Start",
+      "tags": ["tool", "start"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [],
+      "fields": [
+        { "id": "name", "label": "Name", "type": "string" },
+        { "id": "description", "label": "Description", "type": "string" },
+        { "id": "schema", "label": "JSON Schema", "type": "string" }
+      ]
+    },
+    {
+      "id": "tool.end",
+      "name": "Tool End",
+      "tags": ["tool", "end"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "stateIn",
+          "name": "State",
+          "direction": "input",
+          "type": "State",
+          "cardinality": "many",
+          "required": true
+        }
+      ],
+      "outputs": [],
+      "fields": []
+    },
+    {
       "id": "agent",
       "name": "Agent",
       "tags": ["agent"],
@@ -247,6 +279,49 @@
           "name": "Tool",
           "direction": "output",
           "type": "MCP",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "tool.in",
+      "name": "Tool Input",
+      "tags": ["tool", "json", "input"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "jsonOut",
+          "name": "JSON",
+          "direction": "output",
+          "type": "Json",
+          "cardinality": "many"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "tool.out",
+      "name": "Tool Output",
+      "tags": ["tool", "json", "output"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "jsonIn",
+          "name": "JSON",
+          "direction": "input",
+          "type": "Json",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "id": "toolOut",
+          "name": "Tool",
+          "direction": "output",
+          "type": "Tool",
           "cardinality": "many"
         }
       ],
