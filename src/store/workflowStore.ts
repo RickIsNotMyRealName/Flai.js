@@ -26,6 +26,8 @@ interface WorkflowState {
   refreshSavedWorkflows: () => void;
   saveWorkflow: (name: string) => void;
   loadWorkflow: (name: string) => void;
+  saveTool: (name: string) => void;
+  loadTool: (name: string) => void;
   deleteWorkflow: (name: string) => void;
   duplicateWorkflow: (name: string) => void;
   renameWorkflow: (oldName: string, newName: string) => void;
@@ -114,6 +116,40 @@ export const useWorkflowStore = create<WorkflowState>()(
           s.nodes = parsed.nodes;
           s.edges = parsed.edges;
           s.workflowName = name;
+          s.dirty = false;
+        } catch {
+          /* ignore parse errors */
+        }
+      }),
+
+    saveTool: (name) =>
+      set((s) => {
+        localStorage.setItem(
+          `tool.${name}`,
+          JSON.stringify({ nodes: s.nodes, edges: s.edges })
+        );
+        const list = localStorage.getItem('tools');
+        const names = list ? JSON.parse(list) : [];
+        if (!names.includes(name)) {
+          names.push(name);
+          localStorage.setItem('tools', JSON.stringify(names));
+        }
+        s.workflowName = `tool:${name}`;
+        s.dirty = false;
+      }),
+
+    loadTool: (name) =>
+      set((s) => {
+        const data = localStorage.getItem(`tool.${name}`);
+        if (!data) return;
+        try {
+          const parsed = JSON.parse(data) as {
+            nodes: Record<string, NodeInstance>;
+            edges: EdgeInstance[];
+          };
+          s.nodes = parsed.nodes;
+          s.edges = parsed.edges;
+          s.workflowName = `tool:${name}`;
           s.dirty = false;
         } catch {
           /* ignore parse errors */

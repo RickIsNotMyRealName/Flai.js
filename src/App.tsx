@@ -14,11 +14,13 @@ export default function App() {
   const theme = useWorkflowStore((s) => s.theme);
   const loadDefs = useWorkflowStore((s) => s.loadDefinitions);
   const loadWorkflow = useWorkflowStore((s) => s.loadWorkflow);
+  const loadTool = useWorkflowStore((s) => s.loadTool);
   const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
 
   const [page, setPage] = useState<
     'workflows' | 'editor' | 'settings' | 'tools' | 'assistants' | 'chat'
   >('workflows');
+  const [returnPage, setReturnPage] = useState<'workflows' | 'tools'>('workflows');
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}nodeTypes.json`)
@@ -29,11 +31,19 @@ export default function App() {
 
   const openWorkflow = (name: string) => {
     loadWorkflow(name);
+    setReturnPage('workflows');
+    setPage('editor');
+  };
+
+  const openTool = (name: string) => {
+    loadTool(name);
+    setReturnPage('tools');
     setPage('editor');
   };
 
   const createAndOpen = () => {
     createWorkflow();
+    setReturnPage('workflows');
     setPage('editor');
   };
 
@@ -61,10 +71,10 @@ export default function App() {
       {page === 'chat' && <ChatPage />}
 
       {page === 'settings' && <SettingsPage />}
-      {page === 'tools' && <ToolsPage />}
+      {page === 'tools' && <ToolsPage onOpen={openTool} />}
 
       {page === 'editor' && (
-        <EditorPage onBack={() => setPage('workflows')} />
+        <EditorPage onBack={() => setPage(returnPage)} />
       )}
 
       <ErrorToast />

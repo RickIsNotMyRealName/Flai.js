@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 
 export default function WorkflowManager() {
-  const save = useWorkflowStore((s) => s.saveWorkflow);
+  const saveWorkflow = useWorkflowStore((s) => s.saveWorkflow);
+  const saveTool = useWorkflowStore((s) => s.saveTool);
   const current = useWorkflowStore((s) => s.workflowName);
   const dirty = useWorkflowStore((s) => s.dirty);
   const nodes = useWorkflowStore((s) => s.nodes);
@@ -12,12 +13,16 @@ export default function WorkflowManager() {
   useEffect(() => {
     if (current && dirty) {
       try {
-        save(current);
+        if (current.startsWith('tool:')) {
+          saveTool(current.slice(5));
+        } else {
+          saveWorkflow(current);
+        }
       } catch {
         setToast('Auto-save failed');
       }
     }
-  }, [nodes, edges, current, dirty, save, setToast]);
+  }, [nodes, edges, current, dirty, saveWorkflow, saveTool, setToast]);
 
   /* Save actions are handled automatically via auto-save */
 

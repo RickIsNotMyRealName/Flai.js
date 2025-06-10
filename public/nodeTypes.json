@@ -147,6 +147,37 @@
       "fields": []
     },
     {
+      "id": "tool.start",
+      "name": "Tool Start",
+      "tags": ["tool", "start"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [],
+      "fields": [
+        { "id": "name", "label": "Name", "type": "string" },
+        { "id": "description", "label": "Description", "type": "string" },
+        { "id": "schema", "label": "JSON Schema", "type": "string" }
+      ]
+    },
+    {
+      "id": "tool.end",
+      "name": "Tool End",
+      "tags": ["tool", "end"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "stateIn",
+          "name": "State",
+          "direction": "input",
+          "type": "State",
+          "cardinality": "many",
+          "required": true
+        }
+      ],
+      "outputs": [],
+      "fields": []
+    },
+    {
       "id": "agent",
       "name": "Agent",
       "tags": ["agent"],
