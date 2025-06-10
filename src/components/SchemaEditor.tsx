@@ -19,12 +19,54 @@ const defaultField = (): FieldDef => ({
   enums: []
 });
 
+const isValidEnum = (type: string, val: string): boolean => {
+  const t = val.trim();
+  if (!t) return false;
+  try {
+    switch (type) {
+      case 'number':
+        return !isNaN(Number(t));
+      case 'boolean':
+        return t === 'true' || t === 'false';
+      case 'null':
+        return t === 'null';
+      case 'object':
+        return typeof JSON.parse(t) === 'object' && !Array.isArray(JSON.parse(t));
+      case 'array':
+        return Array.isArray(JSON.parse(t));
+      default:
+        return true;
+    }
+  } catch {
+    return false;
+  }
+};
+
+const parseEnum = (type: string, val: string): any => {
+  const t = val.trim();
+  switch (type) {
+    case 'number':
+      return Number(t);
+    case 'boolean':
+      return t === 'true';
+    case 'null':
+      return null;
+    case 'object':
+    case 'array':
+      return JSON.parse(t);
+    default:
+      return t;
+  }
+};
+
 export default function SchemaEditor({ value, onChange }: Props) {
   const [fields, setFields] = useState<FieldDef[]>([]);
   const [adding, setAdding] = useState(false);
   const [newField, setNewField] = useState<FieldDef>(defaultField());
   const [enumInputs, setEnumInputs] = useState<Record<number, string>>({});
+  const [enumErrors, setEnumErrors] = useState<Record<number, string>>({});
   const [newEnumInput, setNewEnumInput] = useState('');
+  const [newEnumError, setNewEnumError] = useState('');
 
   // parse incoming value
   useEffect(() => {
@@ -51,7 +93,10 @@ export default function SchemaEditor({ value, onChange }: Props) {
       if (!f.name) return;
       const prop: any = { type: f.type };
       if (f.description) prop.description = f.description;
-      const vals = f.enums.map(v => v.trim()).filter(Boolean);
+      const vals = f.enums
+        .map(v => v.trim())
+        .filter(Boolean)
+        .map(v => parseEnum(f.type, v));
       if (vals.length) prop.enum = vals;
       obj[f.name] = prop;
     });
@@ -74,19 +119,14 @@ export default function SchemaEditor({ value, onChange }: Props) {
     });
   };
 
-  const updateEnum = (fieldIdx: number, enumIdx: number, val: string) => {
-    updateFields(prev => {
-      const next = prev.slice();
-      const enums = next[fieldIdx].enums.slice();
-      enums[enumIdx] = val;
-      next[fieldIdx] = { ...next[fieldIdx], enums };
-      return next;
-    });
-  };
 
   const addEnum = (fieldIdx: number) => {
     const val = (enumInputs[fieldIdx] || '').trim();
     if (!val) return;
+    if (!isValidEnum(fields[fieldIdx].type, val)) {
+      setEnumErrors(errs => ({ ...errs, [fieldIdx]: 'Invalid value' }));
+      return;
+    }
     updateFields(prev => {
       const next = prev.slice();
       const enums = next[fieldIdx].enums.concat(val);
@@ -94,6 +134,7 @@ export default function SchemaEditor({ value, onChange }: Props) {
       return next;
     });
     setEnumInputs(inputs => ({ ...inputs, [fieldIdx]: '' }));
+    setEnumErrors(errs => ({ ...errs, [fieldIdx]: '' }));
   };
 
   const removeEnum = (fieldIdx: number, enumIdx: number) => {
@@ -167,36 +208,38 @@ export default function SchemaEditor({ value, onChange }: Props) {
               </label>
               <label className="field-label">
                 Enum Values
-                <div className="enum-list">
+                <div className="enum-tags">
                   {f.enums.map((val, j) => (
-                    <div className="enum-item" key={j}>
-                      <input
-                        type="text"
-                        value={val}
-                        onChange={e => updateEnum(i, j, e.target.value)}
-                      />
+                    <span className="enum-tag" key={j}>
+                      {val}
                       <button
                         type="button"
                         className="delete-btn"
                         onClick={() => removeEnum(i, j)}
                         aria-label="Delete enum"
                       >
-                        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                        <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
                           <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                           <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                         </svg>
                       </button>
-                    </div>
+                    </span>
                   ))}
-                  <div className="enum-item">
-                    <input
-                      type="text"
-                      value={enumInputs[i] || ''}
-                      onChange={e => setEnumInputs(inp => ({ ...inp, [i]: e.target.value }))}
-                    />
-                    <button type="button" onClick={() => addEnum(i)}>Add</button>
-                  </div>
                 </div>
+                <div className="enum-item">
+                  <input
+                    type="text"
+                    value={enumInputs[i] || ''}
+                    onChange={e => setEnumInputs(inp => ({ ...inp, [i]: e.target.value }))}
+                  />
+                  <button type="button" className="add-btn" onClick={() => addEnum(i)} aria-label="Add enum">
+                    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                      <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      <line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                </div>
+                {enumErrors[i] && <div className="enum-error">{enumErrors[i]}</div>}
               </label>
               <label className="field-label">
                 Type
@@ -240,21 +283,10 @@ export default function SchemaEditor({ value, onChange }: Props) {
             </label>
             <label className="field-label">
               Enum Values
-              <div className="enum-list">
+              <div className="enum-tags">
                 {newField.enums.map((val, j) => (
-                  <div className="enum-item" key={j}>
-                    <input
-                      type="text"
-                      value={val}
-                      onChange={e =>
-                        setNewField({
-                          ...newField,
-                          enums: newField.enums.map((v, k) =>
-                            k === j ? e.target.value : v
-                          )
-                        })
-                      }
-                    />
+                  <span className="enum-tag" key={j}>
+                    {val}
                     <button
                       type="button"
                       className="delete-btn"
@@ -266,34 +298,45 @@ export default function SchemaEditor({ value, onChange }: Props) {
                       }
                       aria-label="Delete enum"
                     >
-                      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                      <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
                         <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                         <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                       </svg>
                     </button>
-                  </div>
+                  </span>
                 ))}
-                <div className="enum-item">
-                  <input
-                    type="text"
-                    value={newEnumInput}
-                    onChange={e => setNewEnumInput(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!newEnumInput.trim()) return;
-                      setNewField({
-                        ...newField,
-                        enums: [...newField.enums, newEnumInput.trim()]
-                      });
-                      setNewEnumInput('');
-                    }}
-                  >
-                    Add
-                  </button>
-                </div>
               </div>
+              <div className="enum-item">
+                <input
+                  type="text"
+                  value={newEnumInput}
+                  onChange={e => setNewEnumInput(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="add-btn"
+                  onClick={() => {
+                    if (!newEnumInput.trim()) return;
+                    if (!isValidEnum(newField.type, newEnumInput)) {
+                      setNewEnumError('Invalid value');
+                      return;
+                    }
+                    setNewField({
+                      ...newField,
+                      enums: [...newField.enums, newEnumInput.trim()]
+                    });
+                    setNewEnumInput('');
+                    setNewEnumError('');
+                  }}
+                  aria-label="Add enum"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                    <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </div>
+              {newEnumError && <div className="enum-error">{newEnumError}</div>}
             </label>
             <label className="field-label">
               Type
