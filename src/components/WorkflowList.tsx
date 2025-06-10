@@ -61,6 +61,7 @@ export default function WorkflowList({
               strokeLinecap="round"
             />
           </svg>
+          <span className="create-label">New</span>
         </button>
       </div>
       <ul>

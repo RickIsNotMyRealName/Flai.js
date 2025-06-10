@@ -428,16 +428,25 @@
   color: #fff;
   border: none;
   border-radius: 4px;
-  width: 36px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   height: 36px;
+  padding: 0 10px;
   font-size: 1.3rem;
   cursor: pointer;
+}
+.create-btn svg {
+  flex: none;
 }
 .workflow-controls {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 0.75rem;
+}
+.create-label {
+  font-size: 0.9rem;
 }
 .workflow-search {
   flex: 1;
