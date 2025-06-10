@@ -605,7 +605,7 @@
 .field-summary .field-name {
   font-weight: bold;
   flex: 0 0 auto;
-  width: 8ch;
+  width: 5ch;
   border: none;
   background: transparent;
   color: var(--fg);
@@ -624,12 +624,12 @@
 
 .field-summary .field-type {
   margin-left: 4px;
-  padding: 2px 4px;
+  padding: 1px 3px;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
   color: var(--fg);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   width: auto;
 }
 .field-body {
