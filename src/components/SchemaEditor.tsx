@@ -81,36 +81,81 @@ export default function SchemaEditor({ value, onChange }: Props) {
 
   return (
     <div className="schema-editor">
-      {fields.map((f, i) => (
-        <div className="schema-field" key={i}>
-          <input
-            placeholder="Name"
-            value={f.name}
-            onChange={e => updateField(i, 'name', e.target.value)}
-          />
-          <select value={f.type} onChange={e => updateField(i, 'type', e.target.value)}>
-            <option value="string">string</option>
-            <option value="number">number</option>
-            <option value="object">object</option>
-            <option value="array">array</option>
-            <option value="boolean">boolean</option>
-            <option value="null">null</option>
-          </select>
-          <input
-            placeholder="Description"
-            value={f.description}
-            onChange={e => updateField(i, 'description', e.target.value)}
-          />
-          <input
-            placeholder="Enum (comma separated)"
-            value={f.enumVals}
-            onChange={e => updateField(i, 'enumVals', e.target.value)}
-          />
-          <button type="button" className="delete-btn" onClick={() => removeField(i)}>
-            🗑️
-          </button>
-        </div>
-      ))}
+      <ul>
+        {fields.map((f, i) => (
+          <li className="schema-field" key={i}>
+            <details>
+            <summary className="field-summary">
+              <span>{f.name || `Field ${i + 1}`}</span>
+              <button
+                type="button"
+                className="delete-btn"
+                onClick={() => removeField(i)}
+                aria-label="Delete field"
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                  <line
+                    x1="1"
+                    y1="1"
+                    x2="11"
+                    y2="11"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <line
+                    x1="11"
+                    y1="1"
+                    x2="1"
+                    y2="11"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </summary>
+            <div className="field-body">
+              <label className="field-label">
+                Name
+                <input
+                  type="text"
+                  value={f.name}
+                  onChange={e => updateField(i, 'name', e.target.value)}
+                />
+              </label>
+              <label className="field-label">
+                Description
+                <input
+                  type="text"
+                  value={f.description}
+                  onChange={e => updateField(i, 'description', e.target.value)}
+                />
+              </label>
+              <label className="field-label">
+                Enum (comma separated)
+                <input
+                  type="text"
+                  value={f.enumVals}
+                  onChange={e => updateField(i, 'enumVals', e.target.value)}
+                />
+              </label>
+              <label className="field-label">
+                Type
+                <select value={f.type} onChange={e => updateField(i, 'type', e.target.value)}>
+                  <option value="string">string</option>
+                  <option value="number">number</option>
+                  <option value="object">object</option>
+                  <option value="array">array</option>
+                  <option value="boolean">boolean</option>
+                  <option value="null">null</option>
+                </select>
+              </label>
+            </div>
+          </details>
+          </li>
+        ))}
+      </ul>
       <button type="button" onClick={addField}>Add Field</button>
       {adding && (
         <>

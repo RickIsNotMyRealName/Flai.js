@@ -562,16 +562,36 @@
   flex-direction: column;
   gap: 4px;
 }
-.schema-field {
+.schema-editor ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 4px;
 }
-.schema-field input,
-.schema-field select {
-  flex: 1;
+.schema-field details {
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 4px;
 }
-.schema-field .delete-btn {
+.field-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.field-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+.field-body input,
+.field-body select {
+  width: 100%;
+}
+.delete-btn {
   background: none;
   border: none;
   color: #d55;
