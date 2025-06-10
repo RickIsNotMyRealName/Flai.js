@@ -28,7 +28,26 @@ export default function WorkflowList({
           title="New Workflow"
           onClick={onCreate}
         >
-          ⊕
+          <svg width="16" height="16" viewBox="0 0 12 12" aria-hidden="true">
+            <line
+              x1="1"
+              y1="6"
+              x2="11"
+              y2="6"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <line
+              x1="6"
+              y1="1"
+              x2="6"
+              y2="11"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
         </button>
       </div>
       <ul>
