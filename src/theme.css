@@ -444,8 +444,6 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 0.75rem;
-  padding-bottom: 0.25rem;
-  border-bottom: 1px solid #6663;
 }
 .create-label {
   font-size: 0.9rem;
