@@ -27,7 +27,7 @@ export default function WorkflowList({
   return (
     <div className="workflow-list">
       <div className="list-header page-header">
-        <h2>Workflows</h2>
+        <h2>Agents</h2>
       </div>
       <div className="workflow-controls">
         <div className="search-wrap">
