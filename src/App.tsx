@@ -1,29 +1,62 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useWorkflowStore } from './store/workflowStore';
-import NodePalette from './components/NodePalette';
-import EditorCanvas from './components/EditorCanvas';
-import PropertiesPanel from './components/PropertiesPanel';
 import ErrorToast from './components/ErrorToast';
-import WorkflowManager from './components/WorkflowManager';
+import Sidebar from './components/Sidebar';
+import WorkflowList from './components/WorkflowList';
+import EditorPage from './components/EditorPage';
+import SettingsPage from './components/SettingsPage';
+import ToolsPage from './components/ToolsPage';
 import clsx from 'clsx';
 
 export default function App() {
-  const theme     = useWorkflowStore((s) => s.theme);
-  const loadDefs  = useWorkflowStore((s) => s.loadDefinitions);
+  const theme = useWorkflowStore((s) => s.theme);
+  const loadDefs = useWorkflowStore((s) => s.loadDefinitions);
+  const loadWorkflow = useWorkflowStore((s) => s.loadWorkflow);
+  const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
+
+  const [page, setPage] = useState<'workflows' | 'editor' | 'settings' | 'tools'>(
+    'workflows'
+  );
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}nodeTypes.json`)
       .then((r) => r.json())
       .then(loadDefs)
       .catch((err) => console.error('Failed to load node types', err));
-  }, []);
+  }, [loadDefs]);
+
+  const openWorkflow = (name: string) => {
+    loadWorkflow(name);
+    setPage('editor');
+  };
+
+  const createAndOpen = () => {
+    createWorkflow();
+    setPage('editor');
+  };
 
   return (
-    <div className={clsx('app', theme)}>
-      <WorkflowManager />
-      <NodePalette />
-      <EditorCanvas />
-      <PropertiesPanel />
+    <div className={clsx('app-container', theme)}>
+      {page !== 'editor' && (
+        <Sidebar
+          current={page as 'workflows' | 'settings' | 'tools'}
+          onNavigate={setPage}
+        />
+      )}
+
+      {page === 'workflows' && (
+        <main className="main">
+          <WorkflowList onOpen={openWorkflow} onCreate={createAndOpen} />
+        </main>
+      )}
+
+      {page === 'settings' && <SettingsPage />}
+      {page === 'tools' && <ToolsPage />}
+
+      {page === 'editor' && (
+        <EditorPage onBack={() => setPage('workflows')} />
+      )}
+
       <ErrorToast />
     </div>
   );

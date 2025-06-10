@@ -27,6 +27,9 @@ interface WorkflowState {
   saveWorkflow: (name: string) => void;
   loadWorkflow: (name: string) => void;
   deleteWorkflow: (name: string) => void;
+  duplicateWorkflow: (name: string) => void;
+  renameWorkflow: (oldName: string, newName: string) => void;
+  createWorkflow: () => string;
 
   loadDefinitions: (json: {
     types: Record<string, string | null>;
@@ -133,6 +136,58 @@ export const useWorkflowStore = create<WorkflowState>()(
         }
         s.savedWorkflows = names;
       }),
+
+    duplicateWorkflow: (name) =>
+      set((s) => {
+        const data = localStorage.getItem(`workflow.${name}`);
+        if (!data) return;
+        const list = localStorage.getItem('workflows');
+        const names = list ? JSON.parse(list) : [];
+        let newName = `${name} copy`;
+        let i = 2;
+        while (names.includes(newName)) {
+          newName = `${name} copy ${i++}`;
+        }
+        localStorage.setItem(`workflow.${newName}`, data);
+        names.push(newName);
+        localStorage.setItem('workflows', JSON.stringify(names));
+        s.savedWorkflows = names;
+      }),
+
+    renameWorkflow: (oldName, newName) =>
+      set((s) => {
+        const data = localStorage.getItem(`workflow.${oldName}`);
+        if (!data) return;
+        localStorage.setItem(`workflow.${newName}`, data);
+        localStorage.removeItem(`workflow.${oldName}`);
+        const list = localStorage.getItem('workflows');
+        let names = list ? JSON.parse(list) : [];
+        const idx = names.indexOf(oldName);
+        if (idx !== -1) names.splice(idx, 1);
+        if (!names.includes(newName)) names.push(newName);
+        localStorage.setItem('workflows', JSON.stringify(names));
+        if (s.workflowName === oldName) s.workflowName = newName;
+        s.savedWorkflows = names;
+      }),
+
+    createWorkflow: () => {
+      const list = localStorage.getItem('workflows');
+      const names = list ? JSON.parse(list) : ([] as string[]);
+      let idx = 1;
+      const base = 'Untitled';
+      let name = `${base} ${idx}`;
+      while (names.includes(name)) {
+        name = `${base} ${++idx}`;
+      }
+      set((s) => {
+        s.nodes = {};
+        s.edges = [];
+        s.workflowName = name;
+        /* mark as clean so autosave doesn't immediately persist */
+        s.dirty = false;
+      });
+      return name;
+    },
 
     loadDefinitions: (json) =>
       set((s) => {
