@@ -30,12 +30,33 @@ export default function WorkflowList({
         <h2>Workflows</h2>
       </div>
       <div className="workflow-controls">
-        <input
-          className="workflow-search"
-          placeholder="Search workflows"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-        />
+        <div className="search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <circle
+              cx="11"
+              cy="11"
+              r="7"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+            />
+            <line
+              x1="16"
+              y1="16"
+              x2="22"
+              y2="22"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+          <input
+            className="workflow-search"
+            placeholder="Search workflows"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+          />
+        </div>
         <button
           className="create-btn"
           title="New Workflow"
