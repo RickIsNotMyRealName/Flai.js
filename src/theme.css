@@ -696,6 +696,7 @@ details[open] .field-summary .toggle-icon {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding: 0 4px 4px;
   margin-top: 4px;
 }
 .field-body select {
