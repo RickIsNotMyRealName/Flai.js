@@ -615,7 +615,7 @@
 details[open] .field-summary .toggle-icon {
   transform: rotate(90deg);
 }
-.field-summary .field-name {
+.schema-editor .field-summary .field-name {
   font-weight: bold;
   flex: 0 0 auto;
   margin-right: 4px;
@@ -628,15 +628,15 @@ details[open] .field-summary .toggle-icon {
   padding: 2px 4px;
   transition: width 0.15s ease;
 }
-.field-summary .field-name:hover {
+.schema-editor .field-summary .field-name:hover {
   outline: 1px solid var(--accent);
 }
-.field-summary .field-name:focus {
+.schema-editor .field-summary .field-name:focus {
   outline: 1px solid var(--accent);
   width: 12ch;
 }
 
-.field-summary .field-desc {
+.schema-editor .field-summary .field-desc {
   flex: 1 1 auto;
   margin-right: auto;
   min-width: 12ch;
@@ -649,10 +649,10 @@ details[open] .field-summary .toggle-icon {
   padding: 2px 4px;
   transition: width 0.15s ease;
 }
-.field-summary .field-desc:hover {
+.schema-editor .field-summary .field-desc:hover {
   outline: 1px solid var(--accent);
 }
-.field-summary .field-desc:focus {
+.schema-editor .field-summary .field-desc:focus {
   outline: 1px solid var(--accent);
   width: 24ch;
 }
