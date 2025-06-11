@@ -167,9 +167,20 @@
   z-index: 10;
   min-width: 240px;
 }
+.modal-large {
+  width: 95vw;
+  max-width: 1000px;
+  max-height: 95vh;
+  overflow-y: auto;
+}
 .modal input[type="text"] {
   width: 100%;
   margin-top: 0.5rem;
+}
+
+/* Override modal input margin for compact schema editor summary fields */
+.schema-editor .field-summary input[type="text"] {
+  margin-top: 0;
 }
 .modal-buttons {
   display: flex;
@@ -209,11 +220,25 @@
   display: block;
   margin-bottom: 0.5rem;
 }
-.field-label > input,
 .field-label > select {
   display: block;
   margin-top: 0.25rem;
   width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+}
+.field-label > input {
+  display: block;
+  margin-top: 0.25rem;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
 }
 .field-label > .switch {
   display: block;
@@ -554,5 +579,205 @@
 }
 .workflow-item .item-actions button {
   margin-left: 8px;
+}
+
+/* Schema Editor */
+.schema-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.schema-editor ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.schema-field details {
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: #6661;
+}
+.schema-field summary {
+  list-style: none;
+}
+.schema-field summary::-webkit-details-marker {
+  display: none;
+}
+.field-summary {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px;
+}
+.field-summary .toggle-icon {
+  transition: transform 0.2s;
+  flex: none;
+}
+details[open] .field-summary .toggle-icon {
+  transform: rotate(90deg);
+}
+.schema-editor .field-summary .field-name {
+  font-weight: bold;
+  flex: 0 0 auto;
+  margin-right: 4px;
+  width: 12ch;
+  height: 24px;
+  box-sizing: border-box;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 1rem;
+  line-height: 24px;
+  padding: 0 4px;
+  transition: width 0.15s ease;
+}
+.schema-editor .field-summary .field-name:hover {
+  outline: 1px solid var(--accent);
+}
+.schema-editor .field-summary .field-name:focus {
+  outline: 1px solid var(--accent);
+  width: 24ch;
+}
+
+.schema-editor .field-summary .field-desc {
+  flex: 1 1 auto;
+  margin-right: auto;
+  min-width: 12ch;
+  width: 12ch;
+  height: 24px;
+  box-sizing: border-box;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 1rem;
+  line-height: 24px;
+  padding: 0 4px;
+  transition: width 0.15s ease;
+}
+.schema-editor .field-summary .field-desc:hover {
+  outline: 1px solid var(--accent);
+}
+.schema-editor .field-summary .field-desc:focus {
+  outline: 1px solid var(--accent);
+  width: 24ch;
+}
+
+.field-summary .field-type {
+  margin-left: auto;
+  margin-right: 4px;
+  padding: 0 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 1rem;
+  line-height: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  width: auto;
+  align-self: center;
+}
+.field-summary .delete-btn {
+  margin-left: 0;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.field-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 4px 4px;
+  margin-top: 4px;
+}
+.field-body select {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+}
+.field-body input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+}
+.delete-btn {
+  background: none;
+  border: none;
+  color: #d55;
+  cursor: pointer;
+}
+
+/* Enum editing */
+.enum-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.enum-tag {
+  display: inline-flex;
+  align-items: center;
+  background: #6662;
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 0.9rem;
+  gap: 6px;
+  line-height: 1;
+}
+.enum-tag button {
+  background: none;
+  border: none;
+  color: #d55;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+.enum-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.enum-item input {
+  flex: 1;
+  height: 24px;
+  box-sizing: border-box;
+  line-height: 24px;
+}
+.add-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 0;
+}
+.enum-error {
+  color: #d55;
+  font-size: 0.8rem;
+  margin-top: 2px;
 }
 
