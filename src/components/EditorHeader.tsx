@@ -4,6 +4,7 @@ import SchemaEditor from './SchemaEditor';
 
 export default function EditorHeader({ onBack }: { onBack: () => void }) {
   const name = useWorkflowStore(s => s.workflowName);
+  const displayName = name.startsWith('tool:') ? name.slice(5) : name;
   const dirty = useWorkflowStore(s => s.dirty);
   const rename = useWorkflowStore(s => s.renameWorkflow);
   const toolMeta = useWorkflowStore(s => s.toolMeta);
@@ -11,7 +12,7 @@ export default function EditorHeader({ onBack }: { onBack: () => void }) {
   const renameTool = useWorkflowStore(s => s.renameTool);
 
   const [editing, setEditing] = useState(false);
-  const [newName, setNewName] = useState(name);
+  const [newName, setNewName] = useState(displayName);
   const [cfgOpen, setCfgOpen] = useState(false);
   const [cfgName, setCfgName] = useState(
     toolMeta?.name || (name.startsWith('tool:') ? name.slice(5) : '')
@@ -20,7 +21,7 @@ export default function EditorHeader({ onBack }: { onBack: () => void }) {
   const [cfgSchema, setCfgSchema] = useState(toolMeta?.schema || '');
 
   const startEdit = () => {
-    setNewName(name);
+    setNewName(displayName);
     setEditing(true);
   };
 
@@ -51,8 +52,12 @@ export default function EditorHeader({ onBack }: { onBack: () => void }) {
   };
 
   const save = () => {
-    if (newName && newName !== name) {
-      rename(name, newName);
+    if (newName && newName !== displayName) {
+      if (name.startsWith('tool:')) {
+        renameTool(name.slice(5), newName);
+      } else {
+        rename(name, newName);
+      }
     }
     setEditing(false);
   };
@@ -81,7 +86,7 @@ export default function EditorHeader({ onBack }: { onBack: () => void }) {
           </button>
         )}
         <h2 className="editor-title">
-          {name}
+          {displayName}
           {dirty && <span className="unsaved">*</span>}
           <button
             className="name-edit-btn"
