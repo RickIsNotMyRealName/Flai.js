@@ -627,8 +627,8 @@ details[open] .field-summary .toggle-icon {
   background: var(--bg);
   color: var(--fg);
   font-size: 1rem;
-  line-height: 20px;
-  padding: 2px 4px;
+  line-height: 24px;
+  padding: 0 4px;
   transition: width 0.15s ease;
 }
 .schema-editor .field-summary .field-name:hover {
@@ -651,8 +651,8 @@ details[open] .field-summary .toggle-icon {
   background: var(--bg);
   color: var(--fg);
   font-size: 1rem;
-  line-height: 20px;
-  padding: 2px 4px;
+  line-height: 24px;
+  padding: 0 4px;
   transition: width 0.15s ease;
 }
 .schema-editor .field-summary .field-desc:hover {
@@ -666,12 +666,13 @@ details[open] .field-summary .toggle-icon {
 .field-summary .field-type {
   margin-left: auto;
   margin-right: 4px;
-  padding: 2px 4px;
+  padding: 0 4px;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
   color: var(--fg);
   font-size: 1rem;
+  line-height: 24px;
   height: 24px;
   box-sizing: border-box;
   width: auto;
