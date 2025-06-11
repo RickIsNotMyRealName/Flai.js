@@ -621,7 +621,8 @@ details[open] .field-summary .toggle-icon {
   margin-right: 4px;
   width: 12ch;
   height: 24px;
-  line-height: 20px;
+  line-height: 18px;
+  vertical-align: middle;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
@@ -644,7 +645,8 @@ details[open] .field-summary .toggle-icon {
   min-width: 12ch;
   width: 12ch;
   height: 24px;
-  line-height: 20px;
+  line-height: 18px;
+  vertical-align: middle;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
