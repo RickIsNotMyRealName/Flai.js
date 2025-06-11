@@ -24,6 +24,8 @@ export interface NodeType {
   name: string;
   icon?: string;
   tags: string[];
+  /** Optional palette category */
+  category?: string;
   layout: 'singleRow';
   inputs: Pin[];
   outputs: Pin[];

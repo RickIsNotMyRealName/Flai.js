@@ -248,6 +248,7 @@ export const useWorkflowStore = create<WorkflowState>()(
             id: typeId,
             name,
             tags: ['tool', 'custom'],
+            category: 'Custom Tools',
             layout: 'singleRow',
             inputs: [],
             outputs: [

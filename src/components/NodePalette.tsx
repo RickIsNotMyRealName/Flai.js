@@ -24,6 +24,18 @@ export default function NodePalette({ editor }: Props) {
     );
   }, [nodeTypes, query, editor]);
 
+  const grouped = useMemo(() => {
+    const map = new Map<string, typeof filtered>();
+    filtered.forEach((nt) => {
+      const cat = nt.category || 'Other';
+      if (!map.has(cat)) map.set(cat, [] as typeof filtered);
+      map.get(cat)!.push(nt);
+    });
+    return Array.from(map.entries());
+  }, [filtered]);
+
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
   return (
     <div className="palette-wrapper">
       <button
@@ -113,17 +125,35 @@ export default function NodePalette({ editor }: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <ul>
-            {filtered.map((nt) => (
-              <li
-                key={nt.id}
-                draggable
-                onDragStart={(e) => {
-                  e.dataTransfer.setData('application/x-node-type', nt.id);
-                }}
-              >
-                {nt.icon && <img src={nt.icon} alt="" />}
-                {nt.name}
+          <ul className="palette-list">
+            {grouped.map(([cat, nts]) => (
+              <li key={cat} className="palette-category">
+                <button
+                  type="button"
+                  className="category-header"
+                  onClick={() =>
+                    setCollapsed((c) => ({ ...c, [cat]: !c[cat] }))
+                  }
+                >
+                  <span className="arrow">{collapsed[cat] ? '▶' : '▼'}</span>
+                  {cat}
+                </button>
+                {!collapsed[cat] && (
+                  <ul className="category-items">
+                    {nts.map((nt) => (
+                      <li
+                        key={nt.id}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData('application/x-node-type', nt.id);
+                        }}
+                      >
+                        {nt.icon && <img src={nt.icon} alt="" />}
+                        {nt.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>

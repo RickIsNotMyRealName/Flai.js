@@ -68,6 +68,36 @@
   border: 1px solid #6663;
   border-radius: 8px;
 }
+.palette-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.palette-category {
+  list-style: none;
+  margin-bottom: 0.5rem;
+}
+.category-header {
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 2px 0;
+}
+.category-header .arrow {
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+  margin-right: 4px;
+}
+.category-items {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 2px 0 0;
+}
 .canvas { flex: 1; }
 .props {
   width: 260px;
