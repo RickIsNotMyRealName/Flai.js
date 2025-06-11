@@ -16,6 +16,7 @@ export default function App() {
   const loadWorkflow = useWorkflowStore((s) => s.loadWorkflow);
   const loadTool = useWorkflowStore((s) => s.loadTool);
   const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
+  const refreshTools = useWorkflowStore(s => s.refreshToolNodes);
 
   const [page, setPage] = useState<
     'workflows' | 'editor' | 'settings' | 'tools' | 'assistants' | 'chat'
@@ -25,9 +26,12 @@ export default function App() {
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}nodeTypes.json`)
       .then((r) => r.json())
-      .then(loadDefs)
+      .then((json) => {
+        loadDefs(json);
+        refreshTools();
+      })
       .catch((err) => console.error('Failed to load node types', err));
-  }, [loadDefs]);
+  }, [loadDefs, refreshTools]);
 
   const openWorkflow = (name: string) => {
     loadWorkflow(name);

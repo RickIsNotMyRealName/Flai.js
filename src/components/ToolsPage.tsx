@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import SchemaEditor from './SchemaEditor';
 import { v4 as uuid } from 'uuid';
+import { useWorkflowStore } from '../store/workflowStore';
 import type { NodeInstance, EdgeInstance, ToolData, ToolMeta } from '../types';
 
 
 export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }) {
   const [tools, setTools] = useState<string[]>([]);
   const [query, setQuery] = useState('');
+
+  const refreshNodes = useWorkflowStore(s => s.refreshToolNodes);
 
   const [editing, setEditing] = useState<string | null>(null);
   const [metaName, setMetaName] = useState('');
@@ -17,6 +20,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
   const refresh = () => {
     const list = localStorage.getItem('tools');
     setTools(list ? JSON.parse(list) : []);
+    refreshNodes();
   };
 
   useEffect(() => {
@@ -97,6 +101,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
     list.push(name);
     localStorage.setItem('tools', JSON.stringify(list));
     setTools(list);
+    refreshNodes();
     openEdit(name);
   };
 
@@ -123,6 +128,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
     setEditing(null);
     setData(null);
     refresh();
+    refreshNodes();
   };
 
   const deleteTool = (name: string) => {
@@ -133,6 +139,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
     localStorage.setItem('tools', JSON.stringify(names));
     localStorage.removeItem(`tool.${name}`);
     setTools(names);
+    refreshNodes();
   };
 
   const filtered = tools.filter(t => t.toLowerCase().includes(query.toLowerCase()));
