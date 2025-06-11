@@ -593,7 +593,6 @@
 .schema-field details {
   border: 1px solid var(--accent);
   border-radius: 4px;
-  padding: 4px;
   background: #6661;
 }
 .schema-field summary {
@@ -607,6 +606,7 @@
   align-items: center;
   gap: 4px;
   cursor: pointer;
+  padding: 4px;
 }
 .field-summary .toggle-icon {
   transition: transform 0.2s;
@@ -627,6 +627,7 @@ details[open] .field-summary .toggle-icon {
   background: var(--bg);
   color: var(--fg);
   font-size: 1rem;
+  line-height: 20px;
   padding: 2px 4px;
   transition: width 0.15s ease;
 }
@@ -650,6 +651,7 @@ details[open] .field-summary .toggle-icon {
   background: var(--bg);
   color: var(--fg);
   font-size: 1rem;
+  line-height: 20px;
   padding: 2px 4px;
   transition: width 0.15s ease;
 }
