@@ -12,7 +12,9 @@
     "Calculator": "Tool",
     "MCP": "Tool",
     "Curl": "Tool",
-    "Webhook": "Tool"
+    "Webhook": "Tool",
+    "ToolArgs": null,
+    "Message": null
   },
   "nodes": [
     {
@@ -159,10 +161,10 @@
       "inputs": [],
       "outputs": [
         {
-          "id": "stateOut",
-          "name": "State",
+          "id": "argsOut",
+          "name": "ToolArgs",
           "direction": "output",
-          "type": "State",
+          "type": "ToolArgs",
           "cardinality": "one",
           "required": true
         }
@@ -448,6 +450,110 @@
           "default": false
         }
       ]
+    },
+    {
+      "id": "toolargs.tojson",
+      "name": "ToolArgs to JSON",
+      "tags": ["toolargs", "json"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "argsIn",
+          "name": "ToolArgs",
+          "direction": "input",
+          "type": "ToolArgs",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "id": "jsonOut",
+          "name": "Json",
+          "direction": "output",
+          "type": "Json",
+          "cardinality": "one"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "toolargs.totext",
+      "name": "ToolArgs to Text",
+      "tags": ["toolargs", "text"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "argsIn",
+          "name": "ToolArgs",
+          "direction": "input",
+          "type": "ToolArgs",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "id": "textOut",
+          "name": "Text",
+          "direction": "output",
+          "type": "Text",
+          "cardinality": "one"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "toolargs.tomessage",
+      "name": "ToolArgs to Message",
+      "tags": ["toolargs", "message"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "argsIn",
+          "name": "ToolArgs",
+          "direction": "input",
+          "type": "ToolArgs",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "id": "msgOut",
+          "name": "Message",
+          "direction": "output",
+          "type": "Message",
+          "cardinality": "one"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "state.from.message",
+      "name": "Create State from Message",
+      "tags": ["state", "message"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "msgIn",
+          "name": "Message",
+          "direction": "input",
+          "type": "Message",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "id": "stateOut",
+          "name": "State",
+          "direction": "output",
+          "type": "State",
+          "cardinality": "one"
+        }
+      ],
+      "fields": []
     }
   ]
 }

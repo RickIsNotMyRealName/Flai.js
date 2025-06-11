@@ -144,10 +144,14 @@ describe('validateWorkflow', () => {
   it('validates tool workflows with start and end', () => {
     const nodes: Record<string, NodeInstance> = {
       start: makeNode('tool.start', 'start'),
+      toMsg: makeNode('toolargs.tomessage', 'toMsg'),
+      toState: makeNode('state.from.message', 'toState'),
       end: makeNode('tool.end', 'end')
     };
     const edges: EdgeInstance[] = [
-      { id: 'e1', from: { uuid: 'start', pin: 'stateOut' }, to: { uuid: 'end', pin: 'stateIn' } }
+      { id: 'e1', from: { uuid: 'start', pin: 'argsOut' }, to: { uuid: 'toMsg', pin: 'argsIn' } },
+      { id: 'e2', from: { uuid: 'toMsg', pin: 'msgOut' }, to: { uuid: 'toState', pin: 'msgIn' } },
+      { id: 'e3', from: { uuid: 'toState', pin: 'stateOut' }, to: { uuid: 'end', pin: 'stateIn' } }
     ];
     expect(
       validateWorkflow(nodes, edges, nodeTypes, hierarchy, 'tool')
