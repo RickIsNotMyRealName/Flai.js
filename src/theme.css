@@ -660,17 +660,24 @@ details[open] .field-summary .toggle-icon {
 .field-summary .field-type {
   margin-left: auto;
   margin-right: 4px;
-  padding: 1px 3px;
+  padding: 2px 4px;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
   color: var(--fg);
-  font-size: 0.8rem;
+  font-size: 1rem;
+  line-height: 1;
+  height: calc(1em + 4px);
   width: auto;
   align-self: center;
 }
 .field-summary .delete-btn {
   margin-left: 0;
+  width: calc(1em + 4px);
+  height: calc(1em + 4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .field-body {
   display: flex;
