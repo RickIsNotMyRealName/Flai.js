@@ -667,14 +667,14 @@ details[open] .field-summary .toggle-icon {
   color: var(--fg);
   font-size: 1rem;
   line-height: 1;
-  height: calc(1em + 4px);
+  height: 24px;
   width: auto;
   align-self: center;
 }
 .field-summary .delete-btn {
   margin-left: 0;
-  width: calc(1em + 4px);
-  height: calc(1em + 4px);
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
