@@ -621,8 +621,8 @@ details[open] .field-summary .toggle-icon {
   margin-right: 4px;
   width: 12ch;
   height: 24px;
-  line-height: 18px;
-  vertical-align: middle;
+  line-height: 20px;
+  box-sizing: border-box;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
@@ -645,8 +645,8 @@ details[open] .field-summary .toggle-icon {
   min-width: 12ch;
   width: 12ch;
   height: 24px;
-  line-height: 18px;
-  vertical-align: middle;
+  line-height: 20px;
+  box-sizing: border-box;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
@@ -674,6 +674,7 @@ details[open] .field-summary .toggle-icon {
   font-size: 1rem;
   line-height: 1;
   height: 24px;
+  box-sizing: border-box;
   width: auto;
   align-self: center;
 }
@@ -681,6 +682,7 @@ details[open] .field-summary .toggle-icon {
   margin-left: 0;
   width: 24px;
   height: 24px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
