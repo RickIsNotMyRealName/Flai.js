@@ -34,6 +34,7 @@ interface WorkflowState {
   duplicateWorkflow: (name: string) => void;
   renameWorkflow: (oldName: string, newName: string) => void;
   renameTool: (oldName: string, newName: string) => void;
+  refreshToolNodes: () => void;
   createWorkflow: () => string;
 
   loadDefinitions: (json: {
@@ -57,7 +58,7 @@ interface WorkflowState {
 }
 
 export const useWorkflowStore = create<WorkflowState>()(
-  immer((set) => ({
+  immer((set, get) => ({
     toast: null,
     nodeTypes: [],
     typeHierarchy: {},
@@ -126,7 +127,7 @@ export const useWorkflowStore = create<WorkflowState>()(
         }
       }),
 
-    saveTool: (name) =>
+    saveTool: (name) => {
       set((s) => {
         const meta = s.toolMeta || { name, description: '', schema: '' };
         const payload: ToolData = { meta, nodes: s.nodes, edges: s.edges };
@@ -139,7 +140,9 @@ export const useWorkflowStore = create<WorkflowState>()(
         }
         s.workflowName = `tool:${name}`;
         s.dirty = false;
-      }),
+      });
+      get().refreshToolNodes();
+    },
 
     loadTool: (name) =>
       set((s) => {
@@ -213,7 +216,7 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.savedWorkflows = names;
       }),
 
-    renameTool: (oldName, newName) =>
+    renameTool: (oldName, newName) => {
       set((s) => {
         const data = localStorage.getItem(`tool.${oldName}`);
         if (!data) return;
@@ -226,7 +229,43 @@ export const useWorkflowStore = create<WorkflowState>()(
         if (!names.includes(newName)) names.push(newName);
         localStorage.setItem('tools', JSON.stringify(names));
         if (s.workflowName === `tool:${oldName}`) s.workflowName = `tool:${newName}`;
-      }),
+      });
+      get().refreshToolNodes();
+    },
+
+    refreshToolNodes: () => {
+      const list = localStorage.getItem('tools');
+      const names: string[] = list ? JSON.parse(list) : [];
+      set((s) => {
+        s.nodeTypes = s.nodeTypes.filter(
+          (nt) => !nt.id.startsWith('tool.custom.')
+        );
+        names.forEach((name) => {
+          const slug = name.replace(/[^a-z0-9]/gi, '_');
+          const typeId = `tool.custom.${slug}`;
+          const outType = `CustomTool_${slug}`;
+          s.nodeTypes.push({
+            id: typeId,
+            name,
+            tags: ['tool', 'custom'],
+            layout: 'singleRow',
+            inputs: [],
+            outputs: [
+              {
+                id: 'toolOut',
+                name: 'Tool',
+                direction: 'output',
+                type: outType,
+                cardinality: 'many',
+              },
+            ],
+            fields: [],
+            editors: ['agent', 'tool'],
+          });
+          s.typeHierarchy[outType] = 'Tool';
+        });
+      });
+    },
 
     createWorkflow: () => {
       const list = localStorage.getItem('workflows');
@@ -247,11 +286,13 @@ export const useWorkflowStore = create<WorkflowState>()(
       return name;
     },
 
-    loadDefinitions: (json) =>
+    loadDefinitions: (json) => {
       set((s) => {
         s.nodeTypes = json.nodes;
         s.typeHierarchy = json.types;
-      }),
+      });
+      get().refreshToolNodes();
+    },
 
     addNode: (typeId, position) =>
       set((s) => {
