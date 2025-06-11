@@ -758,6 +758,8 @@ details[open] .field-summary .toggle-icon {
 .enum-item input {
   flex: 1;
   height: 24px;
+  box-sizing: border-box;
+  line-height: 24px;
 }
 .add-btn {
   background: var(--accent);
@@ -766,6 +768,7 @@ details[open] .field-summary .toggle-icon {
   border-radius: 4px;
   width: 24px;
   height: 24px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
