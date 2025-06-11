@@ -10,7 +10,9 @@
     "OpenAIEmbeddings": "Embeddings",
     "WebSearch": "Tool",
     "Calculator": "Tool",
-    "MCP": "Tool"
+    "MCP": "Tool",
+    "Curl": "Tool",
+    "Webhook": "Tool"
   },
   "nodes": [
     {
@@ -293,6 +295,159 @@
         }
       ],
       "fields": []
+    },
+    {
+      "id": "tool.curl",
+      "name": "cURL Request",
+      "tags": ["tool", "http", "curl"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "toolOut",
+          "name": "Tool",
+          "direction": "output",
+          "type": "Curl",
+          "cardinality": "many"
+        }
+      ],
+      "fields": [
+        {
+          "id": "url",
+          "label": "URL",
+          "type": "string",
+          "required": true
+        },
+        {
+          "id": "method",
+          "label": "Method",
+          "type": "enum",
+          "options": ["GET", "POST", "PUT", "DELETE"],
+          "default": "GET"
+        },
+        {
+          "id": "headers",
+          "label": "Headers",
+          "type": "string",
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "tool.webhook",
+      "name": "Webhook",
+      "tags": ["tool", "webhook"],
+      "layout": "singleRow",
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "toolOut",
+          "name": "Tool",
+          "direction": "output",
+          "type": "Webhook",
+          "cardinality": "many"
+        }
+      ],
+      "fields": [
+        {
+          "id": "url",
+          "label": "URL",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "text.concat",
+      "name": "Concatenate Text",
+      "tags": ["text", "processing"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "textIn",
+          "name": "Text",
+          "direction": "input",
+          "type": "Text",
+          "cardinality": "many",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "id": "textOut",
+          "name": "Text",
+          "direction": "output",
+          "type": "Text",
+          "cardinality": "one"
+        }
+      ],
+      "fields": [
+        {
+          "id": "delimiter",
+          "label": "Delimiter",
+          "type": "string",
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "json.parse",
+      "name": "Parse JSON",
+      "tags": ["json", "processing"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "textIn",
+          "name": "Text",
+          "direction": "input",
+          "type": "Text",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "id": "jsonOut",
+          "name": "Json",
+          "direction": "output",
+          "type": "Json",
+          "cardinality": "one"
+        }
+      ],
+      "fields": []
+    },
+    {
+      "id": "json.stringify",
+      "name": "JSON Stringify",
+      "tags": ["json", "processing"],
+      "layout": "singleRow",
+      "inputs": [
+        {
+          "id": "jsonIn",
+          "name": "Json",
+          "direction": "input",
+          "type": "Json",
+          "cardinality": "one",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "id": "textOut",
+          "name": "Text",
+          "direction": "output",
+          "type": "Text",
+          "cardinality": "one"
+        }
+      ],
+      "fields": [
+        {
+          "id": "pretty",
+          "label": "Pretty Print",
+          "type": "bool",
+          "default": false
+        }
+      ]
     }
   ]
 }
