@@ -621,14 +621,13 @@ details[open] .field-summary .toggle-icon {
   margin-right: 4px;
   width: 12ch;
   height: 24px;
-  line-height: 24px;
   box-sizing: border-box;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
   color: var(--fg);
   font-size: 1rem;
-  padding: 0 4px;
+  padding: 2px 4px;
   transition: width 0.15s ease;
 }
 .schema-editor .field-summary .field-name:hover {
@@ -645,14 +644,13 @@ details[open] .field-summary .toggle-icon {
   min-width: 12ch;
   width: 12ch;
   height: 24px;
-  line-height: 24px;
   box-sizing: border-box;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
   color: var(--fg);
   font-size: 1rem;
-  padding: 0 4px;
+  padding: 2px 4px;
   transition: width 0.15s ease;
 }
 .schema-editor .field-summary .field-desc:hover {
@@ -666,13 +664,12 @@ details[open] .field-summary .toggle-icon {
 .field-summary .field-type {
   margin-left: auto;
   margin-right: 4px;
-  padding: 0 4px;
+  padding: 2px 4px;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
   color: var(--fg);
   font-size: 1rem;
-  line-height: 24px;
   height: 24px;
   box-sizing: border-box;
   width: auto;
