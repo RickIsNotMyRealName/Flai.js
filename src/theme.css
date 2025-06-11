@@ -619,7 +619,7 @@ details[open] .field-summary .toggle-icon {
   font-weight: bold;
   flex: 0 0 auto;
   margin-right: 4px;
-  width: 6ch;
+  width: 12ch;
   border: 1px solid var(--accent);
   border-radius: 4px;
   background: var(--bg);
@@ -633,7 +633,7 @@ details[open] .field-summary .toggle-icon {
 }
 .schema-editor .field-summary .field-name:focus {
   outline: 1px solid var(--accent);
-  width: 12ch;
+  width: 24ch;
 }
 
 .schema-editor .field-summary .field-desc {
