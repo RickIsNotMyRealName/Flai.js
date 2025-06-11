@@ -98,6 +98,24 @@
   padding-left: 1rem;
   margin: 2px 0 0;
 }
+.palette-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  margin-bottom: 2px;
+  border: 1px solid #6663;
+  border-radius: 6px;
+  background: var(--bg);
+}
+.palette-item + .palette-item {
+  margin-top: 2px;
+}
+.palette-category + .palette-category {
+  border-top: 1px solid #6663;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
 .canvas { flex: 1; }
 .props {
   width: 260px;

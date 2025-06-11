@@ -143,6 +143,7 @@ export default function NodePalette({ editor }: Props) {
                     {nts.map((nt) => (
                       <li
                         key={nt.id}
+                        className="palette-item"
                         draggable
                         onDragStart={(e) => {
                           e.dataTransfer.setData('application/x-node-type', nt.id);
