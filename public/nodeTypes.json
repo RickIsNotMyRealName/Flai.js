@@ -452,32 +452,6 @@
       ]
     },
     {
-      "id": "toolargs.tojson",
-      "name": "ToolArgs to JSON",
-      "tags": ["toolargs", "json"],
-      "layout": "singleRow",
-      "inputs": [
-        {
-          "id": "argsIn",
-          "name": "ToolArgs",
-          "direction": "input",
-          "type": "ToolArgs",
-          "cardinality": "one",
-          "required": true
-        }
-      ],
-      "outputs": [
-        {
-          "id": "jsonOut",
-          "name": "Json",
-          "direction": "output",
-          "type": "Json",
-          "cardinality": "one"
-        }
-      ],
-      "fields": []
-    },
-    {
       "id": "toolargs.totext",
       "name": "ToolArgs to Text",
       "tags": ["toolargs", "text"],
