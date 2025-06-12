@@ -21,6 +21,7 @@
       "id": "openai.chatmodel",
       "name": "OpenAI Chat Model",
       "tags": ["llm", "openai", "chatmodel"],
+      "category": "Models",
       "layout": "singleRow",
       "inputs": [],
       "outputs": [
@@ -77,6 +78,7 @@
       "id": "openai.embeddings",
       "name": "OpenAI Embeddings",
       "tags": ["openai", "embeddings"],
+      "category": "Embeddings",
       "layout": "singleRow",
       "inputs": [],
       "outputs": [
@@ -118,6 +120,7 @@
       "id": "workflow.start",
       "name": "Start Agent",
       "tags": ["workflow", "start", "state"],
+      "category": "Workflow",
       "editors": ["agent"],
       "layout": "singleRow",
       "inputs": [],
@@ -137,6 +140,7 @@
       "id": "workflow.end",
       "name": "End Agent",
       "tags": ["workflow", "end", "state"],
+      "category": "Workflow",
       "editors": ["agent"],
       "layout": "singleRow",
       "inputs": [
@@ -156,6 +160,7 @@
       "id": "tool.start",
       "name": "Tool Start",
       "tags": ["tool", "start"],
+      "category": "Tool Workflow",
       "editors": ["tool"],
       "layout": "singleRow",
       "inputs": [],
@@ -175,6 +180,7 @@
       "id": "tool.end",
       "name": "Tool End",
       "tags": ["tool", "end"],
+      "category": "Tool Workflow",
       "editors": ["tool"],
       "layout": "singleRow",
       "inputs": [
@@ -194,6 +200,7 @@
       "id": "agent",
       "name": "Agent",
       "tags": ["agent"],
+      "category": "Workflow",
       "editors": ["agent", "tool"],
       "layout": "singleRow",
       "inputs": [
@@ -234,6 +241,7 @@
       "id": "tool.websearch",
       "name": "Web Search",
       "tags": ["tool", "web", "search"],
+      "category": "Tools",
       "layout": "singleRow",
       "inputs": [
         {
@@ -268,6 +276,7 @@
       "id": "tool.calculator",
       "name": "Calculator",
       "tags": ["tool", "math", "calculator"],
+      "category": "Tools",
       "layout": "singleRow",
       "inputs": [],
       "outputs": [
@@ -285,6 +294,7 @@
       "id": "tool.mcp",
       "name": "MCP Tool",
       "tags": ["tool", "mcp"],
+      "category": "Tools",
       "layout": "singleRow",
       "inputs": [],
       "outputs": [
