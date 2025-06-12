@@ -13,7 +13,7 @@
     "MCP": "Tool",
     "Curl": "Tool",
     "Webhook": "Tool",
-    "ToolArgs": null,
+    "ToolArgs": "Json",
     "Message": null
   },
   "nodes": [
