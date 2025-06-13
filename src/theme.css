@@ -288,6 +288,16 @@
   background: var(--bg);
   color: var(--fg);
 }
+.field-label > textarea {
+  display: block;
+  margin-top: 0.25rem;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+}
 .field-label > .switch {
   display: block;
   margin-top: 0.25rem;

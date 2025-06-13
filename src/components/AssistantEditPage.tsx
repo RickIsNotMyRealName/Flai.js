@@ -92,7 +92,7 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
           <label className="field-label">
             System Message
             <textarea
-              style={{ width: '100%', height: '6em' }}
+              rows={6}
               value={system}
               onChange={(e) => setSystem(e.target.value)}
             />
