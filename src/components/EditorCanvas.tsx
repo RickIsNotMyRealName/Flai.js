@@ -47,6 +47,7 @@ function FlowInner() {
   const addEdgeStore = useWorkflowStore((s) => s.addEdge);
   const removeEdge = useWorkflowStore((s) => s.removeEdge);
   const moveNode = useWorkflowStore((s) => s.moveNode);
+  const recordSnapshot = useWorkflowStore((s) => s.recordSnapshot);
   const setSelected = useWorkflowStore((s) => s.setSelected);
 
   const nodeDefs = useWorkflowStore((s) => s.nodeTypes);
@@ -84,6 +85,7 @@ function FlowInner() {
 
   /* -------- drag-and-drop ------------------------------------------------- */
   const { screenToFlowPosition } = useReactFlow<RFNode, RFEdge>();
+  const dragRef = useRef(false);
 
   const handleNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -96,6 +98,17 @@ function FlowInner() {
     },
     [onNodesChange, moveNode]
   );
+
+  const onNodeDragStart = useCallback(() => {
+    if (!dragRef.current) {
+      recordSnapshot();
+      dragRef.current = true;
+    }
+  }, [recordSnapshot]);
+
+  const onNodeDragStop = useCallback(() => {
+    dragRef.current = false;
+  }, []);
 
   const onDrop = useCallback(
     (evt: React.DragEvent) => {
@@ -159,6 +172,8 @@ function FlowInner() {
         nodeTypes={rfNodeTypes}
         edgeTypes={rfEdgeTypes}
         onNodesChange={handleNodesChange}
+        onNodeDragStart={onNodeDragStart}
+        onNodeDragStop={onNodeDragStop}
         onEdgesChange={(changes) => {
           if (syncingRef.current) {
             syncingRef.current = false;

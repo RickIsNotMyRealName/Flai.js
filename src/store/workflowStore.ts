@@ -20,6 +20,7 @@ interface WorkflowState {
   redoStack: { nodes: Record<string, NodeInstance>; edges: EdgeInstance[] }[];
   undo: () => void;
   redo: () => void;
+  recordSnapshot: () => void;
   workflowName: string;
   dirty: boolean;
   savedWorkflows: string[];
@@ -400,13 +401,14 @@ export const useWorkflowStore = create<WorkflowState>()(
       })),
 
       moveNode: (uuid, pos) =>
-        (pushUndo(),
         set((s) => {
           if (s.nodes[uuid]) {
             s.nodes[uuid].position = pos;
             s.dirty = true;
           }
-        })),
+        }),
+
+      recordSnapshot: pushUndo,
 
       undo: () => {
         const snap = snapshot();
