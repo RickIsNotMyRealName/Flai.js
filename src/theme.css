@@ -768,6 +768,11 @@ details[open] .field-summary .toggle-icon {
   border: none;
   color: #d55;
   cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
 }
 
 /* Enum editing */
