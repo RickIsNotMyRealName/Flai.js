@@ -16,8 +16,10 @@ interface WorkflowState {
     position: { x: number; y: number };
   } | null;
   theme: 'light' | 'dark';
-  undoStack: unknown[];
-  redoStack: unknown[];
+  undoStack: { nodes: Record<string, NodeInstance>; edges: EdgeInstance[] }[];
+  redoStack: { nodes: Record<string, NodeInstance>; edges: EdgeInstance[] }[];
+  undo: () => void;
+  redo: () => void;
   workflowName: string;
   dirty: boolean;
   savedWorkflows: string[];
@@ -58,7 +60,16 @@ interface WorkflowState {
 }
 
 export const useWorkflowStore = create<WorkflowState>()(
-  immer((set, get) => ({
+  immer((set, get) => {
+    const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
+    const snapshot = () => ({ nodes: clone(get().nodes), edges: clone(get().edges) });
+    const pushUndo = () =>
+      set((s) => {
+        s.undoStack.push(snapshot());
+        s.redoStack = [];
+      });
+
+    return {
     toast: null,
     nodeTypes: [],
     typeHierarchy: {},
@@ -296,6 +307,7 @@ export const useWorkflowStore = create<WorkflowState>()(
     },
 
     addNode: (typeId, position) =>
+      (pushUndo(),
       set((s) => {
         const id = uuid();
         s.nodes[id] = {
@@ -305,9 +317,10 @@ export const useWorkflowStore = create<WorkflowState>()(
           fields: {}
         };
         s.dirty = true;
-      }),
+      })),
 
     duplicateNode: (origId) =>
+      (pushUndo(),
       set((s) => {
         const orig = s.nodes[origId];
         if (!orig) return;
@@ -319,28 +332,31 @@ export const useWorkflowStore = create<WorkflowState>()(
           fields: { ...orig.fields }
         };
         s.dirty = true;
-      }),
+      })),
 
     removeNode: (id) =>
+      (pushUndo(),
       set((s) => {
         delete s.nodes[id];
         s.edges = s.edges.filter(
           (e) => e.from.uuid !== id && e.to.uuid !== id
         );
         s.dirty = true;
-      }),
+      })),
 
     addEdge: (edge) =>
+      (pushUndo(),
       set((s) => {
         s.edges.push(edge);
         s.dirty = true;
-      }),
+      })),
 
     removeEdge: (id) =>
+      (pushUndo(),
       set((s) => {
         s.edges = s.edges.filter((e) => e.id !== id);
         s.dirty = true;
-      }),
+      })),
 
     openContextMenu: (menu) =>
       set((s) => {
@@ -369,19 +385,44 @@ export const useWorkflowStore = create<WorkflowState>()(
       }),
 
     updateNodeField: (uuid, fieldId, value) =>
+      (pushUndo(),
       set((s) => {
         if (s.nodes[uuid]) {
           s.nodes[uuid].fields[fieldId] = value;
           s.dirty = true;
         }
-      }),
+      })),
 
-    moveNode: (uuid, pos) =>
-      set((s) => {
-        if (s.nodes[uuid]) {
-          s.nodes[uuid].position = pos;
-          s.dirty = true;
-        }
-      })
-  }))
+      moveNode: (uuid, pos) =>
+        (pushUndo(),
+        set((s) => {
+          if (s.nodes[uuid]) {
+            s.nodes[uuid].position = pos;
+            s.dirty = true;
+          }
+        })),
+
+      undo: () => {
+        const snap = snapshot();
+        const prev = get().undoStack.pop();
+        if (!prev) return;
+        set((s) => {
+          s.redoStack.push(snap);
+          s.nodes = prev.nodes;
+          s.edges = prev.edges;
+        });
+      },
+
+      redo: () => {
+        const snap = snapshot();
+        const next = get().redoStack.pop();
+        if (!next) return;
+        set((s) => {
+          s.undoStack.push(snap);
+          s.nodes = next.nodes;
+          s.edges = next.edges;
+        });
+      }
+    };
+  })
 );
