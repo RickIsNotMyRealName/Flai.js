@@ -22,6 +22,9 @@ export default function App() {
     'workflows' | 'editor' | 'settings' | 'tools' | 'assistants' | 'chat'
   >('workflows');
   const [returnPage, setReturnPage] = useState<'workflows' | 'tools'>('workflows');
+  const [chatBack, setChatBack] = useState<
+    'workflows' | 'settings' | 'tools' | 'assistants'
+  >('workflows');
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}nodeTypes.json`)
@@ -53,7 +56,7 @@ export default function App() {
 
   return (
     <div className={clsx('app-container', theme)}>
-      {page !== 'editor' && (
+      {page !== 'editor' && page !== 'chat' && (
         <Sidebar
           current={page as
             | 'workflows'
@@ -61,7 +64,14 @@ export default function App() {
             | 'tools'
             | 'assistants'
             | 'chat'}
-          onNavigate={setPage}
+          onNavigate={(p) => {
+            if (p === 'chat') {
+              setChatBack(
+                page as 'workflows' | 'settings' | 'tools' | 'assistants'
+              );
+            }
+            setPage(p);
+          }}
         />
       )}
 
@@ -72,7 +82,7 @@ export default function App() {
       )}
 
       {page === 'assistants' && <AssistantsPage />}
-      {page === 'chat' && <ChatPage />}
+      {page === 'chat' && <ChatPage onBack={() => setPage(chatBack)} />}
 
       {page === 'settings' && <SettingsPage />}
       {page === 'tools' && <ToolsPage onOpen={openTool} />}

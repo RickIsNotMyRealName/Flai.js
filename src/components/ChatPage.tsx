@@ -12,7 +12,7 @@ interface Chat {
   messages: Message[];
 }
 
-export default function ChatPage() {
+export default function ChatPage({ onBack }: { onBack: () => void }) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [active, setActive] = useState<number | null>(null);
   const [input, setInput] = useState('');
@@ -48,9 +48,21 @@ export default function ChatPage() {
   const messages = chats.find((c) => c.id === active)?.messages ?? [];
 
   return (
-    <main className="main chat-page">
-      <div className="page-header">
-        <h2>Chat</h2>
+    <main className="main editor-page chat-page">
+      <div className="page-header editor-header">
+        <button className="back-btn" onClick={onBack} aria-label="Back">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <polyline
+              points="15 18 9 12 15 6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        <h2 className="editor-title">Chat</h2>
       </div>
       <div className="chat-main">
         <aside className={clsx('chat-sidebar', { collapsed })}>
