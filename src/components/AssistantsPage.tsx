@@ -1,16 +1,8 @@
 import { useState, useEffect } from 'react';
 
-interface AssistantData {
-  name: string;
-  instructions: string;
-}
-
 export default function AssistantsPage() {
   const [assistants, setAssistants] = useState<string[]>([]);
   const [query, setQuery] = useState('');
-  const [editing, setEditing] = useState<string | null>(null);
-  const [metaName, setMetaName] = useState('');
-  const [metaInstr, setMetaInstr] = useState('');
 
   const refresh = () => {
     const list = localStorage.getItem('assistants');
@@ -21,44 +13,6 @@ export default function AssistantsPage() {
     refresh();
   }, []);
 
-  const openEdit = (name: string) => {
-    const raw = localStorage.getItem(`assistant.${name}`);
-    let data: AssistantData = { name, instructions: '' };
-    if (raw) {
-      try {
-        data = JSON.parse(raw) as AssistantData;
-      } catch {
-        /* ignore parse errors */
-      }
-    }
-    setMetaName(data.name);
-    setMetaInstr(data.instructions || '');
-    setEditing(name);
-  };
-
-  const saveAssistant = () => {
-    if (!editing) return;
-    const listRaw = localStorage.getItem('assistants');
-    const names: string[] = listRaw ? JSON.parse(listRaw) : [];
-    let target = editing;
-    if (metaName && metaName !== editing) {
-      if (names.includes(metaName)) {
-        alert('Name already exists');
-        return;
-      }
-      const idx = names.indexOf(editing);
-      if (idx !== -1) names[idx] = metaName;
-      localStorage.removeItem(`assistant.${editing}`);
-      target = metaName;
-    }
-    localStorage.setItem('assistants', JSON.stringify(names));
-    localStorage.setItem(
-      `assistant.${target}`,
-      JSON.stringify({ name: metaName, instructions: metaInstr })
-    );
-    setEditing(null);
-    refresh();
-  };
 
   const deleteAssistant = (name: string) => {
     const listRaw = localStorage.getItem('assistants');
@@ -83,7 +37,6 @@ export default function AssistantsPage() {
     list.push(name);
     localStorage.setItem('assistants', JSON.stringify(list));
     setAssistants(list);
-    openEdit(name);
   };
 
   const filtered = assistants.filter((n) =>
@@ -121,7 +74,6 @@ export default function AssistantsPage() {
           <li key={name} className="workflow-item">
             <span className="workflow-name">{name}</span>
             <div className="item-actions">
-              <button title="Edit" onClick={() => openEdit(name)}>✏️</button>
               <button className="delete" title="Delete" onClick={() => deleteAssistant(name)}>
                 🗑️
               </button>
@@ -129,30 +81,6 @@ export default function AssistantsPage() {
           </li>
         ))}
       </ul>
-      {editing && (
-        <>
-          <div className="modal-backdrop" onClick={() => setEditing(null)} />
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Edit Assistant</h3>
-            <label className="field-label">
-              Name
-              <input type="text" value={metaName} onChange={(e) => setMetaName(e.target.value)} />
-            </label>
-            <label className="field-label">
-              Instructions
-              <textarea
-                value={metaInstr}
-                onChange={(e) => setMetaInstr(e.target.value)}
-                rows={4}
-              />
-            </label>
-            <div className="modal-buttons">
-              <button onClick={() => setEditing(null)}>Cancel</button>
-              <button onClick={saveAssistant}>Save</button>
-            </div>
-          </div>
-        </>
-      )}
     </main>
   );
 }
