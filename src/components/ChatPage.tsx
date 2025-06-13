@@ -32,8 +32,13 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
   const resizeTextarea = () => {
     const el = textareaRef.current;
     if (el) {
+      const style = getComputedStyle(el);
+      const line = parseFloat(style.lineHeight) || 20;
+      const pad =
+        parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) || 0;
+      const max = line * 24 + pad; // limit to 24 lines
       el.style.height = 'auto';
-      el.style.height = `${el.scrollHeight}px`;
+      el.style.height = `${Math.min(el.scrollHeight, max)}px`;
     }
   };
 

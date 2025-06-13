@@ -940,6 +940,8 @@ details[open] .field-summary .toggle-icon {
   flex: 1;
   padding: 8px;
   font-size: 1rem;
+  line-height: 20px;
+  max-height: 480px;
   border: 1px solid #6663;
   border-radius: 4px;
   background: var(--bg);
