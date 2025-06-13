@@ -18,6 +18,16 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
   const [input, setInput] = useState('');
   const [collapsed, setCollapsed] = useState(false);
 
+  const deleteChat = (id: number) => {
+    setChats((cs) => {
+      const remaining = cs.filter((c) => c.id !== id);
+      if (active === id) {
+        setActive(remaining.length ? remaining[0].id : null);
+      }
+      return remaining;
+    });
+  };
+
   const createChat = () => {
     const id = chats.length ? chats[chats.length - 1].id + 1 : 1;
     const chat: Chat = { id, title: `Chat ${id}`, messages: [] };
@@ -115,9 +125,24 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
                 <li
                   key={chat.id}
                   className={clsx('chat-history-item', { active: chat.id === active })}
-                  onClick={() => setActive(chat.id)}
                 >
-                  {chat.title}
+                  <span
+                    className="chat-history-name"
+                    onClick={() => setActive(chat.id)}
+                  >
+                    {chat.title}
+                  </span>
+                  <button
+                    type="button"
+                    className="delete-btn"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteChat(chat.id);
+                    }}
+                  >
+                    🗑️
+                  </button>
                 </li>
               ))}
             </ul>

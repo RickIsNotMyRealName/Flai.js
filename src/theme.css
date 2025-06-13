@@ -874,10 +874,19 @@ details[open] .field-summary .toggle-icon {
   margin: 0;
   flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .chat-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 4px 6px;
   border-radius: 4px;
+}
+.chat-history-name {
+  flex: 1;
   cursor: pointer;
 }
 .chat-history-item:hover {
