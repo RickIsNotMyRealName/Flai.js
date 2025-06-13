@@ -13,7 +13,6 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
   const [model, setModel] = useState('');
   const [tools, setTools] = useState<string[]>([]);
   const [available, setAvailable] = useState<string[]>([]);
-  const [newTool, setNewTool] = useState('');
 
   useEffect(() => {
     const raw = localStorage.getItem(`assistant.${orig}`);
@@ -34,13 +33,6 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
     const list = localStorage.getItem('tools');
     setAvailable(list ? JSON.parse(list) : []);
   }, [orig]);
-
-  const addTool = () => {
-    if (newTool && !tools.includes(newTool)) {
-      setTools(ts => [...ts, newTool]);
-      setNewTool('');
-    }
-  };
 
   const removeTool = (t: string) => {
     setTools(ts => ts.filter(x => x !== t));
@@ -121,7 +113,16 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
               ))}
             </div>
             <div className="enum-item">
-              <select value={newTool} onChange={(e) => setNewTool(e.target.value)}>
+              <select
+                defaultValue=""
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val && !tools.includes(val)) {
+                    setTools((ts) => [...ts, val]);
+                  }
+                  e.target.value = '';
+                }}
+              >
                 <option value="">Select tool...</option>
                 {available
                   .filter((t) => !tools.includes(t))
@@ -131,12 +132,6 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
                     </option>
                   ))}
               </select>
-              <button type="button" className="add-btn" onClick={addTool} aria-label="Add tool">
-                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                  <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </button>
             </div>
           </div>
           <div className="modal-buttons">
