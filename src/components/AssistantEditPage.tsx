@@ -13,6 +13,7 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
   const [model, setModel] = useState('');
   const [tools, setTools] = useState<string[]>([]);
   const [available, setAvailable] = useState<string[]>([]);
+  const [newTool, setNewTool] = useState('');
 
   useEffect(() => {
     const raw = localStorage.getItem(`assistant.${orig}`);
@@ -34,10 +35,15 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
     setAvailable(list ? JSON.parse(list) : []);
   }, [orig]);
 
-  const toggleTool = (t: string) => {
-    setTools((ts) =>
-      ts.includes(t) ? ts.filter((x) => x !== t) : [...ts, t]
-    );
+  const addTool = () => {
+    if (newTool && !tools.includes(newTool)) {
+      setTools(ts => [...ts, newTool]);
+      setNewTool('');
+    }
+  };
+
+  const removeTool = (t: string) => {
+    setTools(ts => ts.filter(x => x !== t));
   };
 
   const save = () => {
@@ -97,20 +103,42 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
           </label>
           <div className="field-label">
             Tools
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {available.map((t) => (
-                <li key={t}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={tools.includes(t)}
-                      onChange={() => toggleTool(t)}
-                    />{' '}
-                    {t}
-                  </label>
-                </li>
+            <div className="enum-tags">
+              {tools.map((t) => (
+                <span className="enum-tag" key={t}>
+                  {t}
+                  <button
+                    type="button"
+                    className="delete-btn"
+                    onClick={() => removeTool(t)}
+                    aria-label="Remove tool"
+                  >
+                    <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
+                      <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                </span>
               ))}
-            </ul>
+            </div>
+            <div className="enum-item">
+              <select value={newTool} onChange={(e) => setNewTool(e.target.value)}>
+                <option value="">Select tool...</option>
+                {available
+                  .filter((t) => !tools.includes(t))
+                  .map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+              </select>
+              <button type="button" className="add-btn" onClick={addTool} aria-label="Add tool">
+                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                  <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
           </div>
           <div className="modal-buttons">
             <button onClick={onBack}>Cancel</button>
