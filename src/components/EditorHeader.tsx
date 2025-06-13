@@ -10,6 +10,8 @@ export default function EditorHeader({ onBack }: { onBack: () => void }) {
   const toolMeta = useWorkflowStore(s => s.toolMeta);
   const setToolMeta = useWorkflowStore(s => s.setToolMeta);
   const renameTool = useWorkflowStore(s => s.renameTool);
+  const undo = useWorkflowStore(s => s.undo);
+  const redo = useWorkflowStore(s => s.redo);
 
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(displayName);
@@ -77,6 +79,48 @@ export default function EditorHeader({ onBack }: { onBack: () => void }) {
             />
           </svg>
         </button>
+        <div className="history-buttons">
+          <button className="undo-btn" onClick={undo} aria-label="Undo">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <polyline
+                points="1 4 1 10 7 10"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <button className="redo-btn" onClick={redo} aria-label="Redo">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <polyline
+                points="23 4 23 10 17 10"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
         {name.startsWith('tool:') && (
           <button className="settings-btn" onClick={openCfg} title="Tool Settings">
             <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">

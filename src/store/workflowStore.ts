@@ -16,8 +16,11 @@ interface WorkflowState {
     position: { x: number; y: number };
   } | null;
   theme: 'light' | 'dark';
-  undoStack: unknown[];
-  redoStack: unknown[];
+  undoStack: { nodes: Record<string, NodeInstance>; edges: EdgeInstance[] }[];
+  redoStack: { nodes: Record<string, NodeInstance>; edges: EdgeInstance[] }[];
+  undo: () => void;
+  redo: () => void;
+  recordSnapshot: () => void;
   workflowName: string;
   dirty: boolean;
   savedWorkflows: string[];
@@ -58,7 +61,16 @@ interface WorkflowState {
 }
 
 export const useWorkflowStore = create<WorkflowState>()(
-  immer((set, get) => ({
+  immer((set, get) => {
+    const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
+    const snapshot = () => ({ nodes: clone(get().nodes), edges: clone(get().edges) });
+    const pushUndo = () =>
+      set((s) => {
+        s.undoStack.push(snapshot());
+        s.redoStack = [];
+      });
+
+    return {
     toast: null,
     nodeTypes: [],
     typeHierarchy: {},
@@ -109,23 +121,25 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.savedWorkflows = names;
       }),
 
-    loadWorkflow: (name) =>
-      set((s) => {
-        const data = localStorage.getItem(`workflow.${name}`);
-        if (!data) return;
-        try {
-          const parsed = JSON.parse(data) as {
-            nodes: Record<string, NodeInstance>;
-            edges: EdgeInstance[];
-          };
-          s.nodes = parsed.nodes;
-          s.edges = parsed.edges;
-          s.workflowName = name;
-          s.dirty = false;
-        } catch {
-          /* ignore parse errors */
-        }
-      }),
+      loadWorkflow: (name) =>
+        set((s) => {
+          const data = localStorage.getItem(`workflow.${name}`);
+          if (!data) return;
+          try {
+            const parsed = JSON.parse(data) as {
+              nodes: Record<string, NodeInstance>;
+              edges: EdgeInstance[];
+            };
+            s.nodes = parsed.nodes;
+            s.edges = parsed.edges;
+            s.workflowName = name;
+            s.dirty = false;
+            s.undoStack = [];
+            s.redoStack = [];
+          } catch {
+            /* ignore parse errors */
+          }
+        }),
 
     saveTool: (name) => {
       set((s) => {
@@ -144,21 +158,23 @@ export const useWorkflowStore = create<WorkflowState>()(
       get().refreshToolNodes();
     },
 
-    loadTool: (name) =>
-      set((s) => {
-        const data = localStorage.getItem(`tool.${name}`);
-        if (!data) return;
-        try {
-          const parsed = JSON.parse(data) as ToolData;
-          s.nodes = parsed.nodes;
-          s.edges = parsed.edges;
-          s.toolMeta = parsed.meta || { name, description: '', schema: '' };
-          s.workflowName = `tool:${name}`;
-          s.dirty = false;
-        } catch {
-          /* ignore parse errors */
-        }
-      }),
+      loadTool: (name) =>
+        set((s) => {
+          const data = localStorage.getItem(`tool.${name}`);
+          if (!data) return;
+          try {
+            const parsed = JSON.parse(data) as ToolData;
+            s.nodes = parsed.nodes;
+            s.edges = parsed.edges;
+            s.toolMeta = parsed.meta || { name, description: '', schema: '' };
+            s.workflowName = `tool:${name}`;
+            s.dirty = false;
+            s.undoStack = [];
+            s.redoStack = [];
+          } catch {
+            /* ignore parse errors */
+          }
+        }),
 
     setToolMeta: (meta) =>
       set((s) => {
@@ -283,6 +299,8 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.workflowName = name;
         /* mark as clean so autosave doesn't immediately persist */
         s.dirty = false;
+        s.undoStack = [];
+        s.redoStack = [];
       });
       return name;
     },
@@ -296,6 +314,7 @@ export const useWorkflowStore = create<WorkflowState>()(
     },
 
     addNode: (typeId, position) =>
+      (pushUndo(),
       set((s) => {
         const id = uuid();
         s.nodes[id] = {
@@ -305,9 +324,10 @@ export const useWorkflowStore = create<WorkflowState>()(
           fields: {}
         };
         s.dirty = true;
-      }),
+      })),
 
     duplicateNode: (origId) =>
+      (pushUndo(),
       set((s) => {
         const orig = s.nodes[origId];
         if (!orig) return;
@@ -319,28 +339,31 @@ export const useWorkflowStore = create<WorkflowState>()(
           fields: { ...orig.fields }
         };
         s.dirty = true;
-      }),
+      })),
 
     removeNode: (id) =>
+      (pushUndo(),
       set((s) => {
         delete s.nodes[id];
         s.edges = s.edges.filter(
           (e) => e.from.uuid !== id && e.to.uuid !== id
         );
         s.dirty = true;
-      }),
+      })),
 
     addEdge: (edge) =>
+      (pushUndo(),
       set((s) => {
         s.edges.push(edge);
         s.dirty = true;
-      }),
+      })),
 
     removeEdge: (id) =>
+      (pushUndo(),
       set((s) => {
         s.edges = s.edges.filter((e) => e.id !== id);
         s.dirty = true;
-      }),
+      })),
 
     openContextMenu: (menu) =>
       set((s) => {
@@ -369,19 +392,45 @@ export const useWorkflowStore = create<WorkflowState>()(
       }),
 
     updateNodeField: (uuid, fieldId, value) =>
+      (pushUndo(),
       set((s) => {
         if (s.nodes[uuid]) {
           s.nodes[uuid].fields[fieldId] = value;
           s.dirty = true;
         }
-      }),
+      })),
 
-    moveNode: (uuid, pos) =>
-      set((s) => {
-        if (s.nodes[uuid]) {
-          s.nodes[uuid].position = pos;
-          s.dirty = true;
-        }
-      })
-  }))
+      moveNode: (uuid, pos) =>
+        set((s) => {
+          if (s.nodes[uuid]) {
+            s.nodes[uuid].position = pos;
+            s.dirty = true;
+          }
+        }),
+
+      recordSnapshot: pushUndo,
+
+      undo: () => {
+        const snap = snapshot();
+        set((s) => {
+          const prev = s.undoStack.pop();
+          if (!prev) return;
+          s.redoStack.push(snap);
+          s.nodes = prev.nodes;
+          s.edges = prev.edges;
+        });
+      },
+
+      redo: () => {
+        const snap = snapshot();
+        set((s) => {
+          const next = s.redoStack.pop();
+          if (!next) return;
+          s.undoStack.push(snap);
+          s.nodes = next.nodes;
+          s.edges = next.edges;
+        });
+      }
+    };
+  })
 );

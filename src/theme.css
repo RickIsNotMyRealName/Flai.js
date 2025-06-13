@@ -545,6 +545,14 @@
   top: 50%;
   transform: translateY(-50%);
 }
+.editor-header .history-buttons {
+  position: absolute;
+  left: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 4px;
+}
 .editor-header .editor-title {
   margin: 0;
   display: flex;
