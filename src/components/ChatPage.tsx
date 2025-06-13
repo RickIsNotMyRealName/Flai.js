@@ -136,12 +136,22 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
                     type="button"
                     className="delete-btn"
                     title="Delete"
+                    aria-label="Delete"
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteChat(chat.id);
                     }}
                   >
-                    🗑️
+                    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M3 6h18M8 6v-1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1m1 0v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 4v6m4-6v6"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </button>
                 </li>
               ))}
