@@ -30,6 +30,7 @@ This project implements a visual node editor for building AI workflows. The arch
   - `CustomNode.tsx` – Renders nodes using the single-row layout and exposes an edit button.
   - `PropertiesPanel.tsx` – Modal editor for the selected node's fields.
   - `ErrorToast.tsx` – Transient error display.
+  - `ChatPage.tsx` – Standalone chat interface with collapsible history.
 - **store/workflowStore.ts** – Zustand store implementing the workflow state model and localStorage persistence.
 - **logic/pinValidation.ts** – Implements connection and workflow validation (tested).
 
