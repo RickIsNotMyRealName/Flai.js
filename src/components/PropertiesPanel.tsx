@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { Field, NodeInstance } from '../types';
 import type { JSX } from 'react';
@@ -34,6 +34,11 @@ function FieldInput({ field, node }: { field: Field; node: NodeInstance }) {
   const update = useWorkflowStore((s) => s.updateNodeField);
   const initial = node.fields[field.id] ?? field.default ?? '';
   const [value, setValue] = useState<any>(initial);
+
+  // keep input value in sync when undo/redo changes the node
+  useEffect(() => {
+    setValue(node.fields[field.id] ?? field.default ?? '');
+  }, [node.fields[field.id]]);
 
   const onChange = (val: unknown) => {
     setValue(val);
