@@ -288,6 +288,16 @@
   background: var(--bg);
   color: var(--fg);
 }
+.field-label > textarea {
+  display: block;
+  margin-top: 0.25rem;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+}
 .field-label > .switch {
   display: block;
   margin-top: 0.25rem;
@@ -481,6 +491,13 @@
   display: flex;
   height: 100%;
   padding: 0;
+}
+.assistant-main {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 .workflow-list ul {
   list-style: none;
@@ -813,6 +830,16 @@ details[open] .field-summary .toggle-icon {
   height: 24px;
   box-sizing: border-box;
   line-height: 24px;
+}
+.enum-item select {
+  flex: 1;
+  height: 24px;
+  box-sizing: border-box;
+  padding: 4px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
 }
 .add-btn {
   background: var(--accent);
