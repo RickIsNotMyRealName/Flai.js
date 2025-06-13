@@ -120,23 +120,25 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.savedWorkflows = names;
       }),
 
-    loadWorkflow: (name) =>
-      set((s) => {
-        const data = localStorage.getItem(`workflow.${name}`);
-        if (!data) return;
-        try {
-          const parsed = JSON.parse(data) as {
-            nodes: Record<string, NodeInstance>;
-            edges: EdgeInstance[];
-          };
-          s.nodes = parsed.nodes;
-          s.edges = parsed.edges;
-          s.workflowName = name;
-          s.dirty = false;
-        } catch {
-          /* ignore parse errors */
-        }
-      }),
+      loadWorkflow: (name) =>
+        set((s) => {
+          const data = localStorage.getItem(`workflow.${name}`);
+          if (!data) return;
+          try {
+            const parsed = JSON.parse(data) as {
+              nodes: Record<string, NodeInstance>;
+              edges: EdgeInstance[];
+            };
+            s.nodes = parsed.nodes;
+            s.edges = parsed.edges;
+            s.workflowName = name;
+            s.dirty = false;
+            s.undoStack = [];
+            s.redoStack = [];
+          } catch {
+            /* ignore parse errors */
+          }
+        }),
 
     saveTool: (name) => {
       set((s) => {
@@ -155,21 +157,23 @@ export const useWorkflowStore = create<WorkflowState>()(
       get().refreshToolNodes();
     },
 
-    loadTool: (name) =>
-      set((s) => {
-        const data = localStorage.getItem(`tool.${name}`);
-        if (!data) return;
-        try {
-          const parsed = JSON.parse(data) as ToolData;
-          s.nodes = parsed.nodes;
-          s.edges = parsed.edges;
-          s.toolMeta = parsed.meta || { name, description: '', schema: '' };
-          s.workflowName = `tool:${name}`;
-          s.dirty = false;
-        } catch {
-          /* ignore parse errors */
-        }
-      }),
+      loadTool: (name) =>
+        set((s) => {
+          const data = localStorage.getItem(`tool.${name}`);
+          if (!data) return;
+          try {
+            const parsed = JSON.parse(data) as ToolData;
+            s.nodes = parsed.nodes;
+            s.edges = parsed.edges;
+            s.toolMeta = parsed.meta || { name, description: '', schema: '' };
+            s.workflowName = `tool:${name}`;
+            s.dirty = false;
+            s.undoStack = [];
+            s.redoStack = [];
+          } catch {
+            /* ignore parse errors */
+          }
+        }),
 
     setToolMeta: (meta) =>
       set((s) => {
@@ -294,6 +298,8 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.workflowName = name;
         /* mark as clean so autosave doesn't immediately persist */
         s.dirty = false;
+        s.undoStack = [];
+        s.redoStack = [];
       });
       return name;
     },
@@ -404,9 +410,9 @@ export const useWorkflowStore = create<WorkflowState>()(
 
       undo: () => {
         const snap = snapshot();
-        const prev = get().undoStack.pop();
-        if (!prev) return;
         set((s) => {
+          const prev = s.undoStack.pop();
+          if (!prev) return;
           s.redoStack.push(snap);
           s.nodes = prev.nodes;
           s.edges = prev.edges;
@@ -415,9 +421,9 @@ export const useWorkflowStore = create<WorkflowState>()(
 
       redo: () => {
         const snap = snapshot();
-        const next = get().redoStack.pop();
-        if (!next) return;
         set((s) => {
+          const next = s.redoStack.pop();
+          if (!next) return;
           s.undoStack.push(snap);
           s.nodes = next.nodes;
           s.edges = next.edges;
