@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 
 interface Message {
@@ -38,12 +38,19 @@ export default function ChatPage() {
     setInput('');
   };
 
+  useEffect(() => {
+    if (!chats.length) {
+      createChat();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const messages = chats.find((c) => c.id === active)?.messages ?? [];
 
   return (
     <main className="main chat-page">
-      <div className="page-header editor-header">
-        <h2 className="editor-title">Chat</h2>
+      <div className="page-header">
+        <h2>Chat</h2>
       </div>
       <div className="chat-main">
         <aside className={clsx('chat-sidebar', { collapsed })}>
