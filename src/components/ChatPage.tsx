@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 
 interface Message {
@@ -17,6 +17,7 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
   const [active, setActive] = useState<number | null>(null);
   const [input, setInput] = useState('');
   const [collapsed, setCollapsed] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const deleteChat = (id: number) => {
     setChats((cs) => {
@@ -26,6 +27,14 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
       }
       return remaining;
     });
+  };
+
+  const resizeTextarea = () => {
+    const el = textareaRef.current;
+    if (el) {
+      el.style.height = 'auto';
+      el.style.height = `${el.scrollHeight}px`;
+    }
   };
 
   const createChat = () => {
@@ -54,6 +63,10 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    resizeTextarea();
+  }, [input]);
 
   const messages = chats.find((c) => c.id === active)?.messages ?? [];
 
@@ -168,10 +181,15 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
           </div>
           {active !== null && (
             <form className="chat-input" onSubmit={sendMessage}>
-              <input
+              <textarea
+                ref={textareaRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onInput={(e) => {
+                  setInput(e.currentTarget.value);
+                  resizeTextarea();
+                }}
                 placeholder="Type a message..."
+                rows={1}
               />
               <button type="submit">Send</button>
             </form>

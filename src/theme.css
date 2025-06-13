@@ -936,7 +936,7 @@ details[open] .field-summary .toggle-icon {
   border-top: 1px solid #6663;
   padding-top: 8px;
 }
-.chat-input input {
+.chat-input textarea {
   flex: 1;
   padding: 8px;
   font-size: 1rem;
@@ -944,6 +944,8 @@ details[open] .field-summary .toggle-icon {
   border-radius: 4px;
   background: var(--bg);
   color: var(--fg);
+  resize: none;
+  overflow-y: auto;
 }
 .chat-input button {
   background: var(--accent);
