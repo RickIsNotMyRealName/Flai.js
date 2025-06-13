@@ -83,12 +83,11 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
         </button>
         <h2 className="editor-title">Assistant</h2>
       </div>
-      <div className="editor-main" style={{ padding: '1rem', overflowY: 'auto' }}>
-        <div style={{ flex: 1 }}>
-          <label className="field-label">
-            Name
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-          </label>
+      <div className="assistant-main">
+        <label className="field-label">
+          Name
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        </label>
           <label className="field-label">
             System Message
             <textarea
@@ -144,7 +143,6 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
             <button onClick={onBack}>Cancel</button>
             <button onClick={save}>Save</button>
           </div>
-        </div>
       </div>
     </main>
   );
