@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function AssistantsPage() {
+export default function AssistantsPage({ onOpen }: { onOpen: (name: string) => void }) {
   const [assistants, setAssistants] = useState<string[]>([]);
   const [query, setQuery] = useState('');
 
@@ -37,6 +37,7 @@ export default function AssistantsPage() {
     list.push(name);
     localStorage.setItem('assistants', JSON.stringify(list));
     setAssistants(list);
+    onOpen(name);
   };
 
   const filtered = assistants.filter((n) =>
@@ -71,10 +72,14 @@ export default function AssistantsPage() {
       </div>
       <ul>
         {filtered.map((name) => (
-          <li key={name} className="workflow-item">
+          <li key={name} className="workflow-item" onClick={() => onOpen(name)}>
             <span className="workflow-name">{name}</span>
-            <div className="item-actions">
-              <button className="delete" title="Delete" onClick={() => deleteAssistant(name)}>
+            <div className="item-actions" onClick={(e) => e.stopPropagation()}>
+              <button
+                className="delete"
+                title="Delete"
+                onClick={() => deleteAssistant(name)}
+              >
                 🗑️
               </button>
             </div>

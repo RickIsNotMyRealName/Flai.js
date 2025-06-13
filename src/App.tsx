@@ -7,6 +7,7 @@ import EditorPage from './components/EditorPage';
 import SettingsPage from './components/SettingsPage';
 import ToolsPage from './components/ToolsPage';
 import AssistantsPage from './components/AssistantsPage';
+import AssistantEditPage from './components/AssistantEditPage';
 import ChatPage from './components/ChatPage';
 import clsx from 'clsx';
 
@@ -19,12 +20,19 @@ export default function App() {
   const refreshTools = useWorkflowStore(s => s.refreshToolNodes);
 
   const [page, setPage] = useState<
-    'workflows' | 'editor' | 'settings' | 'tools' | 'assistants' | 'chat'
+    | 'workflows'
+    | 'editor'
+    | 'settings'
+    | 'tools'
+    | 'assistants'
+    | 'assistantEdit'
+    | 'chat'
   >('workflows');
   const [returnPage, setReturnPage] = useState<'workflows' | 'tools'>('workflows');
   const [chatBack, setChatBack] = useState<
     'workflows' | 'settings' | 'tools' | 'assistants'
   >('workflows');
+  const [editingAssistant, setEditingAssistant] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}nodeTypes.json`)
@@ -48,6 +56,11 @@ export default function App() {
     setPage('editor');
   };
 
+  const editAssistant = (name: string) => {
+    setEditingAssistant(name);
+    setPage('assistantEdit');
+  };
+
   const createAndOpen = () => {
     createWorkflow();
     setReturnPage('workflows');
@@ -56,7 +69,7 @@ export default function App() {
 
   return (
     <div className={clsx('app-container', theme)}>
-      {page !== 'editor' && page !== 'chat' && (
+      {page !== 'editor' && page !== 'chat' && page !== 'assistantEdit' && (
         <Sidebar
           current={page as
             | 'workflows'
@@ -81,7 +94,16 @@ export default function App() {
         </main>
       )}
 
-      {page === 'assistants' && <AssistantsPage />}
+      {page === 'assistants' && <AssistantsPage onOpen={editAssistant} />}
+      {page === 'assistantEdit' && editingAssistant && (
+        <AssistantEditPage
+          name={editingAssistant}
+          onBack={() => {
+            setPage('assistants');
+            setEditingAssistant(null);
+            }}
+        />
+      )}
       {page === 'chat' && <ChatPage onBack={() => setPage(chatBack)} />}
 
       {page === 'settings' && <SettingsPage />}
