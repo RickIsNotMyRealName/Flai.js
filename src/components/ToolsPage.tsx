@@ -3,6 +3,7 @@ import SchemaEditor from './SchemaEditor';
 import { v4 as uuid } from 'uuid';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { NodeInstance, EdgeInstance, ToolData, ToolMeta } from '../types';
+import * as api from '../api';
 
 
 export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }) {
@@ -17,9 +18,9 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
   const [metaSchema, setMetaSchema] = useState('');
   const [data, setData] = useState<ToolData | null>(null);
 
-  const refresh = () => {
-    const list = localStorage.getItem('tools');
-    setTools(list ? JSON.parse(list) : []);
+  const refresh = async () => {
+    const list = await api.listTools();
+    setTools(list);
     refreshNodes();
   };
 
@@ -27,16 +28,9 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
     refresh();
   }, []);
 
-  const openEdit = (name: string) => {
-    const raw = localStorage.getItem(`tool.${name}`);
-    let parsed: ToolData;
-    if (raw) {
-      try {
-        parsed = JSON.parse(raw) as ToolData;
-      } catch {
-        parsed = { meta: { name, description: '', schema: '' }, nodes: {}, edges: [] };
-      }
-    } else {
+  const openEdit = async (name: string) => {
+    let parsed: ToolData | null = await api.getTool(name);
+    if (!parsed) {
       parsed = { meta: { name, description: '', schema: '' }, nodes: {}, edges: [] };
     }
 
@@ -69,7 +63,7 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
     setData(parsed);
   };
 
-  const createTool = () => {
+  const createTool = async () => {
     const list = tools.slice();
     let base = 'Untitled Tool';
     let idx = 1;
@@ -97,19 +91,16 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
       nodes: { [startId]: start, [endId]: end },
       edges: [],
     };
-    localStorage.setItem(`tool.${name}`, JSON.stringify(newData));
-    list.push(name);
-    localStorage.setItem('tools', JSON.stringify(list));
-    setTools(list);
+    await api.saveTool(name, newData);
+    const names = await api.listTools();
+    setTools(names);
     refreshNodes();
     openEdit(name);
   };
 
-  const saveTool = () => {
+  const saveTool = async () => {
     if (!editing || !data) return;
-    const list = localStorage.getItem('tools');
-    const names: string[] = list ? JSON.parse(list) : [];
-
+    const names = await api.listTools();
     data.meta = { name: metaName, description: metaDesc, schema: metaSchema };
 
     let target = editing;
@@ -119,25 +110,18 @@ export default function ToolsPage({ onOpen }: { onOpen: (name: string) => void }
         return;
       }
       target = metaName;
-      const idx = names.indexOf(editing);
-      if (idx !== -1) names[idx] = metaName;
-      localStorage.removeItem(`tool.${editing}`);
+      await api.deleteTool(editing);
     }
-    localStorage.setItem('tools', JSON.stringify(names));
-    localStorage.setItem(`tool.${target}`, JSON.stringify(data));
+    await api.saveTool(target, data);
     setEditing(null);
     setData(null);
     refresh();
     refreshNodes();
   };
 
-  const deleteTool = (name: string) => {
-    const list = localStorage.getItem('tools');
-    const names: string[] = list ? JSON.parse(list) : [];
-    const idx = names.indexOf(name);
-    if (idx !== -1) names.splice(idx, 1);
-    localStorage.setItem('tools', JSON.stringify(names));
-    localStorage.removeItem(`tool.${name}`);
+  const deleteTool = async (name: string) => {
+    await api.deleteTool(name);
+    const names = await api.listTools();
     setTools(names);
     refreshNodes();
   };

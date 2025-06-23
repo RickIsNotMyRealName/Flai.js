@@ -10,7 +10,7 @@ This project implements a visual node editor for building AI workflows. The arch
 │   └─ nodeTypes.json # Node type definitions (see below)
 ├─ src/               # React + TypeScript source
 │   ├─ components/    # UI components (canvas, palette, workflow manager, etc.)
-│   ├─ store/         # Zustand state store with localStorage persistence
+│   ├─ store/         # Zustand state store with API persistence
 │   ├─ logic/         # Business logic helpers & validation
 │   │   └─ __tests__/ # Vitest unit tests
 │   ├─ index.css      # Base styles
@@ -18,6 +18,7 @@ This project implements a visual node editor for building AI workflows. The arch
 │   └─ types.ts       # Shared TypeScript interfaces
 ├─ index.html         # Vite entry page
 ├─ vite.config.ts     # Vite configuration
+├─ server/            # Express backend for storing data
 └─ DesignDoc.md       # Detailed design document
 ```
 
@@ -65,16 +66,17 @@ App
 ```
 
 ### Data Flow
-1. `App.tsx` loads `nodeTypes.json` and populates the store with `NodeType` objects and the type hierarchy.
+1. `App.tsx` requests `/api/v1/nodeTypes` and populates the store with `NodeType` objects and the type hierarchy.
 2. Dragging from the palette spawns nodes on the canvas with new UUIDs.
 3. Connections are created via React Flow and validated by `logic/pinValidation.ts`.
 4. Selecting a node opens its fields in `PropertiesPanel` for editing.
-5. Workflows auto-save to `localStorage`; `WorkflowManager` lets users save, load and delete named flows.
-6. Theme preference is persisted in `localStorage`.
+5. Workflows auto-save to the Express backend; `WorkflowManager` uses the versioned REST API for CRUD operations.
+6. Theme preference and other settings are stored via `/api/v1/settings`.
 
 ### Notes for Contributors
-- Follow the design intent in `DesignDoc.md` when adding features or refactoring.
-- Run `npm run verify` before committing changes to compile, type-check and run the tests.
-- The repo currently uses plain CSS; switch to CSS Modules or Tailwind only if consistent with the design doc.
+ - Follow the design intent in `DesignDoc.md` when adding features or refactoring.
+ - Use `npm run server` to start the backend during development.
+ - Run `npm run verify` before committing changes to compile, type-check and run both client and server tests.
+ - The repo currently uses plain CSS; switch to CSS Modules or Tailwind only if consistent with the design doc.
 - If the project structure or workflow changes, **update this `AGENTS.md`** to keep it current.
 - When submitting a PR with significant changes, add, modify or remove sections of this file so it accurately reflects the new state of the project.

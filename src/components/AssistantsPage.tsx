@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
+import * as api from '../api';
 
 export default function AssistantsPage({ onOpen }: { onOpen: (name: string) => void }) {
   const [assistants, setAssistants] = useState<string[]>([]);
   const [query, setQuery] = useState('');
 
-  const refresh = () => {
-    const list = localStorage.getItem('assistants');
-    setAssistants(list ? JSON.parse(list) : []);
+  const refresh = async () => {
+    const list = await api.listAssistants();
+    setAssistants(list);
   };
 
   useEffect(() => {
@@ -14,29 +15,21 @@ export default function AssistantsPage({ onOpen }: { onOpen: (name: string) => v
   }, []);
 
 
-  const deleteAssistant = (name: string) => {
-    const listRaw = localStorage.getItem('assistants');
-    const names: string[] = listRaw ? JSON.parse(listRaw) : [];
-    const idx = names.indexOf(name);
-    if (idx !== -1) names.splice(idx, 1);
-    localStorage.setItem('assistants', JSON.stringify(names));
-    localStorage.removeItem(`assistant.${name}`);
+  const deleteAssistant = async (name: string) => {
+    await api.deleteAssistant(name);
+    const names = await api.listAssistants();
     setAssistants(names);
   };
 
-  const createAssistant = () => {
+  const createAssistant = async () => {
     const list = assistants.slice();
     let base = 'Untitled Assistant';
     let idx = 1;
     let name = `${base} ${idx}`;
     while (list.includes(name)) name = `${base} ${++idx}`;
-    localStorage.setItem(
-      `assistant.${name}`,
-      JSON.stringify({ name, instructions: '' })
-    );
-    list.push(name);
-    localStorage.setItem('assistants', JSON.stringify(list));
-    setAssistants(list);
+    await api.saveAssistant(name, { name, system: '', model: '', tools: [] });
+    const names = await api.listAssistants();
+    setAssistants(names);
     onOpen(name);
   };
 

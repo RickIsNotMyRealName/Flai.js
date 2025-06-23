@@ -11,5 +11,5 @@
     "baseUrl": "./src",
     "types": ["vite/client", "node"]
   },
-  "include": ["src"]
+  "include": ["src", "server"]
 }

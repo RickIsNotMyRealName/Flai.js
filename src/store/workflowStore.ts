@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { v4 as uuid } from 'uuid';
 import type { NodeInstance, NodeType, EdgeInstance, ToolMeta, ToolData } from '../types';
+import * as api from '../api';
 
 interface WorkflowState {
   nodeTypes: NodeType[];
@@ -27,18 +28,18 @@ interface WorkflowState {
   toolMeta: ToolMeta | null;
   toast: { message: string; type: 'error' | 'success' } | null;
   setToast: (msg: string, type?: 'error' | 'success') => void;
-  refreshSavedWorkflows: () => void;
-  saveWorkflow: (name: string) => void;
-  loadWorkflow: (name: string) => void;
-  saveTool: (name: string) => void;
-  loadTool: (name: string) => void;
+  refreshSavedWorkflows: () => Promise<void>;
+  saveWorkflow: (name: string) => Promise<void>;
+  loadWorkflow: (name: string) => Promise<void>;
+  saveTool: (name: string) => Promise<void>;
+  loadTool: (name: string) => Promise<void>;
   setToolMeta: (meta: ToolMeta) => void;
-  deleteWorkflow: (name: string) => void;
-  duplicateWorkflow: (name: string) => void;
-  renameWorkflow: (oldName: string, newName: string) => void;
-  renameTool: (oldName: string, newName: string) => void;
-  refreshToolNodes: () => void;
-  createWorkflow: () => string;
+  deleteWorkflow: (name: string) => Promise<void>;
+  duplicateWorkflow: (name: string) => Promise<void>;
+  renameWorkflow: (oldName: string, newName: string) => Promise<void>;
+  renameTool: (oldName: string, newName: string) => Promise<void>;
+  refreshToolNodes: () => Promise<void>;
+  createWorkflow: () => Promise<string>;
 
   loadDefinitions: (json: {
     types: Record<string, string | null>;
@@ -52,7 +53,7 @@ interface WorkflowState {
   openContextMenu: (
     menu: { type: 'node' | 'edge'; id: string; position: { x: number; y: number } } | null
   ) => void;
-  setTheme: (t: 'light' | 'dark') => void;
+  setTheme: (t: 'light' | 'dark') => Promise<void>;
   setSelected: (ids: string[]) => void;
   openEditor: (id: string) => void;
   closeEditor: () => void;
@@ -70,6 +71,12 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.redoStack = [];
       });
 
+    api.getSettings().then((cfg) =>
+      set((s) => {
+        if (cfg && cfg.theme) s.theme = cfg.theme as 'light' | 'dark';
+      })
+    );
+
     return {
     toast: null,
     nodeTypes: [],
@@ -79,11 +86,7 @@ export const useWorkflowStore = create<WorkflowState>()(
     selected: [],
     editing: null,
     contextMenu: null,
-    theme:
-      (localStorage.getItem('theme') as 'light' | 'dark') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light'),
+    theme: 'light',
     undoStack: [],
     redoStack: [],
     workflowName: 'autosave',
@@ -98,83 +101,59 @@ export const useWorkflowStore = create<WorkflowState>()(
         setTimeout(() => set((st) => void (st.toast = null)), 3000);
       }),
 
-    refreshSavedWorkflows: () =>
+    refreshSavedWorkflows: async () => {
+      const names = await api.listWorkflows();
       set((s) => {
-        const list = localStorage.getItem('workflows');
-        s.savedWorkflows = list ? JSON.parse(list) : [];
-      }),
+        s.savedWorkflows = names;
+      });
+    },
 
-    saveWorkflow: (name) =>
+    saveWorkflow: async (name) => {
+      await api.saveWorkflow(name, { nodes: get().nodes, edges: get().edges });
+      await get().refreshSavedWorkflows();
       set((s) => {
-        localStorage.setItem(
-          `workflow.${name}`,
-          JSON.stringify({ nodes: s.nodes, edges: s.edges })
-        );
-        const list = localStorage.getItem('workflows');
-        const names = list ? JSON.parse(list) : [];
-        if (!names.includes(name)) {
-          names.push(name);
-          localStorage.setItem('workflows', JSON.stringify(names));
-        }
         s.workflowName = name;
         s.dirty = false;
-        s.savedWorkflows = names;
-      }),
+      });
+    },
 
-      loadWorkflow: (name) =>
-        set((s) => {
-          const data = localStorage.getItem(`workflow.${name}`);
-          if (!data) return;
-          try {
-            const parsed = JSON.parse(data) as {
-              nodes: Record<string, NodeInstance>;
-              edges: EdgeInstance[];
-            };
-            s.nodes = parsed.nodes;
-            s.edges = parsed.edges;
-            s.workflowName = name;
-            s.dirty = false;
-            s.undoStack = [];
-            s.redoStack = [];
-          } catch {
-            /* ignore parse errors */
-          }
-        }),
-
-    saveTool: (name) => {
+    loadWorkflow: async (name) => {
+      const data = await api.getWorkflow(name);
+      if (!data) return;
       set((s) => {
-        const meta = s.toolMeta || { name, description: '', schema: '' };
-        const payload: ToolData = { meta, nodes: s.nodes, edges: s.edges };
-        localStorage.setItem(`tool.${name}`, JSON.stringify(payload));
-        const list = localStorage.getItem('tools');
-        const names = list ? JSON.parse(list) : [];
-        if (!names.includes(name)) {
-          names.push(name);
-          localStorage.setItem('tools', JSON.stringify(names));
-        }
+        s.nodes = data.nodes;
+        s.edges = data.edges;
+        s.workflowName = name;
+        s.dirty = false;
+        s.undoStack = [];
+        s.redoStack = [];
+      });
+    },
+
+    saveTool: async (name) => {
+      const meta = get().toolMeta || { name, description: '', schema: '' };
+      const payload: ToolData = { meta, nodes: get().nodes, edges: get().edges };
+      await api.saveTool(name, payload);
+      set((s) => {
         s.workflowName = `tool:${name}`;
         s.dirty = false;
       });
-      get().refreshToolNodes();
+      await get().refreshToolNodes();
     },
 
-      loadTool: (name) =>
-        set((s) => {
-          const data = localStorage.getItem(`tool.${name}`);
-          if (!data) return;
-          try {
-            const parsed = JSON.parse(data) as ToolData;
-            s.nodes = parsed.nodes;
-            s.edges = parsed.edges;
-            s.toolMeta = parsed.meta || { name, description: '', schema: '' };
-            s.workflowName = `tool:${name}`;
-            s.dirty = false;
-            s.undoStack = [];
-            s.redoStack = [];
-          } catch {
-            /* ignore parse errors */
-          }
-        }),
+    loadTool: async (name) => {
+      const data = await api.getTool(name);
+      if (!data) return;
+      set((s) => {
+        s.nodes = data.nodes;
+        s.edges = data.edges;
+        s.toolMeta = data.meta || { name, description: '', schema: '' };
+        s.workflowName = `tool:${name}`;
+        s.dirty = false;
+        s.undoStack = [];
+        s.redoStack = [];
+      });
+    },
 
     setToolMeta: (meta) =>
       set((s) => {
@@ -182,76 +161,54 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.dirty = true;
       }),
 
-    deleteWorkflow: (name) =>
+    deleteWorkflow: async (name) => {
+      await api.deleteWorkflow(name);
+      await get().refreshSavedWorkflows();
       set((s) => {
-        localStorage.removeItem(`workflow.${name}`);
-        const list = localStorage.getItem('workflows');
-        const names = list ? JSON.parse(list) : [];
-        const index = names.indexOf(name);
-        if (index !== -1) {
-          names.splice(index, 1);
-          localStorage.setItem('workflows', JSON.stringify(names));
-        }
         if (s.workflowName === name) {
           s.workflowName = 'autosave';
           s.dirty = true;
         }
-        s.savedWorkflows = names;
-      }),
-
-    duplicateWorkflow: (name) =>
-      set((s) => {
-        const data = localStorage.getItem(`workflow.${name}`);
-        if (!data) return;
-        const list = localStorage.getItem('workflows');
-        const names = list ? JSON.parse(list) : [];
-        let newName = `${name} copy`;
-        let i = 2;
-        while (names.includes(newName)) {
-          newName = `${name} copy ${i++}`;
-        }
-        localStorage.setItem(`workflow.${newName}`, data);
-        names.push(newName);
-        localStorage.setItem('workflows', JSON.stringify(names));
-        s.savedWorkflows = names;
-      }),
-
-    renameWorkflow: (oldName, newName) =>
-      set((s) => {
-        const data = localStorage.getItem(`workflow.${oldName}`);
-        if (!data) return;
-        localStorage.setItem(`workflow.${newName}`, data);
-        localStorage.removeItem(`workflow.${oldName}`);
-        const list = localStorage.getItem('workflows');
-        let names = list ? JSON.parse(list) : [];
-        const idx = names.indexOf(oldName);
-        if (idx !== -1) names.splice(idx, 1);
-        if (!names.includes(newName)) names.push(newName);
-        localStorage.setItem('workflows', JSON.stringify(names));
-        if (s.workflowName === oldName) s.workflowName = newName;
-        s.savedWorkflows = names;
-      }),
-
-    renameTool: (oldName, newName) => {
-      set((s) => {
-        const data = localStorage.getItem(`tool.${oldName}`);
-        if (!data) return;
-        localStorage.setItem(`tool.${newName}`, data);
-        localStorage.removeItem(`tool.${oldName}`);
-        const list = localStorage.getItem('tools');
-        let names = list ? JSON.parse(list) : [];
-        const idx = names.indexOf(oldName);
-        if (idx !== -1) names.splice(idx, 1);
-        if (!names.includes(newName)) names.push(newName);
-        localStorage.setItem('tools', JSON.stringify(names));
-        if (s.workflowName === `tool:${oldName}`) s.workflowName = `tool:${newName}`;
       });
-      get().refreshToolNodes();
     },
 
-    refreshToolNodes: () => {
-      const list = localStorage.getItem('tools');
-      const names: string[] = list ? JSON.parse(list) : [];
+    duplicateWorkflow: async (name) => {
+      const data = await api.getWorkflow(name);
+      if (!data) return;
+      const names = await api.listWorkflows();
+      let newName = `${name} copy`;
+      let i = 2;
+      while (names.includes(newName)) {
+        newName = `${name} copy ${i++}`;
+      }
+      await api.saveWorkflow(newName, data);
+      await get().refreshSavedWorkflows();
+    },
+
+    renameWorkflow: async (oldName, newName) => {
+      const data = await api.getWorkflow(oldName);
+      if (!data) return;
+      await api.deleteWorkflow(oldName);
+      await api.saveWorkflow(newName, data);
+      await get().refreshSavedWorkflows();
+      set((s) => {
+        if (s.workflowName === oldName) s.workflowName = newName;
+      });
+    },
+
+    renameTool: async (oldName, newName) => {
+      const data = await api.getTool(oldName);
+      if (!data) return;
+      await api.deleteTool(oldName);
+      await api.saveTool(newName, data);
+      if (get().workflowName === `tool:${oldName}`) {
+        set((s) => { s.workflowName = `tool:${newName}`; });
+      }
+      await get().refreshToolNodes();
+    },
+
+    refreshToolNodes: async () => {
+      const names: string[] = await api.listTools();
       set((s) => {
         s.nodeTypes = s.nodeTypes.filter(
           (nt) => !nt.id.startsWith('tool.custom.')
@@ -284,9 +241,8 @@ export const useWorkflowStore = create<WorkflowState>()(
       });
     },
 
-    createWorkflow: () => {
-      const list = localStorage.getItem('workflows');
-      const names = list ? JSON.parse(list) : ([] as string[]);
+    createWorkflow: async () => {
+      const names = await api.listWorkflows();
       let idx = 1;
       const base = 'Untitled';
       let name = `${base} ${idx}`;
@@ -302,6 +258,8 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.undoStack = [];
         s.redoStack = [];
       });
+      await api.saveWorkflow(name, { nodes: {}, edges: [] });
+      await get().refreshSavedWorkflows();
       return name;
     },
 
@@ -370,11 +328,12 @@ export const useWorkflowStore = create<WorkflowState>()(
         s.contextMenu = menu;
       }),
 
-    setTheme: (t) =>
+    setTheme: async (t) => {
+      await api.saveSettings({ theme: t });
       set((s) => {
         s.theme = t;
-        localStorage.setItem('theme', t);
-      }),
+      });
+    },
 
     setSelected: (ids) =>
       set((s) => {
