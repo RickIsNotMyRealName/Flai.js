@@ -25,3 +25,4 @@ dist-ssr
 .vite
 combined.md
 src/**/*.js
+server/**/*.js

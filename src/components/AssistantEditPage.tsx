@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import * as api from '../api';
 
 interface AssistantData {
   name: string;
@@ -15,46 +16,41 @@ export default function AssistantEditPage({ name: orig, onBack }: { name: string
   const [available, setAvailable] = useState<string[]>([]);
 
   useEffect(() => {
-    const raw = localStorage.getItem(`assistant.${orig}`);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw) as Partial<AssistantData>;
-        setName(parsed.name || orig);
-        setSystem(parsed.system || (parsed as any).instructions || '');
-        setModel(parsed.model || '');
-        setTools(parsed.tools || []);
-      } catch {
+    (async () => {
+      const data = await api.getAssistant(orig);
+      if (data) {
+        setName(data.name || orig);
+        setSystem(data.system || '');
+        setModel(data.model || '');
+        setTools(data.tools || []);
+      } else {
         setName(orig);
         setSystem('');
         setModel('');
         setTools([]);
       }
-    }
-    const list = localStorage.getItem('tools');
-    setAvailable(list ? JSON.parse(list) : []);
+      const list = await api.listTools();
+      setAvailable(list);
+    })();
   }, [orig]);
 
   const removeTool = (t: string) => {
     setTools(ts => ts.filter(x => x !== t));
   };
 
-  const save = () => {
-    const listRaw = localStorage.getItem('assistants');
-    const names: string[] = listRaw ? JSON.parse(listRaw) : [];
+  const save = async () => {
+    const names = await api.listAssistants();
     let target = orig;
     if (name && name !== orig) {
       if (names.includes(name)) {
         alert('Name already exists');
         return;
       }
-      const idx = names.indexOf(orig);
-      if (idx !== -1) names[idx] = name;
-      localStorage.removeItem(`assistant.${orig}`);
+      await api.deleteAssistant(orig);
       target = name;
     }
-    localStorage.setItem('assistants', JSON.stringify(names));
     const payload: AssistantData = { name: target, system, model, tools };
-    localStorage.setItem(`assistant.${target}`, JSON.stringify(payload));
+    await api.saveAssistant(target, payload);
     onBack();
   };
 

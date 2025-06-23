@@ -39,8 +39,27 @@ _Version 0.2 – June 7 2025 (adds single-element-per-row node layout)_
 
 ## Purpose & Scope
 
-This document specifies the **client-side** design for a _visual node editor_ that lets users compose AI-agent workflows by dragging node types onto a canvas and wiring them together.  
-Server concerns (authentication, storage, execution, collaboration) are **out of scope** for this phase.
+This document specifies the **client-side** design for a _visual node editor_ that lets users compose AI-agent workflows by dragging node types onto a canvas and wiring them together.
+
+### Server Responsibilities
+
+The project now ships with a lightweight Express backend. The server is responsible for executing workflows and persisting all editor data:
+
+- Node type definitions
+- Saved agents/workflows
+- Custom tools
+- Assistant profiles
+- Chat history
+- User settings
+
+It exposes a simple versioned REST API consumed by the client:
+
+- `GET /api/v1/nodeTypes` – node type catalog.
+- `GET`, `POST` and `DELETE` `/api/v1/workflows` – workflow CRUD.
+- `GET`, `POST` and `DELETE` `/api/v1/tools` – tool definitions.
+- `GET`, `POST` and `DELETE` `/api/v1/assistants` – assistant records.
+- `GET` and `POST` `/api/v1/chats` – chat history.
+- `GET` and `POST` `/api/v1/settings` – UI preferences.
 
 ## Glossary
 

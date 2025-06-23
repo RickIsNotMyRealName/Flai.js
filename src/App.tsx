@@ -35,7 +35,7 @@ export default function App() {
   const [editingAssistant, setEditingAssistant] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}nodeTypes.json`)
+    fetch('/api/v1/nodeTypes')
       .then((r) => r.json())
       .then((json) => {
         loadDefs(json);

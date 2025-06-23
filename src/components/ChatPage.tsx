@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
+import * as api from '../api';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -18,6 +19,18 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
   const [input, setInput] = useState('');
   const [collapsed, setCollapsed] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    api.getChats().then((c) => {
+      if (c && c.length) {
+        setChats(c);
+        setActive(c[0].id);
+      } else {
+        createChat();
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const deleteChat = (id: number) => {
     setChats((cs) => {
@@ -68,6 +81,10 @@ export default function ChatPage({ onBack }: { onBack: () => void }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    api.saveChats(chats);
+  }, [chats]);
 
   useEffect(() => {
     resizeTextarea();
